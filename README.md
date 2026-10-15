@@ -6,7 +6,7 @@ A **self-paced online course, completely free**, that teaches you to write real 
 
 ## 🚀 Take the course: [ibrahimsobh.github.io/introduction-to-python](https://ibrahimsobh.github.io/introduction-to-python/)
 
-👉 **Start learning now:** https://ibrahimsobh.github.io/introduction-to-python/ · free, no sign-up, runs in your browser
+✅ Free · no sign-up · runs in your browser
 
 [![Course path: Getting started, eight lessons (variables and types, operators, strings, control flow, data structures, functions, modules, errors), the final project, the final quiz, then your certificate](images/course-overview.png)](https://ibrahimsobh.github.io/introduction-to-python/)
 
