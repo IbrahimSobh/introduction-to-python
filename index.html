@@ -2734,6 +2734,7 @@ main()`;
   ];
   const fq = document.getElementById("finalQuizBox");
   const certBox = document.getElementById("certBox");
+  const REPO = "https://github.com/IbrahimSobh/introduction-to-python";
   const PASS = 0.8;
   let result = { correct: 0, answered: 0, total: finalQs.length };
   const totalQs = finalQs.length;
@@ -2804,7 +2805,11 @@ main()`;
     const wrap = DS.el("div", { class: "cert-wrap" }, cert,
       DS.el("div", { class: "controls", style: { justifyContent: "center", marginTop: "14px" } },
         DS.el("button", { class: "always", onclick: () => printCert(cert) }, "Print / Save as PDF"),
-        DS.el("button", { class: "always", onclick: () => downloadCert(name, correct, pct, date) }, "Download as image")));
+        DS.el("button", { class: "always", onclick: () => downloadCert(name, correct, pct, date) }, "Download as image")),
+      DS.el("p", { class: "cert-star", style: { textAlign: "center", margin: "14px 0 0", color: "var(--text-2)" } },
+        "🎉 Congratulations! If you enjoyed the course, ",
+        DS.el("a", { href: REPO, target: "_blank", rel: "noopener" }, "⭐ star it on GitHub"),
+        " and share it with others."));
     certBox.append(wrap);
   }
 
@@ -2914,7 +2919,7 @@ main()`;
 
 
 
-<footer>Introduction to Python — a free, self-paced course. Every code panel shows real Python you can copy and run yourself. Single self-contained file; works offline.</footer>
+<footer>Introduction to Python — a free, self-paced course by Ibrahim Sobh. Every code panel shows real Python you can copy and run yourself. Single self-contained file; works offline.<br><a href="https://github.com/IbrahimSobh/introduction-to-python" target="_blank" rel="noopener">Source on GitHub</a> · ⭐ Star the repo if you found it useful.</footer>
 </main>
 </div>
 

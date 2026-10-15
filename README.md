@@ -10,6 +10,23 @@ A **self-paced online course, completely free**, that teaches you to write real 
 
 ## What you'll learn
 
+- Python basics: variables, data types, operators, strings, and decisions and loops.
+- How to organise code with lists, dictionaries, functions and modules, and handle errors.
+- How to write and debug small programs of your own, ending with a quiz-game project.
+
+## Main audience
+
+Complete beginners: no programming experience needed.
+
+- **Absolute beginners** who have never written code.
+- **Students** starting a programming or computer science course.
+- **Professionals** such as analysts, scientists, engineers and teachers who want to automate tasks or work with data.
+- **Programmers from another language** who want a quick, visual tour of Python.
+
+It isn't aimed at experienced Python developers, or at anyone looking for advanced topics such as classes, web development or data science libraries.
+
+## Course outline
+
 1. **Getting Started**: what Python is, installing it, VS Code, PyCharm and Jupyter, scripts vs. the REPL, and your first `print()`
 2. **Variables and Data Types**: naming rules, `int`, `float`, `str`, `bool`, `None`, type conversion and `input()`
 3. **Operators and Expressions**: arithmetic, comparison and logical operators, and operator precedence
