@@ -51,16 +51,20 @@ It isn't aimed at experienced Python developers, or at anyone looking for advanc
 
 [![Functions lesson: the global names greeting, greet and area, and a purple box of local names for the greet() call holding name, punctuation and message, next to the Python code with line 4 highlighted](images/functions-lesson.png)](https://ibrahimsobh.github.io/introduction-to-python/#functions)
 
-**How long it takes:** about 5–6 hours if you're new to programming, or about 2–2.5 hours if you already program in another language.
+## How long it takes
+
+About 4.5 hours if you're new to programming, or about 2 hours if you already program in another language.
 
 | Part | New to programming | Already program |
 |---|---|---|
-| Getting Started (including installing Python) | 30–40 min | 10–15 min |
-| Each of lessons 2–9 (theory, interactive programs, quiz) | 25–35 min | 10–15 min |
-| Final project | 30 min | 15 min |
+| Getting Started (including installing Python) | 30 min | 10 min |
+| Lessons 2–9: 8 lessons (theory, interactive programs, quiz) | 8 × 25 min = 200 min | 8 × 10 min = 80 min |
+| Final project | 25 min | 15 min |
 | Cheat sheet review | 10 min | 5 min |
 | Final quiz and certificate | 15 min | 10 min |
-| **Total** | **about 5–6 hours** | **about 2–2.5 hours** |
+| **Total** | **280 min ≈ 4.5 hours** | **120 min = 2 hours** |
+
+## Final quiz and certificate
 
 Finish with the final quiz: 10 simple questions. Score 8 of 10 or more to get a certificate with your name, which you can download as an image or save as a PDF and share.
 
