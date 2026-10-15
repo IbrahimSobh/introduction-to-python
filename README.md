@@ -4,7 +4,9 @@ A **self-paced online course, completely free**, that teaches you to write real 
 
 **The certificate is free too.** No sign-up and no fees: pass the final quiz and get a certificate with your name.
 
-**Take the course:** https://ibrahimsobh.github.io/introduction-to-python/
+## 🚀 Take the course: [ibrahimsobh.github.io/introduction-to-python](https://ibrahimsobh.github.io/introduction-to-python/)
+
+👉 **Start learning now:** https://ibrahimsobh.github.io/introduction-to-python/ · free, no sign-up, runs in your browser
 
 [![Course path: Getting started, eight lessons (variables and types, operators, strings, control flow, data structures, functions, modules, errors), the final project, the final quiz, then your certificate](images/course-overview.png)](https://ibrahimsobh.github.io/introduction-to-python/)
 
