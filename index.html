@@ -1,0 +1,2949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Introduction to Python</title>
+<script>
+/* Apply the saved (or OS) theme before first paint to avoid a flash. */
+(function () {
+  var t = null;
+  try { t = localStorage.getItem("ds-theme"); } catch (e) {}
+  if (t !== "light" && t !== "dark") t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  document.documentElement.dataset.theme = t;
+})();
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f4f4f1;
+  --surface: #fcfcfb;
+  --surface-2: #efeee9;
+  --border: #dcdbd4;
+  --text: #0b0b0b;
+  --text-2: #52514e;
+  --muted: #6b6a65;
+  --accent: #2a78d6;   /* default node / primary */
+  --accent-strong: #2b6bc9; /* primary button background (white text >= 4.5:1) */
+  --hot: #eb6834;      /* currently active / being compared */
+  --ok: #1baf7a;       /* found / success */
+  --bad: #e34948;      /* removed / error */
+  --violet: #6250d6;   /* secondary highlight (visited, pointer) */
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4;
+  --code-bg: #1e1f22; --code-text: #e6e4dc; --code-hl: rgba(235,104,52,.28);
+  --shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 16px rgba(0,0,0,.05);
+  --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211;
+  --surface: #1a1a19;
+  --surface-2: #242422;
+  --border: #353532;
+  --text: #f0efec;
+  --text-2: #c3c2b7;
+  --muted: #8e8d86;
+  --accent: #3987e5;
+  --accent-strong: #2f6fcc;
+  --hot: #d95926;
+  --ok: #199e70;
+  --bad: #e66767;
+  --violet: #9085e9;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181;
+  --code-bg: #0e0e0d; --code-hl: rgba(217,89,38,.32);
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 var(--sans); }
+a { color: var(--accent); }
+code { font-family: var(--mono); font-size: .9em; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+h1, h2, h3 { line-height: 1.25; }
+h2 { font-size: 1.75rem; margin: 0 0 .25rem; }
+h3 { font-size: 1.15rem; margin: 1.6rem 0 .5rem; }
+
+/* ---------- layout ---------- */
+header.top {
+  position: sticky; top: 0; z-index: 50; height: 56px;
+  display: flex; align-items: center; gap: 16px; padding: 0 20px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--border);
+}
+header.top .brand { font-weight: 700; font-size: 1.05rem; margin-right: auto; }
+header.top label { font-size: .85rem; color: var(--text-2); display: flex; align-items: center; gap: 8px; }
+.layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); }
+nav.side {
+  position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto;
+  padding: 20px 12px; border-right: 1px solid var(--border);
+}
+nav.side a {
+  display: block; padding: 6px 10px; border-radius: 6px; color: var(--text-2);
+  text-decoration: none; font-size: .92rem;
+}
+nav.side a:hover { background: var(--surface-2); color: var(--text); }
+nav.side a.current { background: var(--surface-2); color: var(--text); font-weight: 600; box-shadow: inset 3px 0 0 var(--accent); }
+main { padding: 32px clamp(16px, 4vw, 56px) 80px; max-width: 1180px; }
+@media (max-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  html { scroll-padding-top: 112px; }
+  nav.side {
+    position: sticky; top: 56px; z-index: 40; height: auto; overflow-x: auto; overflow-y: hidden;
+    display: flex; gap: 6px; padding: 8px 12px; border-right: 0; border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: blur(8px);
+    white-space: nowrap; scrollbar-width: thin;
+  }
+  nav.side a { flex: none; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--border); font-size: .85rem; background: var(--surface); }
+  nav.side a.current { box-shadow: none; border-color: var(--accent); background: var(--surface-2); }
+}
+
+.section { padding: 40px 0 24px; border-bottom: 1px solid var(--border); }
+.section:last-child { border-bottom: 0; }
+.lead { color: var(--text-2); font-size: 1.08rem; margin-top: .25rem; max-width: 760px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; box-shadow: var(--shadow); min-width: 0; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; margin: 20px 0; align-items: start; }
+@media (max-width: 1050px) { .grid2 { grid-template-columns: 1fr; } }
+.callout { border-left: 4px solid var(--accent); background: var(--surface); padding: 10px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+.callout.tip { border-color: var(--ok); }
+.callout.warn { border-color: var(--hot); }
+
+/* ---------- controls ---------- */
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+.controls .sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+button {
+  font: 600 .88rem var(--sans); padding: 7px 13px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--accent-strong); background: var(--accent-strong); color: #fff;
+  transition: filter .15s, transform .05s;
+}
+button:hover { filter: brightness(1.08); }
+button:active { transform: translateY(1px); }
+button.secondary { background: transparent; color: var(--text); border-color: var(--border); }
+button.secondary:hover { background: var(--surface-2); }
+button:disabled { opacity: .45; cursor: not-allowed; filter: none; }
+input[type="text"], input[type="number"], select {
+  font: .9rem var(--mono); padding: 7px 9px; border-radius: 8px; width: 84px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+}
+input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- visual area ---------- */
+.viz {
+  position: relative; min-height: 260px; border-radius: 10px; overflow: auto;
+  background: var(--surface-2); padding: 16px;
+  background-image: radial-gradient(var(--border) 1px, transparent 1px); background-size: 18px 18px;
+}
+.viz svg { display: block; max-width: 100%; }
+.viz .caption { position: absolute; top: 8px; left: 12px; font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.node {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 46px; height: 46px; padding: 0 8px; border-radius: 9px;
+  border: 2px solid var(--accent); background: var(--surface); color: var(--text);
+  font: 600 15px var(--mono); transition: all .3s ease; position: relative;
+}
+.node.active  { border-color: var(--hot); background: color-mix(in srgb, var(--hot) 16%, var(--surface)); transform: translateY(-4px); }
+.node.found   { border-color: var(--ok);  background: color-mix(in srgb, var(--ok) 20%, var(--surface)); }
+.node.visited { border-color: var(--violet); background: color-mix(in srgb, var(--violet) 14%, var(--surface)); }
+.node.removed { border-color: var(--bad); opacity: 0; transform: scale(.6); }
+.node.dim     { opacity: .4; }
+.node.new     { animation: pop .4s ease; }
+.node .tag { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font: 600 11px var(--sans); color: var(--text-2); white-space: nowrap; }
+.node .sub { position: absolute; bottom: -19px; left: 50%; transform: translateX(-50%); font: 11px var(--mono); color: var(--muted); white-space: nowrap; }
+@keyframes pop { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+/* SVG node equivalents (trees, graphs) */
+.svg-node circle { fill: var(--surface); stroke: var(--accent); stroke-width: 2; transition: all .3s; }
+.svg-node text { fill: var(--text); font: 600 14px var(--mono); text-anchor: middle; dominant-baseline: central; }
+.svg-node.active circle  { stroke: var(--hot); fill: color-mix(in srgb, var(--hot) 22%, var(--surface)); }
+.svg-node.found circle   { stroke: var(--ok); fill: color-mix(in srgb, var(--ok) 24%, var(--surface)); }
+.svg-node.visited circle { stroke: var(--violet); fill: color-mix(in srgb, var(--violet) 18%, var(--surface)); }
+.svg-edge { stroke: var(--muted); stroke-width: 2; fill: none; transition: all .3s; }
+.svg-edge.active { stroke: var(--hot); stroke-width: 3; }
+.svg-edge.found  { stroke: var(--ok); stroke-width: 3; }
+
+.status { margin-top: 10px; min-height: 1.6em; font-size: .92rem; color: var(--text-2); }
+.log { margin-top: 10px; max-height: 150px; overflow-y: auto; font: 12.5px/1.5 var(--mono); border-top: 1px dashed var(--border); padding-top: 8px; }
+.log div { padding: 1px 0; color: var(--text-2); }
+.log div.ok::before  { content: "✓ "; color: var(--ok); }
+.log div.err::before { content: "✗ "; color: var(--bad); }
+.log div.info::before { content: "→ "; color: var(--accent); }
+.log div:first-child { color: var(--text); }
+
+/* ---------- code panel ---------- */
+.code {
+  background: var(--code-bg); color: var(--code-text); border-radius: 10px;
+  font: 12.5px/1.6 var(--mono); padding: 10px 0; max-height: 470px; overflow: auto; position: relative;
+}
+.code .title { color: #8e8d86; font-size: 11px; padding: 0 14px 6px; text-transform: uppercase; letter-spacing: .08em; }
+.code .ln { display: flex; white-space: pre; padding: 0 14px 0 0; transition: background .2s; }
+.code .ln .no { width: 36px; flex: none; text-align: right; padding-right: 12px; color: #5f5e59; user-select: none; }
+.code .ln.hl { background: var(--code-hl); box-shadow: inset 3px 0 0 var(--hot); }
+.t-k { color: #c792ea; } .t-sf { color: #f78c6c; } .t-s { color: #c3e88d; } .t-c { color: #7f7e78; font-style: italic; } .t-n { color: #f9c859; } .t-d { color: #82aaff; }
+
+/* ---------- tables ---------- */
+table.cx { border-collapse: collapse; width: 100%; font-size: .92rem; margin: 10px 0; }
+table.cx th, table.cx td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+table.cx th { font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-2); }
+table.cx tbody tr:hover { background: var(--surface-2); }
+.big { font-family: var(--mono); font-weight: 600; white-space: nowrap; }
+.big:is(.o1, .olog, .on, .onlog, .on2)::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; background: var(--muted); }
+.big.o1::before { background: var(--s1); } .big.olog::before { background: var(--s3); } .big.on::before { background: var(--s4); }
+.big.onlog::before { background: var(--s5); } .big.on2::before { background: var(--s2); }
+
+/* ---------- quiz ---------- */
+.quiz { margin: 16px 0; }
+.quiz .q { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+.quiz .q p { margin: 0 0 10px; font-weight: 600; }
+.quiz .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.quiz .opts button { background: var(--surface-2); color: var(--text); border-color: var(--border); font-weight: 500; }
+.quiz .opts button.right { background: color-mix(in srgb, var(--ok) 22%, var(--surface)); border-color: var(--ok); }
+.quiz .opts button.wrong { background: color-mix(in srgb, var(--bad) 18%, var(--surface)); border-color: var(--bad); }
+.quiz .why { margin-top: 10px; font-size: .92rem; color: var(--text-2); display: none; }
+.quiz .why.show { display: block; }
+.quiz .score { font-size: .9rem; color: var(--text-2); }
+
+/* ---------- intro bits ---------- */
+.hero { padding: 24px 0 8px; }
+.hero h1 { font-size: clamp(2rem, 4vw, 2.8rem); margin: 0 0 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text); text-decoration: none; font-size: .9rem; }
+.chip:hover { border-color: var(--accent); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .85rem; color: var(--text-2); margin: 4px 0 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.chart-wrap { position: relative; }
+.tooltip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: .82rem; box-shadow: var(--shadow); white-space: nowrap; opacity: 0; transition: opacity .1s; z-index: 5; }
+.tooltip .row { display: flex; align-items: center; gap: 6px; }
+.tooltip .row i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.tooltip .row b { margin-left: auto; padding-left: 14px; font-family: var(--mono); }
+.order { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 12px 0; counter-reset: step; }
+.order a { counter-increment: step; display: block; padding: 10px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); text-decoration: none; color: var(--text); font-size: .92rem; }
+.order a::before { content: counter(step); display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--surface-2); color: var(--text-2); font-size: .75rem; font-weight: 700; margin-right: 8px; }
+.order a:hover { border-color: var(--accent); }
+.order a small { display: block; color: var(--muted); margin-top: 4px; font-size: .8rem; }
+.scenario { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.scenario .card p { margin: 0 0 10px; }
+.scenario .answer { display: none; font-size: .92rem; color: var(--text-2); }
+.scenario .answer.show { display: block; }
+.scenario select { width: 100%; font-family: var(--sans); }
+ol.ex li { margin-bottom: 6px; }
+footer { color: var(--muted); font-size: .85rem; padding: 32px 0; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* ---------- Python course: memory frames, console, tokens ---------- */
+.node.bad { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 18%, var(--surface)); }
+.tr-frames { display: flex; flex-wrap: wrap; gap: 14px; padding-top: 22px; align-items: flex-start; }
+.tr-frame { border: 1px dashed var(--border); border-radius: 10px; padding: 10px 12px 4px; background: var(--surface); min-width: 160px; max-width: 100%; }
+.tr-frame.local { border: 2px solid var(--violet); }
+.tr-frame h4 { margin: 0 0 24px; font: 600 12px var(--sans); color: var(--text-2); }
+.tr-frame.local h4 { color: var(--violet); }
+.tr-vars { display: flex; flex-wrap: wrap; gap: 44px 12px; padding-bottom: 22px; }
+.tr-vars .empty { color: var(--muted); font: 12px var(--mono); }
+.tr-vars .node, .py-row .node { max-width: 100%; overflow: visible; white-space: pre; }
+.tr-outlabel { margin-top: 6px; font: 600 11px var(--sans); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.console { background: var(--code-bg); color: var(--code-text); border-radius: 8px; font: 13px/1.55 var(--mono); padding: 10px 12px; min-height: 64px; max-height: 240px; overflow: auto; margin-top: 6px; white-space: pre-wrap; word-break: break-word; }
+.console .in { color: #82aaff; }
+.console .err { color: #ff8a80; }
+.console .dim { color: #7f7e78; }
+.console .new { animation: fadein .35s ease; }
+@keyframes fadein { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+.tok-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 34px 0 12px; min-height: 96px; }
+.tok-op { font: 700 18px var(--mono); color: var(--text-2); padding: 0 2px; transition: color .3s; }
+.tok-op.active { color: var(--hot); }
+.py-boxes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-top: 22px; }
+@media (max-width: 560px) { .py-boxes { grid-template-columns: minmax(0, 1fr); } }
+.py-box { border: 1px dashed var(--border); border-radius: 10px; padding: 10px 12px 6px; background: var(--surface); min-width: 0; }
+.py-box h4 { margin: 0 0 24px; font: 600 12px var(--sans); color: var(--text-2); }
+.py-box h4 code { font-size: 12px; }
+.py-row { display: flex; flex-wrap: wrap; gap: 30px 10px; min-height: 46px; align-items: center; padding-bottom: 22px; }
+.py-row.tight { gap: 10px; padding-bottom: 8px; }
+.py-row .empty { color: var(--muted); font: 12px var(--mono); }
+.py-ask { display: flex; gap: 8px; margin-top: 8px; align-items: center; }
+.py-ask input { flex: 1; width: auto; min-width: 0; }
+input.wide { width: 170px; }
+input.num { width: 64px; }
+label.inl { font-size: .85rem; color: var(--text-2); display: inline-flex; align-items: center; gap: 6px; }
+.tb-line { display: block; width: 100%; text-align: left; background: transparent; color: var(--code-text); border: 0; border-radius: 4px;
+  font: 13px/1.55 var(--mono); padding: 2px 8px; white-space: pre-wrap; cursor: pointer; }
+.tb-line:hover { background: rgba(255,255,255,.06); filter: none; }
+.tb-line.on { background: var(--code-hl); box-shadow: inset 3px 0 0 var(--hot); }
+.tb-line:active { transform: none; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">🐍 Intro to Python</div>
+  <label>Animation speed
+    <input type="range" id="speed" min="0.25" max="3" step="0.25" value="1" style="width:110px">
+    <span id="speedVal" style="font-family:var(--mono);width:36px">1×</span>
+  </label>
+  <button class="secondary" id="themeBtn" title="Toggle light / dark">◐ Theme</button>
+</header>
+
+<div class="layout">
+<nav class="side" id="nav" aria-label="Sections"></nav>
+<main>
+
+<script>
+/* ======================================================================
+   DS — shared helpers used by every visualizer below.
+   ====================================================================== */
+const DS = (() => {
+  const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  function el(tag, props = {}, ...children) {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(props || {})) {
+      if (v == null || v === false) continue;
+      if (k === "class") e.className = v;
+      else if (k === "style" && typeof v === "object") Object.assign(e.style, v);
+      else if (k === "dataset") Object.assign(e.dataset, v);
+      else if (k === "html") e.innerHTML = v;
+      else if (k.startsWith("on") && typeof v === "function") e.addEventListener(k.slice(2), v);
+      else e.setAttribute(k, v === true ? "" : v);
+    }
+    for (const c of children.flat()) if (c != null && c !== false) e.append(c instanceof Node ? c : document.createTextNode(c));
+    return e;
+  }
+
+  const SVGNS = "http://www.w3.org/2000/svg";
+  function svg(tag, attrs = {}, ...children) {
+    const e = document.createElementNS(SVGNS, tag);
+    for (const [k, v] of Object.entries(attrs)) if (v != null) e.setAttribute(k, v);
+    for (const c of children.flat()) if (c != null) e.append(c instanceof Node ? c : document.createTextNode(c));
+    return e;
+  }
+
+  const reducedMotion = () => !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  let speed = 1;
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  // Pause between animation steps; scaled by the global speed slider.
+  const wait = (mult = 1) => sleep(650 * mult / speed);
+
+  // Run an async animation, disabling the section's buttons until it finishes.
+  async function run(root, fn) {
+    if (root.dataset.busy) return;
+    root.dataset.busy = "1";
+    // Only touch buttons that are currently enabled, so ones disabled for other
+    // reasons stay disabled afterwards.
+    const btns = [...root.querySelectorAll("button:not(.always)")].filter(b => !b.disabled);
+    const focused = document.activeElement;
+    btns.forEach(b => (b.disabled = true));
+    try { await fn(); }
+    catch (e) { console.error(e); }
+    finally {
+      delete root.dataset.busy;
+      btns.forEach(b => (b.disabled = false));
+      // Disabling a focused button drops focus to <body>; give it back.
+      const lost = !document.activeElement || document.activeElement === document.body;
+      if (focused && btns.includes(focused) && lost && focused.isConnected && !focused.disabled) focused.focus({ preventScroll: true });
+    }
+  }
+
+  function hlPy(line) {
+    const re = /(#.*$)|(f?"[^"]*"|f?'[^']*')|\b(def|class|if|elif|else|while|for|return|in|not|and|or|is|None|True|False|raise|yield|from|import|as|try|except|finally|global|with|del|break|continue|lambda|self|pass)\b|\b(\d+)\b/g;
+    let out = "", last = 0;
+    line.replace(re, (m, c, s, k, n, off) => {
+      out += esc(line.slice(last, off));
+      const cls = c ? "c" : s ? "s" : k ? (k === "self" ? "sf" : "k") : "n";
+      out += `<span class="t-${cls}">${esc(m)}</span>`;
+      last = off + m.length;
+      return m;
+    });
+    out += esc(line.slice(last));
+    return out.replace(/(<span class="t-k">(?:def|class)<\/span>\s+)(\w+)/, '$1<span class="t-d">$2</span>');
+  }
+
+  // Render Python source into a code panel. Returns { hl(...targets), clear() }.
+  // A target is a 1-based line number or a substring; a substring highlights the
+  // first line that contains it. To disambiguate, a target may also be an object
+  // { find: "substring", after: "def method" }: the first line containing `find`
+  // at or after the first line containing `after`.
+  function code(container, src, title) {
+    const lines = src.replace(/^\n+|\s+$/g, "").split("\n");
+    container.innerHTML = "";
+    if (title) container.append(el("div", { class: "title" }, title));
+    const rows = lines.map((t, i) => {
+      const r = el("div", { class: "ln" }, el("span", { class: "no" }, String(i + 1)), el("span", { html: hlPy(t) || " " }));
+      container.append(r);
+      return r;
+    });
+    function clear() { rows.forEach(r => r.classList.remove("hl")); }
+    function hl(...targets) {
+      clear();
+      let first = null;
+      for (const t of targets.flat()) {
+        if (t == null) continue;
+        let idx;
+        if (typeof t === "number") idx = t - 1;
+        else if (typeof t === "object") {
+          const start = t.after != null ? lines.findIndex(l => l.includes(t.after)) : 0;
+          idx = start < 0 || t.find == null ? -1 : lines.findIndex((l, i) => i >= start && l.includes(t.find));
+        }
+        else idx = lines.findIndex(l => l.includes(t));
+        if (rows[idx]) { rows[idx].classList.add("hl"); first = first ?? rows[idx]; }
+      }
+      if (first) {
+        const top = first.offsetTop - container.clientHeight / 3;
+        container.scrollTo({ top: Math.max(0, top), behavior: reducedMotion() ? "auto" : "smooth" });
+      }
+    }
+    return { hl, clear, lines };
+  }
+
+  // Prepend a line to an operation log. kind: "ok" | "err" | "info" | "".
+  function log(logEl, msg, kind = "") {
+    logEl.prepend(el("div", { class: kind, html: msg }));
+    while (logEl.children.length > 40) logEl.lastChild.remove();
+  }
+
+  // onChange (optional) is called with {correct, answered, total} after each answer.
+  function quiz(container, questions, onChange) {
+    container.classList.add("quiz");
+    let correct = 0, answered = 0;
+    const score = el("div", { class: "score" });
+    const update = () => {
+      score.textContent = `Score: ${correct} / ${answered} answered (${questions.length} total)`;
+      if (onChange) onChange({ correct, answered, total: questions.length });
+    };
+    questions.forEach(({ q, options, answer, why }) => {
+      const whyEl = el("div", { class: "why", "aria-live": "polite" });
+      const opts = el("div", { class: "opts" });
+      let done = false;
+      options.forEach((o, i) => {
+        const b = el("button", {
+          class: "always",
+          onclick: () => {
+            if (done) return;
+            done = true; answered++;
+            const ok = i === answer;
+            const rightBtn = opts.children[answer];
+            if (ok) correct++;
+            else { b.classList.add("wrong"); b.prepend("✗ "); }
+            rightBtn.classList.add("right"); rightBtn.prepend("✓ ");
+            whyEl.innerHTML = (ok ? "<b>Correct!</b> " : `<b>Not quite.</b> The correct answer is <b>${esc(options[answer])}</b>. `) + (why || "");
+            whyEl.classList.add("show");
+            update();
+          }
+        }, o);
+        opts.append(b);
+      });
+      container.append(el("div", { class: "q" }, el("p", { html: q }), opts, whyEl));
+    });
+    container.append(score);
+    update();
+  }
+
+  const randInt = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  // Parse "5, 3 8" -> [5, 3, 8] (numbers when possible, otherwise strings).
+  const parseVals = str => String(str).split(/[\s,]+/).filter(Boolean).map(s => (isNaN(+s) ? s : +s));
+
+  return {
+    el, svg, esc, sleep, wait, run, code, log, quiz, randInt, parseVals, reducedMotion,
+    get speed() { return speed; },
+    set speed(v) { speed = v; },
+  };
+})();
+
+document.getElementById("speed").addEventListener("input", e => {
+  DS.speed = +e.target.value;
+  document.getElementById("speedVal").textContent = DS.speed + "×";
+});
+document.getElementById("themeBtn").addEventListener("click", () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme === "dark" ||
+    (!root.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  const next = dark ? "light" : "dark";
+  root.dataset.theme = next;
+  try { localStorage.setItem("ds-theme", next); } catch (e) {}
+  document.dispatchEvent(new Event("themechange"));
+});
+// Theme was already applied by the inline script in <head> (saved choice, else OS preference).
+</script>
+
+<script>
+/* ======================================================================
+   PY — helpers for the Python lessons: a step-through program runner that
+   shows names in memory, printed output and the line being run.
+   ====================================================================== */
+const PY = (() => {
+  const { el, esc } = DS;
+
+  // Python type name for a value written as Python source (repr).
+  function typeOf(v) {
+    v = String(v).trim();
+    if (v === "None") return "NoneType";
+    if (v === "True" || v === "False") return "bool";
+    if (/^-?\d+$/.test(v)) return "int";
+    if (/^-?(\d+\.\d*|\.\d+)(e[-+]?\d+)?$/.test(v) || /^-?\d+e[-+]?\d+$/.test(v)) return "float";
+    if (/^f?["']/.test(v)) return "str";
+    if (v.startsWith("[")) return "list";
+    if (v.startsWith("(")) return "tuple";
+    if (v.startsWith("{")) return v === "{}" || /^\{\s*['"\d][^,]*?:/.test(v) ? "dict" : "set";
+    if (v.startsWith("<function")) return "function";
+    if (v.startsWith("<module")) return "module";
+    if (v.startsWith("datetime.date")) return "date";
+    return "";
+  }
+
+  // Python's repr() of a JS value: strings get quotes, floats keep ".0".
+  function repr(v) {
+    if (v === null || v === undefined) return "None";
+    if (v === true) return "True";
+    if (v === false) return "False";
+    if (typeof v === "number") return Number.isInteger(v) && !Object.is(v, -0) && v.__float ? v + ".0" : String(v);
+    if (Array.isArray(v)) return "[" + v.map(repr).join(", ") + "]";
+    return "'" + String(v).replace(/\\/g, "\\\\").replace(/'/g, "\\'") + "'";
+  }
+  // A float that prints the Python way (3 -> 3.0).
+  const fl = x => (Number.isInteger(x) ? x.toFixed(1) : String(x));
+
+  const shake = e => e.animate(
+    [{ transform: "translateX(0)" }, { transform: "translateX(-7px)" }, { transform: "translateX(7px)" },
+     { transform: "translateX(-4px)" }, { transform: "translateX(0)" }], { duration: 360 });
+
+  /* Step-through runner.
+     getProgram() returns { src, title, steps, done }.
+     Each step: { line, say, set: {name: repr}, read: [names], push: "frame name", pop: true,
+                  out: "printed text" | [..], inp: [prompt, typed], err: "Error text", wait } */
+  function tracer(root, getProgram, opts = {}) {
+    const $ = s => root.querySelector(s);
+    const viz = $(".viz"), statusEl = $(".status"), logEl = $(".log"), codeEl = $(".code");
+    viz.innerHTML = "";
+    viz.append(el("span", { class: "caption" }, opts.caption || "Memory · names and their values"));
+    const framesEl = el("div", { class: "tr-frames" });
+    const outEl = el("div", { class: "console", "aria-live": "polite" });
+    viz.append(framesEl, el("div", { class: "tr-outlabel" }, "Output"), outEl);
+    let prog, cp, steps = [], i = 0, frames = [], started = false;
+    const say = h => (statusEl.innerHTML = h);
+
+    function draw(changed = [], read = []) {
+      framesEl.innerHTML = "";
+      frames.forEach((f, fi) => {
+        const vars = el("div", { class: "tr-vars" });
+        if (!f.vars.size) vars.append(el("span", { class: "empty" }, "(no names yet)"));
+        const top = fi === frames.length - 1;
+        for (const [k, v] of f.vars) {
+          let cls = "node";
+          if (top && changed.includes(k)) cls += " visited new";
+          if (read.includes(k) && (top || !frames[frames.length - 1].vars.has(k))) cls += " active";
+          vars.append(el("div", { class: cls }, v, el("span", { class: "tag" }, k), el("span", { class: "sub" }, typeOf(v))));
+        }
+        framesEl.append(el("div", { class: "tr-frame" + (fi ? " local" : "") }, el("h4", {}, f.name), vars));
+      });
+    }
+
+    function load() {
+      prog = getProgram();
+      cp = DS.code(codeEl, prog.src, prog.title);
+      steps = prog.steps; i = 0; started = false;
+      frames = [{ name: opts.globalName || "Global names", vars: new Map() }];
+      draw();
+      outEl.innerHTML = "";
+      outEl.append(el("span", { class: "dim" }, "(nothing printed yet)"));
+      say(opts.hint || "Press <b>Run</b> to watch the program, or <b>Step</b> to go one line at a time.");
+    }
+
+    function print(text, cls = "") {
+      if (!outEl.dataset.used) { outEl.innerHTML = ""; outEl.dataset.used = "1"; }
+      outEl.append(el("div", { class: "new " + cls }, text));
+      outEl.scrollTop = outEl.scrollHeight;
+    }
+
+    function apply(s) {
+      if (s.push) frames.push({ name: s.push, vars: new Map() });
+      if (s.pop) frames.pop();
+      const top = frames[frames.length - 1];
+      const changed = [];
+      if (s.set) for (const [k, v] of Object.entries(s.set)) { top.vars.set(k, String(v)); changed.push(k); }
+      if (s.gset) for (const [k, v] of Object.entries(s.gset)) frames[0].vars.set(k, String(v));
+      draw(changed, s.read || []);
+      if (s.inp) print(el("span", {}, s.inp[0], el("span", { class: "in" }, s.inp[1])));
+      if (s.out != null) [].concat(s.out).forEach(t => print(String(t)));
+      if (s.err) { print(s.err, "err"); shake(viz); }
+      if (s.line != null) cp.hl(...[].concat(s.line)); else cp.clear();
+      say(s.say || "");
+      if (s.log) DS.log(logEl, s.log, s.kind || "info");
+      else if (s.err) DS.log(logEl, esc(s.err), "err");
+    }
+
+    function begin() {
+      load(); started = true;
+      delete outEl.dataset.used;
+      DS.log(logEl, (prog.startLog || "Run started"), "info");
+    }
+    function finish() {
+      DS.log(logEl, prog.done || "Program finished.", prog.failed ? "err" : "ok");
+      started = false;
+    }
+    async function runAll() {
+      if (!started || i >= steps.length) begin();
+      while (i < steps.length) {
+        const s = steps[i++];
+        apply(s);
+        await DS.wait(s.wait ?? 1.25);
+      }
+      finish();
+    }
+    async function stepOnce() {
+      if (!started || i >= steps.length) begin();
+      apply(steps[i++]);
+      if (i >= steps.length) finish();
+    }
+    const reset = () => { if (!root.dataset.busy) { load(); delete outEl.dataset.used; } };
+    $(".t-run").onclick = () => DS.run(root, runAll);
+    $(".t-step").onclick = () => DS.run(root, stepOnce);
+    $(".t-reset").onclick = reset;
+    root.querySelectorAll("input, select").forEach(inp => {
+      inp.addEventListener("change", reset);
+      if (inp.tagName === "INPUT") inp.addEventListener("keydown", e => { if (e.key === "Enter") { reset(); $(".t-run").click(); } });
+    });
+    load();
+    return { reset };
+  }
+
+  // Read a short, safe text value from an input (no quotes or backslashes).
+  const clean = (inp, def, max = 14) => (String(inp.value).replace(/['"\\]/g, "").trim().slice(0, max)) || def;
+  const num = (inp, def, lo, hi) => {
+    const v = Math.trunc(+inp.value);
+    if (!Number.isFinite(v) || inp.value === "") { inp.value = def; return def; }
+    const c = Math.min(hi, Math.max(lo, v));
+    inp.value = c;
+    return c;
+  };
+
+  return { typeOf, repr, fl, shake, tracer, clean, num };
+})();
+</script>
+
+<section class="section hero" id="intro" data-title="Welcome">
+  <div class="kicker">Free self-paced course · Certificate on completion</div>
+  <h1>Introduction to Python</h1>
+  <p class="lead">Learn to write real Python programs from zero: variables, operators, strings, decisions and loops, lists and dictionaries, functions, modules and error handling. Each lesson pairs the <b>theory</b> (what the idea is and why it matters) with <b>practice</b>: real Python code that runs line by line in front of you, interactive tools you can drive yourself, and quizzes. Finish with a small project, then pass the final quiz to earn your certificate.</p>
+  <style>
+    #intro .kicker { font-size: .8rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+    #intro .pillars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 18px 0 0; }
+    #intro .pillar { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+    #intro .pillar .p-ico { font-size: 1.4rem; line-height: 1; }
+    #intro .pillar h3 { margin: 8px 0 4px; font-size: 1rem; }
+    #intro .pillar p { margin: 0; color: var(--text-2); font-size: .9rem; line-height: 1.45; }
+    #intro .path { list-style: none; counter-reset: step; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+    #intro .path li { counter-increment: step; display: grid; grid-template-columns: 26px minmax(0, 1fr); column-gap: 12px; align-items: start; }
+    #intro .path li::before { content: counter(step); flex: none; width: 26px; height: 26px; border-radius: 50%; display: inline-grid; place-items: center;
+      font-weight: 700; font-size: .85rem; color: var(--accent); border: 2px solid var(--accent); grid-row: span 2; }
+    #intro .path li b, #intro .path li span { grid-column: 2; }
+    #intro .path li span { color: var(--text-2); font-size: .95rem; }
+    #intro .facts { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 14px 0 0; padding: 0; list-style: none; font-size: .9rem; color: var(--text-2); }
+    #intro .facts b { color: var(--text); }
+    @media (max-width: 700px) { #intro .pillars { grid-template-columns: minmax(0, 1fr); } }
+    #intro .ckey { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin: 16px 0 0; }
+    #intro .ckey h3 { margin: 0 0 2px; font-size: 1rem; }
+    #intro .ckey > p { margin: 0 0 12px; color: var(--text-2); font-size: .92rem; }
+    #intro .ckey ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px; }
+    #intro .ckey li { display: flex; align-items: center; gap: 12px; }
+    #intro .ckey .node { flex: none; min-width: 40px; height: 40px; font-size: 14px; transform: none; }
+    #intro .ckey b { display: block; }
+    @media (max-width: 560px) { #intro .ckey ul { grid-template-columns: minmax(0, 1fr); } }
+    #intro .ckey small { color: var(--text-2); font-size: .85rem; line-height: 1.35; display: block; }
+  </style>
+  <div class="pillars">
+    <div class="pillar"><div class="p-ico" aria-hidden="true">📘</div><h3>Theory</h3><p>Each idea explained in plain words with everyday examples, tables of the key rules, and where you'll use it in real programs.</p></div>
+    <div class="pillar"><div class="p-ico" aria-hidden="true">🛠️</div><h3>Practice</h3><p>Real Python code that runs line by line, so you see every name and value change. Interactive tools, a final project, and a quiz per lesson.</p></div>
+    <div class="pillar"><div class="p-ico" aria-hidden="true">🎓</div><h3>Certificate</h3><p>Score 80% or more on the final quiz to get a certificate with your name, ready to print, save as PDF or download as an image.</p></div>
+  </div>
+  <ul class="facts" aria-label="Course facts">
+    <li><b>10</b> lessons</li>
+    <li><b>30</b> lesson quiz questions</li>
+    <li><b>10</b>-question final quiz</li>
+    <li>No installation needed to follow along</li>
+    <li>Self-paced · works offline</li>
+  </ul>
+
+  <h3>How the course works</h3>
+  <ol class="path">
+    <li><b>Start with Getting Started</b><span>what Python is, how to install it, and your first program.</span></li>
+    <li><b>Work through lessons 2 to 9 in order</b><span>read the idea, press Run or Step to watch the code, then take the lesson quiz.</span></li>
+    <li><b>Build the final project</b><span>play a small quiz game written with everything you learned, and see which lesson each part comes from.</span></li>
+    <li><b>Take the final quiz</b><span>One list of 10 simple questions covering every lesson. Score 8 of 10 or more to earn your certificate.</span></li>
+  </ol>
+  <div class="callout tip"><b>Tip for each lesson:</b> before you press <b>Step</b>, guess what the next line will do. Use the <b>Animation speed</b> slider at the top to slow things down. There's no time limit, and you can retake any quiz. When you install Python (lesson 1), type the examples yourself too.</div>
+
+  <div class="ckey" role="group" aria-labelledby="ckeyTitle">
+    <h3 id="ckeyTitle">Colour key for the animations</h3>
+    <p>When code runs in any lesson, the boxes in memory change colour to show what is happening at that moment:</p>
+    <ul>
+      <li><span class="node" aria-hidden="true">7</span><span><b>Normal</b><small>A value stored under a name, not involved in the current line.</small></span></li>
+      <li><span class="node active" aria-hidden="true">7</span><span><b>Being used</b><small>The value the current line is reading or working on right now.</small></span></li>
+      <li><span class="node visited" aria-hidden="true">7</span><span><b>Just changed</b><small>A name that was just created or given a new value.</small></span></li>
+      <li><span class="node found" aria-hidden="true">7</span><span><b>Result</b><small>The answer: the value an expression or a step produced.</small></span></li>
+    </ul>
+  </div>
+
+  <h3>Course map</h3>
+  <div class="order">
+    <a href="#start">Getting Started<small>install, REPL, print()</small></a>
+    <a href="#vars">Variables &amp; Types<small>int, float, str, bool, None</small></a>
+    <a href="#ops">Operators<small>math, comparison, logic</small></a>
+    <a href="#strings">Strings<small>slicing, methods, f-strings</small></a>
+    <a href="#flow">Control Flow<small>if, for, while</small></a>
+    <a href="#collections">Data Structures<small>list, tuple, dict, set</small></a>
+    <a href="#functions">Functions<small>def, return, scope</small></a>
+    <a href="#modules">Modules<small>math, random, datetime</small></a>
+    <a href="#errors">Errors<small>tracebacks, try / except</small></a>
+    <a href="#project">Final Project<small>a quiz game</small></a>
+  </div>
+</section>
+
+<!-- ===================================================================== 1 -->
+<section class="section" id="start" data-title="1. Getting Started">
+  <h2>1. Getting Started <small style="color:var(--muted);font-weight:500">(your first program)</small></h2>
+  <p class="lead">Python is a programming language that reads almost like English, which makes it one of the easiest languages to learn and one of the most widely used.</p>
+  <p>A program is a list of instructions that the computer follows one line at a time, from top to bottom. Think of a recipe: each step is simple, and the order matters. Python's job is to read your recipe and carry it out.</p>
+
+  <div class="w-hello">
+  <div class="grid2">
+    <div class="card">
+      <div class="controls">
+        <label class="inl">Your name <input type="text" class="h-name" value="Ada" aria-label="Your name"></label>
+        <button class="t-run">▶ Run</button>
+        <button class="t-step">Step</button>
+        <button class="secondary t-reset">Reset</button>
+      </div>
+      <div class="viz"></div>
+      <div class="status"></div>
+      <div class="log"></div>
+    </div>
+    <div class="code"></div>
+  </div>
+  </div>
+
+  <h3>What Python is and where people use it</h3>
+  <p>Python is a <b>general-purpose</b> language: the same language is used for very different jobs. It's free, it runs on Windows, macOS and Linux, and it comes with a huge collection of ready-made tools.</p>
+  <table class="cx">
+    <thead><tr><th>Area</th><th>What people build with Python</th></tr></thead>
+    <tbody>
+      <tr><td><b>Data and AI</b></td><td>Data analysis, charts, machine learning and AI models</td></tr>
+      <tr><td><b>Web</b></td><td>Websites and web services (for example with Django or Flask)</td></tr>
+      <tr><td><b>Automation</b></td><td>Scripts that rename files, fill spreadsheets or send reports</td></tr>
+      <tr><td><b>Science and education</b></td><td>Experiments, simulations, and first programming courses</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Installing Python and choosing an editor</h3>
+  <ol class="ex">
+    <li>Download Python from <b>python.org</b> and run the installer. On Windows, tick <b>"Add Python to PATH"</b>.</li>
+    <li>Open a terminal and check it worked: <code>python --version</code> (on macOS or Linux it may be <code>python3 --version</code>).</li>
+    <li>Pick a place to write code:</li>
+  </ol>
+  <table class="cx">
+    <thead><tr><th>Tool</th><th>Good for</th></tr></thead>
+    <tbody>
+      <tr><td><b>VS Code</b></td><td>A free, light editor. Add the <b>Python</b> extension, then press ▶ to run a file.</td></tr>
+      <tr><td><b>PyCharm</b></td><td>A full Python IDE with smart hints and a debugger (the Community edition is free).</td></tr>
+      <tr><td><b>Jupyter</b></td><td>Notebooks made of cells: run small pieces one at a time. Popular in data science.</td></tr>
+      <tr><td><b>IDLE</b></td><td>A simple editor that comes with Python. Fine for your first steps.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Running a script vs. the interactive shell (REPL)</h3>
+  <p>There are two ways to run Python. A <b>script</b> is a file such as <code>hello.py</code> that you run all at once with <code>python hello.py</code>. The <b>interactive shell</b>, or <b>REPL</b> (Read, Evaluate, Print, Loop), starts when you type <code>python</code> on its own: you type one line at a time after the <code>&gt;&gt;&gt;</code> prompt and see the answer immediately.</p>
+
+  <div class="w-repl">
+  <div class="grid2">
+    <div class="card">
+      <div class="controls">
+        <button class="r-play">▶ Play the REPL demo</button>
+        <button class="secondary r-clear">Clear</button>
+      </div>
+      <div class="viz" style="min-height:200px">
+        <span class="caption">Terminal · python</span>
+        <div class="console r-con" style="margin-top:22px;min-height:150px"><span class="dim">$ python</span></div>
+      </div>
+      <div class="status"></div>
+    </div>
+    <div class="card" style="box-shadow:none">
+      <table class="cx" style="margin:0">
+        <thead><tr><th></th><th>Script</th><th>REPL</th></tr></thead>
+        <tbody>
+          <tr><td>Start it with</td><td><code>python hello.py</code></td><td><code>python</code></td></tr>
+          <tr><td>Runs</td><td>the whole file, top to bottom</td><td>one line at a time</td></tr>
+          <tr><td>Shows values</td><td>only what you <code>print()</code></td><td>every expression's value</td></tr>
+          <tr><td>Best for</td><td>real programs you keep</td><td>quick experiments</td></tr>
+          <tr><td>Leave with</td><td>it ends by itself</td><td><code>exit()</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+
+  <div class="callout tip"><b>First program:</b> <code>print()</code> shows text on the screen. Text goes inside quotes: <code>print("Hello, World!")</code>. Numbers don't need quotes: <code>print(2 + 3)</code> shows <code>5</code>. Give <code>print()</code> several items separated by commas and it puts a space between them.</div>
+
+  <h3>Where it shows up</h3>
+  <ul>
+    <li>Every Python program you'll ever write is run the same way: line by line, top to bottom.</li>
+    <li><code>print()</code> is the first tool for checking what your program is doing (you'll use it again for debugging in lesson 9).</li>
+    <li>The REPL is a handy calculator and the quickest way to test an idea.</li>
+  </ul>
+
+  <div class="quizbox"></div>
+</section>
+<script>
+(() => {
+  const root = document.querySelector("#start .w-hello");
+  const nameIn = root.querySelector(".h-name");
+  PY.tracer(root, () => {
+    const name = PY.clean(nameIn, "Ada");
+    const src = `# hello.py: your first Python program
+print("Hello, World!")
+print("Python is fun")
+name = "${name}"
+print("Nice to meet you,", name)
+print(2 + 3)`;
+    return {
+      src, title: "hello.py", done: "Program finished: 4 lines printed.",
+      steps: [
+        { line: 1, say: "Lines starting with <code>#</code> are <b>comments</b>: notes for humans. Python skips them.", wait: 1 },
+        { line: 2, out: "Hello, World!", say: "<code>print()</code> shows the text inside the quotes. The quotes themselves are not printed." },
+        { line: 3, out: "Python is fun", say: "Python moves to the next line and prints again. Programs run <b>top to bottom</b>." },
+        { line: 4, set: { name: `'${name}'` }, say: `This line prints nothing. It stores the text <b>'${DS.esc(name)}'</b> under the name <code>name</code> so we can use it later.` },
+        { line: 5, read: ["name"], out: `Nice to meet you, ${name}`, say: "<code>print()</code> can show several items. It looks up <code>name</code> and puts a space between the items." },
+        { line: 6, out: "5", say: "No quotes, so <code>2 + 3</code> is maths, not text: Python works it out first and prints <b>5</b>." },
+      ],
+    };
+  }, { hint: "Press <b>Run</b> to run <code>hello.py</code>, or <b>Step</b> to go one line at a time. Change the name to make it yours." });
+
+  /* ---------- REPL demo ---------- */
+  const rRoot = document.querySelector("#start .w-repl");
+  const con = rRoot.querySelector(".r-con"), st = rRoot.querySelector(".status");
+  const script = [
+    ["2 + 3", "5", "In the REPL you don't need print(): the value of an expression is shown straight away."],
+    ['"Py" + "thon"', "'Python'", "Text joined with +. The REPL shows text values with quotes."],
+    ['name = "Ada"', null, "Storing a value shows nothing. The name now remembers 'Ada'."],
+    ["name", "'Ada'", "Typing just a name shows its value."],
+    ["print(name)", "Ada", "print() shows the text itself, without quotes."],
+    ["exit()", null, "exit() leaves the REPL and returns to the terminal."],
+  ];
+  async function play() {
+    con.innerHTML = "";
+    con.append(DS.el("div", { class: "dim" }, "$ python"), DS.el("div", { class: "dim" }, "Python 3.13 · type exit() to leave"));
+    for (const [cmd, res, why] of script) {
+      const line = DS.el("div", {}, DS.el("span", { class: "dim" }, ">>> "));
+      const typed = DS.el("span", { class: "in" });
+      line.append(typed); con.append(line);
+      for (const ch of cmd) { typed.textContent += ch; await DS.sleep(45 / DS.speed); }
+      st.innerHTML = DS.esc(why);
+      await DS.wait(0.6);
+      if (res != null) con.append(DS.el("div", { class: "new" }, res));
+      con.scrollTop = con.scrollHeight;
+      await DS.wait(1.3);
+    }
+    con.append(DS.el("div", { class: "dim" }, "$"));
+  }
+  rRoot.querySelector(".r-play").onclick = () => DS.run(rRoot, play);
+  rRoot.querySelector(".r-clear").onclick = () => { if (!rRoot.dataset.busy) { con.innerHTML = '<span class="dim">$ python</span>'; st.textContent = ""; } };
+  st.innerHTML = "Press <b>Play</b> to watch a short REPL session.";
+
+  DS.quiz(document.querySelector("#start .quizbox"), [
+    { q: "Which command runs a script saved as <code>hello.py</code>?", options: ["python hello.py", "run hello", "print(hello.py)", "open hello.py"], answer: 0,
+      why: "<code>python</code> followed by the file name runs the whole file from top to bottom." },
+    { q: "In the REPL you type <code>2 + 3</code> and press Enter. What do you see?", options: ["Nothing", "5", "2 + 3", "An error"], answer: 1,
+      why: "The REPL evaluates each expression and shows its value straight away, even without <code>print()</code>." },
+    { q: "What does <code>print(\"Hi\", \"there\")</code> show?", options: ["Hithere", "Hi there", "\"Hi\", \"there\"", "Hi, there"], answer: 1,
+      why: "<code>print()</code> shows each item without quotes and puts one space between items." },
+  ]);
+})();
+</script>
+
+<!-- ===================================================================== 2 -->
+<section class="section" id="vars" data-title="2. Variables & Data Types">
+  <h2>2. Variables and Data Types <small style="color:var(--muted);font-weight:500">(names for values)</small></h2>
+  <p class="lead">A variable is a <b>name</b> that refers to a <b>value</b>. Every value has a <b>type</b> that decides what you can do with it.</p>
+  <p>Think of sticky labels on boxes. <code>age = 21</code> puts the number 21 in a box and sticks the label <code>age</code> on it. Later, writing <code>age</code> means "the value in that box". Give the label to a new value and it simply moves.</p>
+
+  <div class="w-vars">
+  <div class="grid2">
+    <div class="card">
+      <div class="controls">
+        <label class="inl">name <input type="text" class="v-name" value="Sam" aria-label="Name to type"></label>
+        <label class="inl">age <input type="text" class="v-age" value="21" aria-label="Age to type" style="width:64px"></label>
+      </div>
+      <div class="controls">
+        <button class="t-run">▶ Run</button>
+        <button class="t-step">Step</button>
+        <button class="secondary t-reset">Reset</button>
+        <span style="font-size:.82rem;color:var(--muted)">Try an age like <code>abc</code> too.</span>
+      </div>
+      <div class="viz"></div>
+      <div class="status"></div>
+      <div class="log"></div>
+    </div>
+    <div class="code"></div>
+  </div>
+  </div>
+
+  <h3>Variables and naming rules</h3>
+  <ul>
+    <li>Names use letters, digits and <code>_</code>, and <b>can't start with a digit</b>: <code>score2</code> is fine, <code>2score</code> is not.</li>
+    <li>No spaces or dashes: use <code>user_name</code>, not <code>user name</code> or <code>user-name</code>.</li>
+    <li>Names are <b>case-sensitive</b>: <code>age</code> and <code>Age</code> are two different names.</li>
+    <li>You can't use Python's own words such as <code>if</code>, <code>for</code> or <code>class</code>.</li>
+    <li>Choose names that say what the value means: <code>price</code> beats <code>p</code>.</li>
+  </ul>
+
+  <h3>Core types</h3>
+  <table class="cx">
+    <thead><tr><th>Type</th><th>What it holds</th><th>Examples</th></tr></thead>
+    <tbody>
+      <tr><td><code>int</code></td><td>Whole numbers</td><td><code>7</code>, <code>-3</code>, <code>2025</code></td></tr>
+      <tr><td><code>float</code></td><td>Numbers with a decimal point</td><td><code>3.14</code>, <code>1.75</code>, <code>2.0</code></td></tr>
+      <tr><td><code>str</code></td><td>Text, inside quotes</td><td><code>"hello"</code>, <code>'42'</code></td></tr>
+      <tr><td><code>bool</code></td><td>Yes or no</td><td><code>True</code>, <code>False</code></td></tr>
+      <tr><td><code>None</code></td><td>"No value yet"</td><td><code>None</code></td></tr>
+    </tbody>
+  </table>
+  <p>Ask Python for the type of any value with <code>type()</code>: <code>type(3.14)</code> gives <code>&lt;class 'float'&gt;</code>.</p>
+
+  <h3>Type conversion and user input</h3>
+  <p><code>input()</code> pauses the program, waits for the user to type something and press Enter, and <b>always gives back a <code>str</code></b>, even if they typed digits. To do maths with it, convert it first with <code>int()</code> or <code>float()</code>. Use <code>str()</code> to turn a number into text.</p>
+
+  <div class="w-types card">
+    <div class="controls">
+      <label class="inl">A Python value <input type="text" class="ty-in wide" value="'42'" aria-label="A Python value"></label>
+      <button class="ty-go always">Check type</button>
+      <span class="sep"></span>
+      <span style="font-size:.85rem;color:var(--text-2)">Try:</span>
+      <button class="secondary always ty-ex">42</button><button class="secondary always ty-ex">3.5</button><button class="secondary always ty-ex">'7'</button>
+      <button class="secondary always ty-ex">'hi'</button><button class="secondary always ty-ex">True</button><button class="secondary always ty-ex">None</button>
+    </div>
+    <div class="ty-out"></div>
+  </div>
+  <div class="callout warn"><b>Common mistake:</b> <code>"5" + 3</code> is a <code>TypeError</code>: Python won't add text to a number. Convert first: <code>int("5") + 3</code> gives <code>8</code>, and <code>"5" + str(3)</code> gives <code>'53'</code>.</div>
+
+  <h3>Where it shows up</h3>
+  <ul>
+    <li>Every program stores data in variables: a score, a user's name, a price, a setting.</li>
+    <li>Data from users, files and websites usually arrives as text and must be converted.</li>
+    <li><code>None</code> marks "not set yet", for example a value you haven't looked up.</li>
+  </ul>
+
+  <div class="quizbox"></div>
+</section>
+<script>
+(() => {
+  const root = document.querySelector("#vars .w-vars");
+  const nameIn = root.querySelector(".v-name"), ageIn = root.querySelector(".v-age");
+  PY.tracer(root, () => {
+    const name = PY.clean(nameIn, "Sam");
+    const ageText = PY.clean(ageIn, "21", 6);
+    const ok = /^\s*[+-]?\d+\s*$/.test(ageText);
+    const src = `name = input("What is your name? ")
+age_text = input("How old are you? ")
+age = int(age_text)
+next_year = age + 1
+height = 1.75
+is_student = True
+nickname = None
+print("Hi", name)
+print("Next year you will be", next_year)`;
+    const steps = [
+      { line: 1, inp: ["What is your name? ", name], set: { name: `'${name}'` }, say: "<code>input()</code> shows the question and waits. Whatever the user types comes back as a <b>str</b>." },
+      { line: 2, inp: ["How old are you? ", ageText], set: { age_text: `'${ageText}'` }, say: `Even if the user types digits, <code>input()</code> gives back <b>text</b>: <code>'${DS.esc(ageText)}'</code> is a <code>str</code>, not a number.` },
+    ];
+    if (!ok) {
+      steps.push({ line: 3, read: ["age_text"], err: `ValueError: invalid literal for int() with base 10: '${ageText}'`,
+        say: `<code>int()</code> can only convert text that looks like a whole number. <code>'${DS.esc(ageText)}'</code> doesn't, so Python stops with a <b>ValueError</b>. (Lesson 9 shows how to handle this.)` });
+      return { src, title: "variables.py", steps, failed: true, done: "Stopped with a ValueError." };
+    }
+    const age = parseInt(ageText, 10);
+    steps.push(
+      { line: 3, read: ["age_text"], set: { age: String(age) }, say: `<code>int()</code> converts the text <code>'${DS.esc(ageText)}'</code> into the number <b>${age}</b>, an <code>int</code>. Now we can do maths with it.` },
+      { line: 4, read: ["age"], set: { next_year: String(age + 1) }, say: `Python reads <code>age</code> (${age}), adds 1, and stores the result under a new name.` },
+      { line: 5, set: { height: "1.75" }, say: "A number with a decimal point is a <b>float</b>." },
+      { line: 6, set: { is_student: "True" }, say: "<code>True</code> and <code>False</code> are the two <b>bool</b> values. Note the capital letter." },
+      { line: 7, set: { nickname: "None" }, say: "<code>None</code> means \"no value yet\". Its type is <code>NoneType</code>." },
+      { line: 8, read: ["name"], out: `Hi ${name}`, say: "<code>print()</code> looks up <code>name</code> and shows it." },
+      { line: 9, read: ["next_year"], out: `Next year you will be ${age + 1}`, say: "Every name in memory keeps its value until you change it." },
+    );
+    return { src, title: "variables.py", steps };
+  }, { hint: "Type a name and an age, then press <b>Run</b> or <b>Step</b>. Watch the <b>type</b> under each value." });
+
+  /* ---------- type explorer ---------- */
+  const tRoot = document.querySelector("#vars .w-types");
+  const tIn = tRoot.querySelector(".ty-in"), tOut = tRoot.querySelector(".ty-out");
+  function parse(s) {
+    s = s.trim();
+    if (/^[+-]?\d+$/.test(s)) return { t: "int", v: parseInt(s, 10) };
+    if (/^[+-]?(\d+\.\d*|\.\d+)$/.test(s)) return { t: "float", v: parseFloat(s) };
+    if (s === "True" || s === "False") return { t: "bool", v: s === "True" };
+    if (s === "None") return { t: "NoneType", v: null };
+    const m = s.match(/^(['"])(.*)\1$/);
+    if (m) return { t: "str", v: m[2] };
+    return { t: null };
+  }
+  const R = x => PY.repr(x);
+  function conv(p) {
+    const err = e => ({ err: e });
+    const ok = v => ({ v });
+    const isNum = /^\s*[+-]?(\d+\.?\d*|\.\d+)\s*$/;
+    const out = {};
+    // int()
+    if (p.t === "int") out.int = ok(String(p.v));
+    else if (p.t === "float") out.int = ok(String(Math.trunc(p.v)));
+    else if (p.t === "bool") out.int = ok(p.v ? "1" : "0");
+    else if (p.t === "str") out.int = /^\s*[+-]?\d+\s*$/.test(p.v) ? ok(String(parseInt(p.v, 10))) : err(`ValueError: invalid literal for int() with base 10: ${R(p.v)}`);
+    else out.int = err("TypeError: int() can't convert None");
+    // float()
+    if (p.t === "int" || p.t === "float") out.float = ok(PY.fl(p.v));
+    else if (p.t === "bool") out.float = ok(p.v ? "1.0" : "0.0");
+    else if (p.t === "str") out.float = isNum.test(p.v) ? ok(PY.fl(parseFloat(p.v))) : err(`ValueError: could not convert string to float: ${R(p.v)}`);
+    else out.float = err("TypeError: float() can't convert None");
+    // str()
+    const shown = p.t === "str" ? p.v : p.t === "float" ? PY.fl(p.v) : p.t === "bool" ? (p.v ? "True" : "False") : p.t === "NoneType" ? "None" : String(p.v);
+    out.str = ok(R(shown));
+    // bool()
+    out.bool = ok(p.t === "NoneType" ? "False" : p.t === "str" ? (p.v === "" ? "False" : "True") : p.t === "bool" ? (p.v ? "True" : "False") : (p.v === 0 ? "False" : "True"));
+    return out;
+  }
+  function check() {
+    const s = tIn.value.slice(0, 30);
+    const p = parse(s);
+    tOut.innerHTML = "";
+    if (!p.t) {
+      const looksName = /^[A-Za-z_]\w*$/.test(s.trim());
+      tOut.append(DS.el("div", { class: "callout warn" }, looksName
+        ? DS.el("span", { html: `<b>NameError:</b> name '${DS.esc(s.trim())}' is not defined. Python thinks this is a variable name. For text, add quotes: <code>'${DS.esc(s.trim())}'</code>.` })
+        : DS.el("span", { html: "<b>SyntaxError:</b> that isn't a value Python understands. Try a number like <code>42</code>, text in quotes like <code>'hi'</code>, <code>True</code> or <code>None</code>." })));
+      return;
+    }
+    const c = conv(p);
+    const node = (txt, cls = "") => DS.el("span", { class: "node " + cls, style: { height: "34px", fontSize: "13px" } }, txt);
+    const rows = [["type(x)", { v: `<class '${p.t}'>` }], ["int(x)", c.int], ["float(x)", c.float], ["str(x)", c.str], ["bool(x)", c.bool]];
+    tOut.append(DS.el("p", { style: { margin: "8px 0 0", color: "var(--text-2)" } }, "With ", DS.el("code", {}, "x = " + s.trim()), ":"));
+    tOut.append(DS.el("table", { class: "cx" },
+      DS.el("thead", {}, DS.el("tr", {}, DS.el("th", {}, "Expression"), DS.el("th", {}, "Result"), DS.el("th", {}, "Type"))),
+      DS.el("tbody", {}, ...rows.map(([e, r]) => DS.el("tr", {},
+        DS.el("td", {}, DS.el("code", {}, e)),
+        DS.el("td", {}, r.err ? node(r.err.split(":")[0], "bad") : node(r.v, e === "type(x)" ? "found" : "")),
+        DS.el("td", { style: { color: "var(--text-2)", fontSize: ".88rem" } }, r.err ? r.err : e === "type(x)" ? "" : PY.typeOf(r.v)))))));
+  }
+  tRoot.querySelector(".ty-go").onclick = check;
+  tIn.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+  tRoot.querySelectorAll(".ty-ex").forEach(b => (b.onclick = () => { tIn.value = b.textContent; check(); }));
+  check();
+
+  DS.quiz(document.querySelector("#vars .quizbox"), [
+    { q: "Which of these is a valid variable name?", options: ["2nd_place", "user-name", "user_name", "class"], answer: 2,
+      why: "Names can use letters, digits and underscores but can't start with a digit, can't contain dashes, and can't be a Python word like <code>class</code>." },
+    { q: "What is the type of <code>3.0</code>?", options: ["int", "float", "str", "bool"], answer: 1,
+      why: "Any number written with a decimal point is a <code>float</code>, even when the part after the point is 0." },
+    { q: "What type does <code>input()</code> always give back?", options: ["int", "float", "str", "It depends on what the user types"], answer: 2,
+      why: "<code>input()</code> always returns text (<code>str</code>). Use <code>int()</code> or <code>float()</code> to turn it into a number." },
+  ]);
+})();
+</script>
+
+<!-- ===================================================================== 3 -->
+<section class="section" id="ops" data-title="3. Operators & Expressions">
+  <h2>3. Operators and Expressions <small style="color:var(--muted);font-weight:500">(working values out)</small></h2>
+  <p class="lead">An <b>expression</b> is anything Python can work out to a single value, like <code>2 + 3 * 4</code>. <b>Operators</b> are the symbols that do the work.</p>
+  <p>It's the maths you know from school, with the same rule: multiplication happens before addition unless brackets say otherwise. Python also has operators that compare values and combine yes/no answers.</p>
+
+  <div class="w-ops">
+  <div class="grid2">
+    <div class="card">
+      <div class="controls">
+        <select class="o-sel" aria-label="Expression to evaluate" style="width:auto;font-family:var(--mono)"></select>
+        <button class="o-go">▶ Evaluate</button>
+        <button class="secondary o-rand">Random</button>
+      </div>
+      <div class="viz" style="min-height:200px">
+        <span class="caption">Evaluating step by step</span>
+        <div class="tok-row o-toks"></div>
+        <div class="tr-outlabel">Output</div>
+        <div class="console o-out"><span class="dim">(nothing printed yet)</span></div>
+      </div>
+      <div class="status"></div>
+      <div class="log"></div>
+    </div>
+    <div class="code"></div>
+  </div>
+  </div>
+
+  <h3>Arithmetic, comparison and logical operators</h3>
+  <div style="overflow-x:auto">
+  <table class="cx">
+    <thead><tr><th>Kind</th><th>Operator</th><th>Meaning</th><th>Example</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="7"><b>Arithmetic</b></td><td><code>+</code> <code>-</code></td><td>add, subtract</td><td><code>7 + 2</code></td><td><code>9</code></td></tr>
+      <tr><td><code>*</code></td><td>multiply</td><td><code>7 * 2</code></td><td><code>14</code></td></tr>
+      <tr><td><code>/</code></td><td>divide (always a float)</td><td><code>7 / 2</code></td><td><code>3.5</code></td></tr>
+      <tr><td><code>//</code></td><td>whole-number divide</td><td><code>7 // 2</code></td><td><code>3</code></td></tr>
+      <tr><td><code>%</code></td><td>remainder</td><td><code>7 % 2</code></td><td><code>1</code></td></tr>
+      <tr><td><code>**</code></td><td>power</td><td><code>2 ** 3</code></td><td><code>8</code></td></tr>
+      <tr><td><code>( )</code></td><td>do this part first</td><td><code>(1 + 2) * 3</code></td><td><code>9</code></td></tr>
+      <tr><td><b>Comparison</b></td><td><code>==</code> <code>!=</code> <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></td><td>equal, not equal, less, greater…</td><td><code>5 &gt; 3</code></td><td><code>True</code></td></tr>
+      <tr><td rowspan="3"><b>Logical</b></td><td><code>and</code></td><td>True only if both are True</td><td><code>True and False</code></td><td><code>False</code></td></tr>
+      <tr><td><code>or</code></td><td>True if at least one is True</td><td><code>True or False</code></td><td><code>True</code></td></tr>
+      <tr><td><code>not</code></td><td>flips True and False</td><td><code>not True</code></td><td><code>False</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="callout warn"><b>= vs ==:</b> one <code>=</code> <i>stores</i> a value (<code>x = 5</code>). Two <code>==</code> <i>asks a question</i> (<code>x == 5</code> gives <code>True</code> or <code>False</code>).</div>
+
+  <h3>Operator precedence</h3>
+  <p>When an expression has several operators, Python does them in this order, from first to last. Operators on the same row go left to right. When in doubt, add brackets: they make your intent clear to readers too.</p>
+  <table class="cx">
+    <thead><tr><th>Order</th><th>Operators</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><code>( )</code> brackets</td></tr>
+      <tr><td>2</td><td><code>**</code></td></tr>
+      <tr><td>3</td><td><code>*</code> <code>/</code> <code>//</code> <code>%</code></td></tr>
+      <tr><td>4</td><td><code>+</code> <code>-</code></td></tr>
+      <tr><td>5</td><td><code>==</code> <code>!=</code> <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></td></tr>
+      <tr><td>6</td><td><code>not</code>, then <code>and</code>, then <code>or</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Where it shows up</h3>
+  <ul>
+    <li>Totals, averages and prices: <code>total = price * quantity</code>.</li>
+    <li>Even or odd checks: <code>n % 2 == 0</code> is <code>True</code> for even numbers.</li>
+    <li>Decisions (lesson 5): <code>if age &gt;= 18 and has_ticket:</code>.</li>
+  </ul>
+
+  <div class="quizbox"></div>
+</section>
+<script>
+(() => {
+  const root = document.querySelector("#ops .w-ops");
+  const $ = s => root.querySelector(s);
+  const sel = $(".o-sel"), toksEl = $(".o-toks"), outEl = $(".o-out"), statusEl = $(".status"), logEl = $(".log");
+  const SRC = `# Arithmetic
+print(2 + 3 * 4)
+print((2 + 3) * 4)
+print(10 - 4 / 2)
+print(7 // 2 + 7 % 2)
+print(2 ** 3 * 2)
+
+# Comparison and logic
+print(5 > 3 and 2 > 4)
+print(not 3 == 3 or 1 < 2)
+print(10 % 2 == 0)`;
+  const cp = DS.code($(".code"), SRC, "operators.py");
+  // Each state: tokens, [from, to] range to evaluate next (inclusive), explanation.
+  const T = s => s.split(" ");
+  const EX = [
+    { e: "2 + 3 * 4", s: [[T("2 + 3 * 4"), [2, 4], "<code>*</code> comes before <code>+</code>, so Python works out <code>3 * 4</code> first."],
+                          [T("2 + 12"), [0, 2], "Now only <code>+</code> is left: <code>2 + 12</code>."], [T("14")]] },
+    { e: "(2 + 3) * 4", s: [[T("( 2 + 3 ) * 4"), [0, 4], "Brackets come first, even before <code>*</code>."],
+                            [T("5 * 4"), [0, 2], "Then <code>5 * 4</code>."], [T("20")]] },
+    { e: "10 - 4 / 2", s: [[T("10 - 4 / 2"), [2, 4], "<code>/</code> comes before <code>-</code>. Division with <code>/</code> always gives a <b>float</b>: <code>2.0</code>."],
+                           [T("10 - 2.0"), [0, 2], "An int minus a float gives a float."], [T("8.0")]] },
+    { e: "7 // 2 + 7 % 2", s: [[T("7 // 2 + 7 % 2"), [0, 2], "<code>//</code> and <code>%</code> come before <code>+</code>. First <code>7 // 2</code>: 2 goes into 7 three whole times."],
+                               [T("3 + 7 % 2"), [2, 4], "Next <code>7 % 2</code>: the remainder of 7 ÷ 2 is 1."],
+                               [T("3 + 1"), [0, 2], "Finally <code>3 + 1</code>."], [T("4")]] },
+    { e: "2 ** 3 * 2", s: [[T("2 ** 3 * 2"), [0, 2], "<code>**</code> (power) comes before <code>*</code>: 2 × 2 × 2 = 8."],
+                           [T("8 * 2"), [0, 2], "Then <code>8 * 2</code>."], [T("16")]] },
+    { e: "5 > 3 and 2 > 4", s: [[T("5 > 3 and 2 > 4"), [0, 2], "Comparisons happen before <code>and</code>. Is 5 greater than 3? Yes."],
+                                [T("True and 2 > 4"), [2, 4], "Is 2 greater than 4? No."],
+                                [T("True and False"), [0, 2], "<code>and</code> is True only when <b>both</b> sides are True."], [T("False")]] },
+    { e: "not 3 == 3 or 1 < 2", s: [[T("not 3 == 3 or 1 < 2"), [1, 3], "Comparisons first: <code>3 == 3</code> is True."],
+                                    [T("not True or 1 < 2"), [0, 1], "<code>not</code> comes before <code>or</code>: <code>not True</code> is False."],
+                                    [T("False or 1 < 2"), [2, 4], "Then <code>1 &lt; 2</code> is True."],
+                                    [T("False or True"), [0, 2], "<code>or</code> is True when <b>at least one</b> side is True."], [T("True")]] },
+    { e: "10 % 2 == 0", s: [[T("10 % 2 == 0"), [0, 2], "<code>%</code> comes before <code>==</code>. 10 ÷ 2 leaves remainder 0."],
+                            [T("0 == 0"), [0, 2], "Is 0 equal to 0? Yes, so 10 is even."], [T("True")]] },
+  ];
+  EX.forEach((x, i) => sel.append(DS.el("option", { value: i }, x.e)));
+  const isOp = t => /^(\+|-|\*|\/|\/\/|%|\*\*|\(|\)|>|<|==|!=|>=|<=|and|or|not)$/.test(t);
+  function render(tokens, range, cls) {
+    toksEl.innerHTML = "";
+    return tokens.map((t, i) => {
+      const on = range && i >= range[0] && i <= range[1];
+      const n = isOp(t) ? DS.el("span", { class: "tok-op" + (on ? " active" : "") }, t)
+                        : DS.el("span", { class: "node" + (on ? " active" : "") + (cls && tokens.length === 1 ? " " + cls : "") }, t);
+      toksEl.append(n);
+      return n;
+    });
+  }
+  function show(i) {
+    const x = EX[i];
+    render(T(x.e.replace(/\(/g, "( ").replace(/\)/g, " )")));
+    cp.hl(`print(${x.e})`);
+    statusEl.innerHTML = "Press <b>Evaluate</b> to work it out step by step.";
+  }
+  async function evaluate() {
+    const x = EX[+sel.value];
+    cp.hl(`print(${x.e})`);
+    DS.log(logEl, `print(${DS.esc(x.e)})`, "info");
+    for (const [tokens, range, why] of x.s) {
+      if (!range) {
+        const [n] = render(tokens, null, "found");
+        n.classList.add("new");
+        statusEl.innerHTML = `The whole expression is <b>${DS.esc(tokens[0])}</b>, and <code>print()</code> shows it.`;
+        if (!outEl.dataset.used) { outEl.innerHTML = ""; outEl.dataset.used = "1"; }
+        outEl.append(DS.el("div", { class: "new" }, tokens[0]));
+        outEl.scrollTop = outEl.scrollHeight;
+        DS.log(logEl, `${DS.esc(x.e)} → ${DS.esc(tokens[0])}`, "ok");
+        break;
+      }
+      render(tokens, range);
+      statusEl.innerHTML = why;
+      await DS.wait(1.9);
+    }
+  }
+  sel.addEventListener("change", () => { if (!root.dataset.busy) show(+sel.value); });
+  $(".o-go").onclick = () => DS.run(root, evaluate);
+  $(".o-rand").onclick = () => DS.run(root, async () => {
+    let k; do { k = DS.randInt(0, EX.length - 1); } while (k === +sel.value);
+    sel.value = k; show(k); await DS.wait(0.5); await evaluate();
+  });
+  show(0);
+
+  DS.quiz(document.querySelector("#ops .quizbox"), [
+    { q: "What is <code>2 + 3 * 4</code>?", options: ["20", "14", "24", "9"], answer: 1,
+      why: "Multiplication comes before addition: <code>3 * 4</code> is 12, then <code>2 + 12</code> is 14." },
+    { q: "What is <code>7 % 2</code>?", options: ["3", "3.5", "1", "14"], answer: 2,
+      why: "<code>%</code> gives the remainder: 7 ÷ 2 is 3 with <b>1</b> left over." },
+    { q: "What is <code>True and False</code>?", options: ["True", "False", "None", "An error"], answer: 1,
+      why: "<code>and</code> is True only when both sides are True. One side is False, so the result is False." },
+  ]);
+})();
+</script>
+
+<!-- ===================================================================== 4 -->
+<section class="section" id="strings" data-title="4. Strings">
+  <h2>4. Strings <small style="color:var(--muted);font-weight:500">(working with text)</small></h2>
+  <p class="lead">A string (<code>str</code>) is a sequence of characters. Each character has a numbered position, so you can pick out one character or a whole slice.</p>
+  <p>Think of a string as a row of letter tiles with numbers underneath. Counting starts at <b>0</b> on the left. Python also numbers from the right: <code>-1</code> is the last tile, <code>-2</code> the one before it.</p>
+
+  <div class="w-slice">
+  <div class="grid2">
+    <div class="card">
+      <div class="controls">
+        <label class="inl">s = <input type="text" class="sl-s" value="Python" maxlength="12" aria-label="Text to slice" style="width:120px"></label>
+      </div>
+      <div class="controls">
+        <label class="inl">start <input type="text" class="sl-a num" value="0" aria-label="Start"></label>
+        <label class="inl">stop <input type="text" class="sl-b num" value="2" aria-label="Stop"></label>
+        <label class="inl">step <input type="text" class="sl-c num" value="" placeholder="1" aria-label="Step"></label>
+      </div>
+      <div class="controls">
+        <button class="sl-idx">s[start]</button>
+        <button class="sl-cut">s[start:stop:step]</button>
+        <span class="sep"></span>
+        <button class="secondary sl-ex" data-v="-1,,">last</button>
+        <button class="secondary sl-ex" data-v="2,,">from 2</button>
+        <button class="secondary sl-ex" data-v=",,-1">reverse</button>
+      </div>
+      <div class="viz" style="min-height:220px">
+        <span class="caption">s · top: index from the right · bottom: index from the left</span>
+        <div class="py-row sl-chars" style="padding-top:34px;gap:30px 6px"></div>
+        <div class="tr-outlabel">Result</div>
+        <div class="py-row sl-res" style="padding-top:8px;min-height:50px"></div>
+      </div>
+      <div class="status"></div>
+      <div class="log"></div>
+    </div>
+    <div class="code"></div>
+  </div>
+  </div>
+
+  <h3>Indexing and slicing</h3>
+  <ul>
+    <li><code>s[0]</code> is the first character and <code>s[-1]</code> is the last.</li>
+    <li><code>s[start:stop]</code> takes characters from <code>start</code> <b>up to but not including</b> <code>stop</code>: <code>"Python"[0:2]</code> is <code>'Py'</code>.</li>
+    <li>Leave a number out to mean "from the start" or "to the end": <code>s[:3]</code>, <code>s[2:]</code>.</li>
+    <li>A third number is the step: <code>s[::2]</code> takes every second character, <code>s[::-1]</code> reverses the string.</li>
+    <li>Strings can't be changed in place: <code>s[0] = "J"</code> is an error. Make a new string instead.</li>
+  </ul>
+
+  <h3>Common methods and f-strings</h3>
+  <p>A <b>method</b> is a function that belongs to a value, called with a dot: <code>text.upper()</code>. String methods never change the original; they give back a <b>new</b> string. Run the program below with your own text.</p>
+
+  <div class="w-meth">
+  <div class="grid2">
+    <div class="card">
+      <div class="controls">
+        <label class="inl">text <input type="text" class="m-text" value="  apple, banana, cherry  " maxlength="40" aria-label="Text" style="width:220px"></label>
+      </div>
+      <div class="controls">
+        <button class="t-run">▶ Run</button>
+        <button class="t-step">Step</button>
+        <button class="secondary t-reset">Reset</button>
+      </div>
+      <div class="viz"></div>
+      <div class="status"></div>
+      <div class="log"></div>
+    </div>
+    <div class="code"></div>
+  </div>
+  </div>
+
+  <table class="cx">
+    <thead><tr><th>Method</th><th>What it does</th><th>Example</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td><code>strip()</code></td><td>removes spaces at both ends</td><td><code>"  hi  ".strip()</code></td><td><code>'hi'</code></td></tr>
+      <tr><td><code>split(sep)</code></td><td>cuts into a list of pieces</td><td><code>"a,b,c".split(",")</code></td><td><code>['a', 'b', 'c']</code></td></tr>
+      <tr><td><code>sep.join(list)</code></td><td>glues a list back together</td><td><code>"-".join(["a", "b"])</code></td><td><code>'a-b'</code></td></tr>
+      <tr><td><code>replace(old, new)</code></td><td>swaps every <code>old</code> for <code>new</code></td><td><code>"cat".replace("c", "b")</code></td><td><code>'bat'</code></td></tr>
+      <tr><td><code>upper()</code> / <code>lower()</code></td><td>changes the case</td><td><code>"Hi".lower()</code></td><td><code>'hi'</code></td></tr>
+      <tr><td><code>len(s)</code></td><td>counts characters (a built-in function, not a method)</td><td><code>len("cat")</code></td><td><code>3</code></td></tr>
+    </tbody>
+  </table>
+  <div class="callout tip"><b>f-strings:</b> put an <code>f</code> before the quotes and write any value or expression inside <code>{ }</code>: <code>f"{name} scored {score}"</code>. It's the easiest way to build text from values, and you don't need <code>str()</code>.</div>
+
+  <h3>Where it shows up</h3>
+  <ul>
+    <li>Cleaning what users type: <code>answer.strip().lower()</code> (you'll see this in the final project).</li>
+    <li>Reading data: <code>line.split(",")</code> splits a line of a CSV file into fields.</li>
+    <li>Building messages and reports with f-strings.</li>
+  </ul>
+
+  <div class="quizbox"></div>
+</section>
+<script>
+(() => {
+  const root = document.querySelector("#strings .w-slice");
+  const $ = s => root.querySelector(s);
+  const sIn = $(".sl-s"), aIn = $(".sl-a"), bIn = $(".sl-b"), cIn = $(".sl-c");
+  const charsEl = $(".sl-chars"), resEl = $(".sl-res"), statusEl = $(".status"), logEl = $(".log"), viz = $(".viz");
+  const codeEl = $(".code");
+  const say = h => (statusEl.innerHTML = h);
+  const getS = () => (String(sIn.value).replace(/['"\\]/g, "").slice(0, 12) || "Python");
+  const opt = inp => { const t = String(inp.value).trim(); if (t === "") return null; const v = parseInt(t, 10); return Number.isFinite(v) ? v : NaN; };
+  let cells = [];
+  function render() {
+    const s = getS();
+    charsEl.innerHTML = "";
+    cells = [...s].map((ch, i) => {
+      const n = DS.el("span", { class: "node", style: { minWidth: "40px" } }, ch === " " ? "␣" : ch,
+        DS.el("span", { class: "tag" }, String(i - s.length)), DS.el("span", { class: "sub" }, String(i)));
+      charsEl.append(n);
+      return n;
+    });
+    resEl.innerHTML = '<span class="empty">(press a button)</span>';
+    return s;
+  }
+  function fail(msg, line) {
+    resEl.innerHTML = "";
+    resEl.append(DS.el("span", { class: "node bad" }, msg.split(":")[0]));
+    say("✗ " + DS.esc(msg));
+    DS.log(logEl, DS.esc(msg), "err");
+    PY.shake(viz);
+  }
+  const fmt = v => (v == null ? "" : String(v));
+  async function index() {
+    const s = render();
+    let a = opt(aIn);
+    if (a == null || Number.isNaN(a)) { a = 0; aIn.value = "0"; }
+    const cp = DS.code(codeEl, `s = "${s}"\nch = s[${a}]\nprint(ch)`, "strings.py");
+    cp.hl(2);
+    const i = a < 0 ? a + s.length : a;
+    say(`<code>s[${a}]</code>: ${a < 0 ? `a negative index counts from the right, so it means position ${a} + ${s.length} = ${i}.` : `position ${a}, counting from 0 on the left.`}`);
+    await DS.wait(0.8);
+    if (i < 0 || i >= s.length) { fail(`IndexError: string index out of range (s has ${s.length} characters: 0 to ${s.length - 1})`); return; }
+    cells[i].classList.add("active");
+    await DS.wait();
+    cells[i].classList.remove("active"); cells[i].classList.add("found");
+    resEl.innerHTML = "";
+    resEl.append(DS.el("span", { class: "node found new" }, `'${s[i]}'`, DS.el("span", { class: "sub" }, "str")));
+    cp.hl(3);
+    say(`<code>s[${a}]</code> is <b>'${DS.esc(s[i])}'</b>: a single character is still a <code>str</code>.`);
+    DS.log(logEl, `s[${a}] → '${DS.esc(s[i])}'`, "ok");
+  }
+  async function cut() {
+    const s = render(), n = s.length;
+    const a = opt(aIn), b = opt(bIn), c = opt(cIn);
+    if ([a, b, c].some(Number.isNaN)) { fail("Use whole numbers, or leave a box empty."); return; }
+    const expr = `s[${fmt(a)}:${fmt(b)}${c == null ? "" : ":" + c}]`;
+    const cp = DS.code(codeEl, `s = "${s}"\npiece = ${expr}\nprint(piece)`, "strings.py");
+    cp.hl(2);
+    const step = c == null ? 1 : c;
+    if (step === 0) { fail("ValueError: slice step cannot be zero"); return; }
+    const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+    let start, stop;
+    if (step > 0) {
+      start = a == null ? 0 : clamp(a < 0 ? a + n : a, 0, n);
+      stop = b == null ? n : clamp(b < 0 ? b + n : b, 0, n);
+    } else {
+      start = a == null ? n - 1 : clamp(a < 0 ? a + n : a, -1, n - 1);
+      stop = b == null ? -1 : clamp(b < 0 ? b + n : b, -1, n - 1);
+    }
+    const picks = [];
+    for (let i = start; step > 0 ? i < stop : i > stop; i += step) picks.push(i);
+    say(`<code>${expr}</code>: start at position <b>${start}</b>, go ${step > 0 ? "right" : "left"} in steps of ${Math.abs(step)}, and stop <b>before</b> position ${stop}${b == null ? " (the end)" : ""}.`);
+    await DS.wait(1.1);
+    resEl.innerHTML = "";
+    const rnode = DS.el("span", { class: "node visited" }, "''", DS.el("span", { class: "sub" }, "str"));
+    resEl.append(rnode);
+    let got = "";
+    for (const i of picks) {
+      cells[i].classList.add("active");
+      got += s[i];
+      rnode.firstChild.textContent = `'${got}'`;
+      await DS.wait(0.55);
+      cells[i].classList.remove("active"); cells[i].classList.add("found");
+    }
+    rnode.classList.remove("visited"); rnode.classList.add("found");
+    cp.hl(3);
+    say(picks.length ? `<code>${expr}</code> is <b>'${DS.esc(got)}'</b>: ${picks.length} character${picks.length > 1 ? "s" : ""}. The original <code>s</code> is unchanged.`
+                     : `<code>${expr}</code> is the empty string <b>''</b>: no positions fall in that range. Slices never cause an IndexError.`);
+    DS.log(logEl, `${DS.esc(expr)} → '${DS.esc(got)}'`, "ok");
+  }
+  $(".sl-idx").onclick = () => DS.run(root, index);
+  $(".sl-cut").onclick = () => DS.run(root, cut);
+  root.querySelectorAll(".sl-ex").forEach(b => (b.onclick = () => {
+    const [a, z, c] = b.dataset.v.split(",");
+    aIn.value = a; bIn.value = z; cIn.value = c;
+    DS.run(root, z === "" && c === "" && a === "-1" ? index : cut);
+  }));
+  sIn.addEventListener("input", () => { if (!root.dataset.busy) { render(); DS.code(codeEl, `s = "${getS()}"`, "strings.py"); } });
+  render();
+  DS.code(codeEl, `s = "${getS()}"\npiece = s[0:2]\nprint(piece)`, "strings.py");
+  say("Pick a start, stop and step, then press a button. Leave a box empty to use the default.");
+
+  /* ---------- methods + f-string program ---------- */
+  const mRoot = document.querySelector("#strings .w-meth");
+  const tIn = mRoot.querySelector(".m-text");
+  PY.tracer(mRoot, () => {
+    const raw = String(tIn.value).replace(/['"\\{}]/g, "").slice(0, 40) || "  apple, banana, cherry  ";
+    const clean = raw.trim();
+    const parts = clean.split(", ");
+    const joined = parts.join(" | ");
+    const swapped = clean.split("banana").join("mango");
+    const loud = clean.toUpperCase();
+    const R = PY.repr;
+    const src = `text = "${raw}"
+clean = text.strip()
+parts = clean.split(", ")
+joined = " | ".join(parts)
+swapped = clean.replace("banana", "mango")
+loud = clean.upper()
+count = len(parts)
+print(f"{count} fruits: {joined}")`;
+    return {
+      src, title: "string_methods.py",
+      steps: [
+        { line: 1, set: { text: R(raw) }, say: "A string with extra spaces at both ends, like text a user might type." },
+        { line: 2, read: ["text"], set: { clean: R(clean) }, say: "<code>strip()</code> returns a <b>new</b> string without the spaces at the ends. <code>text</code> itself is unchanged." },
+        { line: 3, read: ["clean"], set: { parts: R(parts) }, say: `<code>split(", ")</code> cuts the string at every comma-and-space and gives a <b>list</b> of ${parts.length} piece${parts.length > 1 ? "s" : ""}.` },
+        { line: 4, read: ["parts"], set: { joined: R(joined) }, say: "<code>\" | \".join(parts)</code> glues the pieces back together with <code> | </code> between them." },
+        { line: 5, read: ["clean"], set: { swapped: R(swapped) }, say: swapped === clean ? "<code>replace()</code> found no <code>'banana'</code>, so the new string is the same as before." : "<code>replace()</code> swaps every <code>'banana'</code> for <code>'mango'</code>, in a new string." },
+        { line: 6, read: ["clean"], set: { loud: R(loud) }, say: "<code>upper()</code> gives a copy in capital letters." },
+        { line: 7, read: ["parts"], set: { count: String(parts.length) }, say: "<code>len()</code> counts the items in the list." },
+        { line: 8, read: ["count", "joined"], out: `${parts.length} fruits: ${joined}`, say: "The <b>f-string</b> drops the values of <code>count</code> and <code>joined</code> into the text where the <code>{ }</code> are." },
+      ],
+    };
+  }, { hint: "Press <b>Run</b> or <b>Step</b>. Then change the text, for example <code>  red, green, blue  </code>, and run again." });
+
+  DS.quiz(document.querySelector("#strings .quizbox"), [
+    { q: "What is <code>\"Python\"[0]</code>?", options: ["'P'", "'y'", "'n'", "'Python'"], answer: 0,
+      why: "Positions start at 0, so index 0 is the first character, <code>'P'</code>." },
+    { q: "What is <code>\"Python\"[0:2]</code>?", options: ["'Pyt'", "'Py'", "'yt'", "'P'"], answer: 1,
+      why: "A slice goes from <code>start</code> up to but <b>not including</b> <code>stop</code>: positions 0 and 1, so <code>'Py'</code>." },
+    { q: "What does <code>f\"{2 + 3} apples\"</code> give?", options: ["'{2 + 3} apples'", "'2 + 3 apples'", "'5 apples'", "An error"], answer: 2,
+      why: "Inside an f-string, the expression in <code>{ }</code> is worked out and its value is put into the text." },
+  ]);
+})();
+</script>
+
+<!-- ===================================================================== 5 -->
+<section class="section" id="flow" data-title="5. Control Flow">
+  <h2>5. Control Flow <small style="color:var(--muted);font-weight:500">(decisions and loops)</small></h2>
+  <p class="lead">Control flow decides <b>which</b> lines run and <b>how many times</b>. <code>if</code> makes decisions; <code>for</code> and <code>while</code> repeat work.</p>
+  <p>Think of a road with junctions and roundabouts. At a junction (<code>if</code>) you take one road depending on a condition. On a roundabout (a loop) you go around again and again until it's time to exit (<code>break</code>), and sometimes you skip ahead to the next lap (<code>continue</code>).</p>
+
+  <div class="w-for">
+  <div class="grid2">
+    <div class="card">
+      <div class="controls">
+        <label class="inl">limit <input type="number" class="f-lim num" value="7" min="2" max="10" aria-label="Range end"></label>
+        <label class="inl">skip <input type="number" class="f-skip num" value="3" min="0" max="10" aria-label="Number to skip"></label>
+        <label class="inl">stop_at <input type="number" class="f-stop num" value="6" min="0" max="10" aria-label="Number to stop at"></label>
+      </div>
+      <div class="controls">
+        <button class="t-run">▶ Run</button>
+        <button class="t-step">Step</button>
+        <button class="secondary t-reset">Reset</button>
+      </div>
+      <div class="viz"></div>
+      <div class="status"></div>
+      <div class="log"></div>
+    </div>
+    <div class="code"></div>
+  </div>
+  </div>
+
+  <h3>if / elif / else</h3>
+  <p>Python checks the conditions from the top. It runs the block under the <b>first</b> condition that is <code>True</code>, then skips the rest. <code>else</code> runs only when none of them were true. The lines that belong to a block are <b>indented</b> (4 spaces): indentation is how Python knows what's inside.</p>
+  <table class="cx">
+    <thead><tr><th>Statement</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><code>if condition:</code></td><td>runs the indented block only when the condition is <code>True</code></td></tr>
+      <tr><td><code>elif condition:</code></td><td>"else if": checked only when every condition above was <code>False</code></td></tr>
+      <tr><td><code>else:</code></td><td>runs when nothing above was <code>True</code></td></tr>
+      <tr><td><code>for x in range(a, b):</code></td><td>repeats for each number from <code>a</code> up to (not including) <code>b</code></td></tr>
+      <tr><td><code>while condition:</code></td><td>repeats as long as the condition stays <code>True</code></td></tr>
+      <tr><td><code>break</code></td><td>leaves the loop immediately</td></tr>
+      <tr><td><code>continue</code></td><td>skips the rest of this round and starts the next one</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Loops: for, while and range()</h3>
+  <p>Use <code>for</code> when you know what to loop over: a <code>range()</code> of numbers, or the items of a list or string. Use <code>while</code> when you repeat <b>until something happens</b>. <code>range(5)</code> gives 0, 1, 2, 3, 4; <code>range(1, 5)</code> gives 1, 2, 3, 4.</p>
+
+  <div class="w-while">
+  <div class="grid2">
+    <div class="card">
+      <div class="controls">
+        <label class="inl">count starts at <input type="number" class="w-start num" value="3" min="1" max="6" aria-label="Start count"></label>
+        <button class="t-run">▶ Run</button>
+        <button class="t-step">Step</button>
+        <button class="secondary t-reset">Reset</button>
+      </div>
+      <div class="viz"></div>
+      <div class="status"></div>
+      <div class="log"></div>
+    </div>
+    <div class="code"></div>
+  </div>
+  </div>
+  <div class="callout warn"><b>Infinite loops:</b> a <code>while</code> loop must change something so its condition eventually becomes <code>False</code>. Forget <code>count = count - 1</code> above and it would count forever. If that happens, press <b>Ctrl+C</b> to stop the program.</div>
+
+  <h3>Where it shows up</h3>
+  <ul>
+    <li><code>if</code>: checking a password, a score, or whether a file exists.</li>
+    <li><code>for</code>: processing every item in a list, every line in a file, every row in a spreadsheet.</li>
+    <li><code>while</code>: game loops, menus and asking again until the user types a valid answer (see the final project).</li>
+  </ul>
+
+  <div class="quizbox"></div>
+</section>
+<script>
+(() => {
+  const root = document.querySelector("#flow .w-for");
+  const $ = s => root.querySelector(s);
+  PY.tracer(root, () => {
+    const lim = PY.num($(".f-lim"), 7, 2, 10), skip = PY.num($(".f-skip"), 3, 0, 10), stop = PY.num($(".f-stop"), 6, 0, 10);
+    const src = `limit = ${lim}
+skip = ${skip}
+stop_at = ${stop}
+for n in range(1, limit):
+    if n == skip:
+        continue
+    if n == stop_at:
+        break
+    if n % 2 == 0:
+        print(n, "is even")
+    elif n == 1:
+        print(n, "is the first number")
+    else:
+        print(n, "is odd")
+print("Done")`;
+    const W = 0.95;
+    const steps = [
+      { line: 1, set: { limit: lim }, say: "Three settings for the loop below.", wait: 0.8 },
+      { line: 2, set: { skip }, wait: 0.6 },
+      { line: 3, set: { stop_at: stop }, wait: 0.6 },
+    ];
+    let broke = false;
+    for (let n = 1; n < lim; n++) {
+      steps.push({ line: 4, set: { n }, read: ["limit"], wait: W,
+        say: n === 1 ? `<code>range(1, ${lim})</code> gives 1, 2, … ${lim - 1}. The loop starts with <b>n = 1</b>.` : `Next round: <b>n = ${n}</b>.` });
+      steps.push({ line: 5, read: ["n", "skip"], wait: W, say: `Is ${n} == ${skip}? <b>${n === skip ? "True" : "False"}</b>.` });
+      if (n === skip) { steps.push({ line: 6, wait: W, say: `<code>continue</code>: skip the rest of this round and go straight to the next number.`, log: `n = ${n}: continue (skipped)` }); continue; }
+      steps.push({ line: 7, read: ["n", "stop_at"], wait: W, say: `Is ${n} == ${stop}? <b>${n === stop ? "True" : "False"}</b>.` });
+      if (n === stop) { steps.push({ line: 8, wait: W, say: `<code>break</code>: leave the loop right now, even though <code>range</code> has more numbers.`, log: `n = ${n}: break`, kind: "err" }); broke = true; break; }
+      steps.push({ line: 9, read: ["n"], wait: W, say: `<code>${n} % 2</code> is ${n % 2}, so <code>${n} % 2 == 0</code> is <b>${n % 2 === 0 ? "True" : "False"}</b>.` });
+      if (n % 2 === 0) { steps.push({ line: 10, read: ["n"], out: `${n} is even`, wait: W, say: "The first true condition wins: print, then skip the <code>elif</code> and <code>else</code>." }); continue; }
+      steps.push({ line: 11, read: ["n"], wait: W, say: `<code>elif</code>: is ${n} == 1? <b>${n === 1 ? "True" : "False"}</b>.` });
+      if (n === 1) steps.push({ line: 12, out: "1 is the first number", wait: W, say: "This <code>elif</code> was true, so its block runs." });
+      else steps.push({ line: [13, 14], read: ["n"], out: `${n} is odd`, wait: W, say: "Nothing above was true, so the <code>else</code> block runs." });
+    }
+    if (!broke) steps.push({ line: 4, wait: W, say: `<code>range(1, ${lim})</code> has no numbers left, so the loop ends.` });
+    steps.push({ line: 15, out: "Done", say: "The first line after the loop (no indentation) runs once the loop is over." });
+    return { src, title: "loops.py", steps };
+  }, { hint: "Press <b>Run</b> or <b>Step</b>. Then change <b>skip</b> and <b>stop_at</b> to see <code>continue</code> and <code>break</code> change the path." });
+
+  const wRoot = document.querySelector("#flow .w-while");
+  PY.tracer(wRoot, () => {
+    const start = PY.num(wRoot.querySelector(".w-start"), 3, 1, 6);
+    const src = `count = ${start}
+while count > 0:
+    print(count)
+    count = count - 1
+print("Go!")`;
+    const steps = [{ line: 1, set: { count: start }, say: `Start the countdown at ${start}.` }];
+    for (let c = start; c > 0; c--) {
+      steps.push({ line: 2, read: ["count"], say: `Is ${c} &gt; 0? <b>True</b>, so run the loop body again.`, wait: 0.9 });
+      steps.push({ line: 3, read: ["count"], out: String(c), wait: 0.9 });
+      steps.push({ line: 4, read: ["count"], set: { count: c - 1 }, say: `<code>count</code> goes down to ${c - 1}. Without this line the loop would never end.`, wait: 0.9 });
+    }
+    steps.push({ line: 2, read: ["count"], say: "Is 0 &gt; 0? <b>False</b>, so the loop stops." });
+    steps.push({ line: 5, out: "Go!", say: "The program carries on after the loop." });
+    return { src, title: "countdown.py", steps };
+  }, { hint: "A <code>while</code> loop repeats as long as its condition is true. Press <b>Run</b>." });
+
+  DS.quiz(document.querySelector("#flow .quizbox"), [
+    { q: "How many times does <code>print(i)</code> run in <code>for i in range(3):</code>?", options: ["2", "3", "4", "It never stops"], answer: 1,
+      why: "<code>range(3)</code> gives 0, 1 and 2: three numbers, so the body runs three times." },
+    { q: "What does <code>break</code> do inside a loop?", options: ["Skips to the next round", "Leaves the loop immediately", "Pauses the program", "Restarts the loop"], answer: 1,
+      why: "<code>break</code> exits the loop at once. (<code>continue</code> is the one that skips to the next round.)" },
+    { q: "Which numbers does <code>range(1, 4)</code> give?", options: ["1, 2, 3, 4", "0, 1, 2, 3", "1, 2, 3", "1, 4"], answer: 2,
+      why: "<code>range(a, b)</code> starts at <code>a</code> and stops <b>before</b> <code>b</code>." },
+  ]);
+})();
+</script>
+
+<!-- ===================================================================== 6 -->
+<section class="section" id="collections" data-title="6. Data Structures">
+  <h2>6. Data Structures <small style="color:var(--muted);font-weight:500">(list, tuple, dict, set)</small></h2>
+  <p class="lead">Python has four built-in ways to keep many values together. Each one is good at a different job.</p>
+  <p>A <b>list</b> is like a shopping list: ordered, and you can add or cross off items. A <b>tuple</b> is like a date of birth: fixed once written. A <b>dict</b> is like a phone book: look up a value by its key. A <b>set</b> is like a bag of unique stickers: no duplicates allowed.</p>
+
+  <div class="w-coll">
+  <div class="grid2">
+    <div class="card">
+      <div class="controls">
+        <label class="inl">item <input type="text" class="c-item" value="mango" aria-label="Item"></label>
+        <label class="inl">key <input type="text" class="c-key" value="Grace" aria-label="Key"></label>
+      </div>
+      <div class="controls">
+        <button class="c-lapp">fruits.append(item)</button>
+        <button class="c-lpop">fruits.pop()</button>
+        <button class="c-lget">fruits[0]</button>
+        <button class="c-tget">point[0]</button>
+        <button class="c-tset">point[0] = item</button>
+      </div>
+      <div class="controls">
+        <button class="c-dset">ages[key] = item</button>
+        <button class="c-dget">ages.get(key)</button>
+        <button class="c-sadd">colors.add(item)</button>
+        <button class="c-sin">item in colors</button>
+        <span class="sep"></span>
+        <button class="secondary c-reset">Reset</button>
+      </div>
+      <div class="viz">
+        <span class="caption">Memory · four collections</span>
+        <div class="py-boxes">
+          <div class="py-box"><h4><code>fruits</code> · list · ordered, changeable</h4><div class="py-row c-list"></div></div>
+          <div class="py-box"><h4><code>point</code> · tuple · ordered, fixed</h4><div class="py-row c-tup"></div></div>
+          <div class="py-box"><h4><code>ages</code> · dict · key → value</h4><div class="py-row tight c-dict"></div></div>
+          <div class="py-box"><h4><code>colors</code> · set · unique items</h4><div class="py-row tight c-set"></div></div>
+        </div>
+        <div class="tr-outlabel">Output</div>
+        <div class="console c-out"><span class="dim">(nothing printed yet)</span></div>
+      </div>
+      <div class="status"></div>
+      <div class="log"></div>
+    </div>
+    <div class="code"></div>
+  </div>
+  </div>
+
+  <h3>list, tuple, dict and set</h3>
+  <div style="overflow-x:auto">
+  <table class="cx">
+    <thead><tr><th>Type</th><th>Written as</th><th>Ordered?</th><th>Can change?</th><th>Duplicates?</th><th>Get an item</th></tr></thead>
+    <tbody>
+      <tr><td><b>list</b></td><td><code>["a", "b"]</code></td><td>yes</td><td>yes</td><td>yes</td><td><code>items[0]</code></td></tr>
+      <tr><td><b>tuple</b></td><td><code>(3, 4)</code></td><td>yes</td><td>no</td><td>yes</td><td><code>point[0]</code></td></tr>
+      <tr><td><b>dict</b></td><td><code>{"Ada": 36}</code></td><td>keeps insertion order</td><td>yes</td><td>keys are unique</td><td><code>ages["Ada"]</code></td></tr>
+      <tr><td><b>set</b></td><td><code>{"red", "blue"}</code></td><td>no</td><td>yes</td><td>no</td><td><code>"red" in colors</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>When to use each one</h3>
+  <p style="color:var(--text-2)">Pick the collection you'd reach for in each situation, then check the answer.</p>
+  <div class="scenario c-scen"></div>
+
+  <h3>List comprehensions (a light intro)</h3>
+  <p>A <b>list comprehension</b> builds a new list in one line: <code>[n * n for n in range(1, 6)]</code> reads as "<i>n times n, for each n in range(1, 6)</i>". It does exactly what the three-line loop does. Step through both below.</p>
+
+  <div class="w-comp">
+  <div class="grid2">
+    <div class="card">
+      <div class="controls">
+        <label class="inl">end <input type="number" class="cp-end num" value="5" min="2" max="7" aria-label="Range end"></label>
+        <button class="t-run">▶ Run</button>
+        <button class="t-step">Step</button>
+        <button class="secondary t-reset">Reset</button>
+      </div>
+      <div class="viz"></div>
+      <div class="status"></div>
+      <div class="log"></div>
+    </div>
+    <div class="code"></div>
+  </div>
+  </div>
+
+  <h3>Where it shows up</h3>
+  <ul>
+    <li><b>list</b>: rows of data, to-do items, scores, anything in an order you can change.</li>
+    <li><b>tuple</b>: fixed pairs such as coordinates <code>(x, y)</code> or RGB colours.</li>
+    <li><b>dict</b>: settings, word counts, a user's profile (<code>{"name": ..., "email": ...}</code>), and JSON data from the web.</li>
+    <li><b>set</b>: removing duplicates and fast "have I seen this?" checks.</li>
+  </ul>
+
+  <div class="quizbox"></div>
+</section>
+<script>
+(() => {
+  const root = document.querySelector("#collections .w-coll");
+  const $ = s => root.querySelector(s);
+  const { el, esc } = DS;
+  const SRC = `fruits = ["apple", "kiwi"]       # list
+fruits.append(item)
+last = fruits.pop()
+first = fruits[0]
+
+point = (3, 4)                   # tuple
+x = point[0]
+point[0] = item                  # TypeError!
+
+ages = {"Ada": 36, "Alan": 41}   # dict
+ages[key] = item
+print(ages.get(key))
+
+colors = {"red", "blue"}         # set
+colors.add(item)
+print(item in colors)`;
+  const cp = DS.code($(".code"), SRC, "collections.py");
+  const itemIn = $(".c-item"), keyIn = $(".c-key"), outEl = $(".c-out"), statusEl = $(".status"), logEl = $(".log"), viz = $(".viz");
+  const say = h => (statusEl.innerHTML = h);
+  const val = s => (/^-?\d+$/.test(s) ? +s : s);
+  const R = v => (typeof v === "number" ? String(v) : PY.repr(v));
+  let fruits, point, ages, colors;
+  const nodes = {};
+  function print(t) {
+    if (!outEl.dataset.used) { outEl.innerHTML = ""; outEl.dataset.used = "1"; }
+    outEl.append(el("div", { class: "new" }, t));
+    outEl.scrollTop = outEl.scrollHeight;
+  }
+  function render() {
+    const row = (sel, list) => {
+      const r = $(sel); r.innerHTML = "";
+      if (!list.length) r.append(el("span", { class: "empty" }, "(empty)"));
+      return list.map(([txt, sub]) => { const n = el("span", { class: "node" }, txt, sub != null ? el("span", { class: "sub" }, sub) : null); r.append(n); return n; });
+    };
+    nodes.list = row(".c-list", fruits.map((v, i) => [R(v), `[${i}]`]));
+    nodes.tup = row(".c-tup", point.map((v, i) => [R(v), `[${i}]`]));
+    nodes.dict = row(".c-dict", [...ages].map(([k, v]) => [`${R(k)}: ${R(v)}`]));
+    nodes.set = row(".c-set", [...colors].map(v => [R(v)]));
+  }
+  function reset() {
+    fruits = ["apple", "kiwi"]; point = [3, 4];
+    ages = new Map([["Ada", 36], ["Alan", 41]]); colors = new Set(["red", "blue"]);
+    render(); cp.clear();
+    outEl.innerHTML = '<span class="dim">(nothing printed yet)</span>'; delete outEl.dataset.used;
+    say("Type an <b>item</b> (and a <b>key</b> for the dict), then press a button to run that line.");
+  }
+  const item = () => val((String(itemIn.value).replace(/['"\\]/g, "").trim().slice(0, 10)) || "mango");
+  const key = () => (String(keyIn.value).replace(/['"\\]/g, "").trim().slice(0, 10)) || "Grace";
+  function fail(msg, n) { say("✗ " + msg); DS.log(logEl, esc(msg.replace(/<[^>]+>/g, "")), "err"); PY.shake(n || viz); }
+  async function flash(n, cls = "found", t = 1.2) { n.classList.add(cls); await DS.wait(t); n.classList.remove(cls); }
+
+  const ops = {
+    async lapp() {
+      cp.hl(2);
+      if (fruits.length >= 7) return fail("Demo limit of 7 items (a real list keeps growing).");
+      const v = item(); fruits.push(v); render();
+      const n = nodes.list[nodes.list.length - 1]; n.classList.add("new", "visited");
+      say(`<code>append(${esc(R(v))})</code> adds the item to the <b>end</b> of the list. Lists can grow and change.`);
+      DS.log(logEl, `fruits.append(${esc(R(v))}) → ${esc(R(fruits))}`, "ok");
+      await DS.wait(); n.classList.remove("visited");
+    },
+    async lpop() {
+      cp.hl(3);
+      if (!fruits.length) { cp.hl(3); return fail("IndexError: pop from empty list"); }
+      const n = nodes.list[nodes.list.length - 1];
+      n.classList.add("active"); say("<code>pop()</code> removes the <b>last</b> item and gives it back."); await DS.wait();
+      n.classList.add("removed"); await DS.wait(0.5);
+      const v = fruits.pop(); render();
+      say(`<code>pop()</code> returned <b>${esc(R(v))}</b>, now stored in <code>last</code>.`);
+      DS.log(logEl, `fruits.pop() → ${esc(R(v))}`, "ok");
+    },
+    async lget() {
+      cp.hl(4);
+      if (!fruits.length) return fail("IndexError: list index out of range (the list is empty)");
+      say(`<code>fruits[0]</code> is the first item: <b>${esc(R(fruits[0]))}</b>. Positions start at 0, just like strings.`);
+      DS.log(logEl, `fruits[0] → ${esc(R(fruits[0]))}`, "info");
+      await flash(nodes.list[0]);
+    },
+    async tget() {
+      cp.hl(7);
+      say(`<code>point[0]</code> is <b>${point[0]}</b>. Reading from a tuple works just like a list.`);
+      DS.log(logEl, `point[0] → ${point[0]}`, "info");
+      await flash(nodes.tup[0]);
+    },
+    async tset() {
+      cp.hl(8);
+      nodes.tup[0].classList.add("bad");
+      fail("<b>TypeError</b>: 'tuple' object does not support item assignment. A tuple can't be changed after it's created.", nodes.tup[0]);
+      await DS.wait(1.4); nodes.tup[0].classList.remove("bad");
+    },
+    async dset() {
+      cp.hl(11);
+      const k = key(), v = item(), had = ages.has(k);
+      if (!had && ages.size >= 5) return fail("Demo limit of 5 keys.");
+      ages.set(k, v); render();
+      const n = nodes.dict[[...ages.keys()].indexOf(k)];
+      n.classList.add(had ? "visited" : "new", "visited");
+      say(had ? `The key <b>${esc(R(k))}</b> already exists, so its value is <b>replaced</b> with ${esc(R(v))}. Keys are unique.`
+              : `New key <b>${esc(R(k))}</b> added with the value ${esc(R(v))}.`);
+      DS.log(logEl, `ages[${esc(R(k))}] = ${esc(R(v))}`, "ok");
+      await DS.wait(); n.classList.remove("visited");
+    },
+    async dget() {
+      cp.hl(12);
+      const k = key();
+      if (ages.has(k)) {
+        const n = nodes.dict[[...ages.keys()].indexOf(k)];
+        print(R(ages.get(k)).replace(/^'(.*)'$/, "$1"));
+        say(`<code>ages.get(${esc(R(k))})</code> jumps straight to that key and returns its value, <b>${esc(R(ages.get(k)))}</b>.`);
+        DS.log(logEl, `ages.get(${esc(R(k))}) → ${esc(R(ages.get(k)))}`, "ok");
+        await flash(n);
+      } else {
+        print("None");
+        say(`There is no key <b>${esc(R(k))}</b>, so <code>get()</code> returns <code>None</code>. (Writing <code>ages[${esc(R(k))}]</code> would raise a <b>KeyError</b>.)`);
+        DS.log(logEl, `ages.get(${esc(R(k))}) → None`, "info");
+      }
+    },
+    async sadd() {
+      cp.hl(15);
+      const v = item();
+      if (colors.has(v)) {
+        const n = nodes.set[[...colors].indexOf(v)];
+        say(`${esc(R(v))} is already in the set, so nothing changes. A set never holds duplicates.`);
+        DS.log(logEl, `colors.add(${esc(R(v))}) → already there`, "info");
+        await flash(n, "active");
+        return;
+      }
+      if (colors.size >= 7) return fail("Demo limit of 7 items.");
+      colors.add(v); render();
+      const n = nodes.set[nodes.set.length - 1]; n.classList.add("new", "visited");
+      say(`${esc(R(v))} was added. Sets have no positions, so there's no <code>colors[0]</code>.`);
+      DS.log(logEl, `colors.add(${esc(R(v))})`, "ok");
+      await DS.wait(); n.classList.remove("visited");
+    },
+    async sin() {
+      cp.hl(16);
+      const v = item(), has = colors.has(v);
+      print(has ? "True" : "False");
+      say(`<code>${esc(R(v))} in colors</code> is <b>${has ? "True" : "False"}</b>. Sets answer "is it in here?" very quickly.`);
+      DS.log(logEl, `${esc(R(v))} in colors → ${has}`, has ? "ok" : "info");
+      if (has) await flash(nodes.set[[...colors].indexOf(v)]);
+    },
+  };
+  for (const [k, fn] of Object.entries(ops)) $(".c-" + k).onclick = () => DS.run(root, fn);
+  $(".c-reset").onclick = () => { if (!root.dataset.busy) { reset(); DS.log(logEl, "reset", "info"); } };
+  reset();
+
+  /* ---------- scenarios ---------- */
+  const options = ["list", "tuple", "dict", "set"];
+  const scenarios = [
+    ["A shopping list you keep adding to and crossing items off.", "list", "Ordered and changeable: <code>append()</code> to add, <code>remove()</code> or <code>pop()</code> to cross off."],
+    ["The (latitude, longitude) of a city, which never changes.", "tuple", "A fixed pair of values that shouldn't be changed by accident."],
+    ["Looking up a student's grade by their name.", "dict", "Name → grade: a dict finds the value straight from its key."],
+    ["Collecting the unique words in a text, ignoring repeats.", "set", "A set keeps only one copy of each word automatically."],
+    ["The songs of a playlist, in play order.", "list", "Order matters and you may reorder, add or remove songs."],
+    ["A phone book: name → phone number.", "dict", "Each name (key) maps to one number (value)."],
+  ];
+  const box = document.querySelector("#collections .c-scen");
+  scenarios.forEach(([text, ans, why]) => {
+    const sel = el("select", {}, el("option", { value: "" }, "Choose…"), ...options.map(o => el("option", {}, o)));
+    const out = el("div", { class: "answer" });
+    sel.addEventListener("change", () => {
+      if (!sel.value) return;
+      const ok = sel.value === ans;
+      out.innerHTML = (ok ? "✓ <b>Correct!</b> " : `✗ <b>Not quite.</b> Best answer: <b>${ans}</b>. `) + why;
+      out.style.color = "var(--text)";
+      out.classList.add("show");
+      sel.style.borderColor = ok ? "var(--ok)" : "var(--bad)";
+    });
+    box.append(el("div", { class: "card" }, el("p", {}, text), sel, el("div", { style: { height: "8px" } }), out));
+  });
+
+  /* ---------- list comprehension ---------- */
+  const cRoot = document.querySelector("#collections .w-comp");
+  PY.tracer(cRoot, () => {
+    const end = PY.num(cRoot.querySelector(".cp-end"), 5, 2, 7);
+    const src = `squares = []
+for n in range(1, ${end}):
+    squares.append(n * n)
+print(squares)
+
+# The same list in one line:
+quick = [n * n for n in range(1, ${end})]
+print(quick)`;
+    const steps = [{ line: 1, set: { squares: "[]" }, say: "Start with an empty list." }];
+    const acc = [];
+    for (let n = 1; n < end; n++) {
+      steps.push({ line: 2, set: { n }, wait: 0.8, say: `<b>n = ${n}</b>` });
+      acc.push(n * n);
+      steps.push({ line: 3, read: ["n"], set: { squares: `[${acc.join(", ")}]` }, wait: 0.9, say: `${n} * ${n} = ${n * n} is appended to the list.` });
+    }
+    steps.push({ line: 4, read: ["squares"], out: `[${acc.join(", ")}]`, say: "The loop built the list one item at a time." });
+    steps.push({ line: 7, set: { quick: `[${acc.join(", ")}]` }, say: "The comprehension does the same loop <b>inside the brackets</b> and builds the whole list in one line." });
+    steps.push({ line: 8, read: ["quick"], out: `[${acc.join(", ")}]`, say: "Same result, less code. Use comprehensions for simple \"make a list from a list\" jobs." });
+    return { src, title: "comprehension.py", steps };
+  }, { hint: "Press <b>Run</b> to compare the loop with the one-line comprehension." });
+
+  DS.quiz(document.querySelector("#collections .quizbox"), [
+    { q: "Which collection <b>can't</b> be changed after it's created?", options: ["list", "tuple", "dict", "set"], answer: 1,
+      why: "A tuple is fixed. Trying <code>point[0] = 10</code> raises a <code>TypeError</code>." },
+    { q: "What does <code>{\"a\": 1, \"b\": 2}[\"a\"]</code> give?", options: ["'a'", "1", "2", "{'a': 1}"], answer: 1,
+      why: "Square brackets with a key look up that key's value in a dict: the value for <code>\"a\"</code> is 1." },
+    { q: "What does the set <code>{1, 2, 2, 3}</code> contain?", options: ["{1, 2, 2, 3}", "{1, 2, 3}", "{2}", "An error"], answer: 1,
+      why: "A set keeps only unique items, so the repeated 2 is stored once." },
+  ]);
+})();
+</script>
+
+<!-- ===================================================================== 7 -->
+<section class="section" id="functions" data-title="7. Functions">
+  <h2>7. Functions <small style="color:var(--muted);font-weight:500">(reusable blocks of code)</small></h2>
+  <p class="lead">A function is a named block of code that does one job. You <b>define</b> it once with <code>def</code> and <b>call</b> it as many times as you like.</p>
+  <p>Think of a coffee machine. You press a button and give it inputs (the cup size). It does its work inside, then hands you a result (the coffee). You don't need to know what happens inside to use it, and you can use it again and again.</p>
+
+  <div class="w-func">
+  <div class="grid2">
+    <div class="card">
+      <div class="controls">
+        <label class="inl">name <input type="text" class="fn-name" value="Ada" aria-label="Name"></label>
+        <label class="inl">width <input type="number" class="fn-w num" value="3" min="1" max="20" aria-label="Width"></label>
+        <label class="inl">height <input type="number" class="fn-h num" value="4" min="1" max="20" aria-label="Height"></label>
+      </div>
+      <div class="controls">
+        <button class="t-run">▶ Run</button>
+        <button class="t-step">Step</button>
+        <button class="secondary t-reset">Reset</button>
+      </div>
+      <div class="viz"></div>
+      <div class="status"></div>
+      <div class="log"></div>
+    </div>
+    <div class="code"></div>
+  </div>
+  </div>
+
+  <h3>Defining and calling functions</h3>
+  <ul>
+    <li><code>def name(parameters):</code> starts a definition. The indented lines below are the function's <b>body</b>.</li>
+    <li>Defining a function does <b>not</b> run it. The body runs only when you <b>call</b> it: <code>greet("Ada")</code>.</li>
+    <li>Calling pauses the caller, jumps into the function, and comes back when the function finishes.</li>
+  </ul>
+
+  <h3>Parameters, default values and return values</h3>
+  <table class="cx">
+    <thead><tr><th>Term</th><th>Meaning</th><th>In the example</th></tr></thead>
+    <tbody>
+      <tr><td><b>Parameter</b></td><td>a name in the definition that receives a value</td><td><code>name</code>, <code>punctuation</code></td></tr>
+      <tr><td><b>Argument</b></td><td>the actual value you pass when calling</td><td><code>"Ada"</code></td></tr>
+      <tr><td><b>Default value</b></td><td>used when the caller leaves that argument out</td><td><code>punctuation="!"</code>, <code>height=1</code></td></tr>
+      <tr><td><b>Return value</b></td><td>the result <code>return</code> sends back to the caller</td><td><code>return message</code></td></tr>
+    </tbody>
+  </table>
+  <div class="callout warn"><b>print vs. return:</b> <code>print()</code> only shows a value on the screen. <code>return</code> hands the value back so the caller can store it and use it. A function with no <code>return</code> gives back <code>None</code>.</div>
+
+  <h3>Scope: local vs. global</h3>
+  <p>Names created <b>inside</b> a function are <b>local</b>: they exist only while that call runs, in its own box of names (shown in purple above), and disappear when it returns. Names created at the top level of the file are <b>global</b>. A function can <i>read</i> a global name (like <code>greeting</code>), but the code outside can't see the function's local names.</p>
+  <div class="callout">Prefer passing values in as parameters and getting them back with <code>return</code>. Changing global variables from inside functions (with the <code>global</code> keyword) makes programs harder to follow.</div>
+
+  <h3>Where it shows up</h3>
+  <ul>
+    <li>Everywhere: <code>print()</code>, <code>len()</code> and <code>input()</code> are functions someone else wrote.</li>
+    <li>Splitting a program into small named steps, as the final project does with <code>ask()</code>, <code>play()</code> and <code>main()</code>.</li>
+    <li>Avoiding copy-and-paste: fix a bug once inside the function and every call gets the fix.</li>
+  </ul>
+
+  <div class="quizbox"></div>
+</section>
+<script>
+(() => {
+  const root = document.querySelector("#functions .w-func");
+  const $ = s => root.querySelector(s);
+  PY.tracer(root, () => {
+    const name = PY.clean($(".fn-name"), "Ada");
+    const w = PY.num($(".fn-w"), 3, 1, 20), h = PY.num($(".fn-h"), 4, 1, 20);
+    const msg = `Hello, ${name}!`;
+    const src = `greeting = "Hello"
+
+def greet(name, punctuation="!"):
+    message = greeting + ", " + name + punctuation
+    return message
+
+def area(width, height=1):
+    result = width * height
+    return result
+
+text = greet("${name}")
+print(text)
+size = area(${w}, ${h})
+print("Area:", size)
+print(area(${w}))`;
+    const L = n => ({ find: n });
+    const steps = [
+      { line: 1, set: { greeting: "'Hello'" }, say: "A <b>global</b> name, created at the top level of the file." },
+      { line: 3, set: { greet: "<function greet>" }, say: "<code>def</code> creates the function and stores it under the name <code>greet</code>. Its body does <b>not</b> run yet." },
+      { line: 7, set: { area: "<function area>" }, say: "Same for <code>area</code>. Python now knows both functions." },
+      { line: 11, say: `<b>Call</b> <code>greet("${DS.esc(name)}")</code>: Python pauses this line and jumps into the function.` },
+      { line: 3, push: "greet() · local names", set: { name: `'${name}'`, punctuation: "'!'" }, say: `A new box of <b>local</b> names appears. <code>name</code> gets the argument <code>'${DS.esc(name)}'</code>; <code>punctuation</code> wasn't given, so it uses its <b>default</b>, <code>'!'</code>.` },
+      { line: 4, read: ["greeting", "name", "punctuation"], set: { message: `'${msg}'` }, say: "<code>greeting</code> isn't local, so Python finds it among the <b>global</b> names. The pieces are joined into a new string." },
+      { line: 5, read: ["message"], say: `<code>return</code> sends <b>'${DS.esc(msg)}'</b> back to the line that called the function.` },
+      { line: 11, pop: true, set: { text: `'${msg}'` }, say: "The call is over: its local names (<code>name</code>, <code>punctuation</code>, <code>message</code>) are gone. The returned value is stored in <code>text</code>." },
+      { line: 12, read: ["text"], out: msg },
+      { line: 13, say: `Call <code>area(${w}, ${h})</code>: both arguments are given.` },
+      { line: 7, push: "area() · local names", set: { width: w, height: h }, say: `<code>width = ${w}</code> and <code>height = ${h}</code>, matched by position.` },
+      { line: 8, read: ["width", "height"], set: { result: w * h } },
+      { line: 9, read: ["result"], say: `Return <b>${w * h}</b>.` },
+      { line: 13, pop: true, set: { size: w * h }, say: "Back in the global code; the local names are gone again." },
+      { line: 14, read: ["size"], out: `Area: ${w * h}` },
+      { line: 15, push: "area() · local names", set: { width: w, height: 1 }, say: `<code>area(${w})</code> leaves out <code>height</code>, so it takes its default value, <b>1</b>.` },
+      { line: 8, read: ["width", "height"], set: { result: w } },
+      { line: 9, read: ["result"], say: `Return <b>${w}</b> straight into <code>print()</code>.` },
+      { line: 15, pop: true, out: String(w), say: "The same function, reused with different arguments. That's the point of functions." },
+    ];
+    return { src, title: "functions.py", steps };
+  }, { hint: "Press <b>Run</b> or <b>Step</b> and watch a purple box of <b>local</b> names appear for each call and vanish when it returns." });
+
+  DS.quiz(document.querySelector("#functions .quizbox"), [
+    { q: "Which keyword defines a function?", options: ["func", "def", "function", "define"], answer: 1,
+      why: "Python functions start with <code>def</code>, then the name, the parameters in brackets, and a colon." },
+    { q: "Given <code>def add(a, b=2): return a + b</code>, what is <code>add(3)</code>?", options: ["3", "5", "32", "An error"], answer: 1,
+      why: "<code>b</code> wasn't given, so it uses its default value 2: <code>3 + 2</code> is 5." },
+    { q: "A variable created inside a function is…", options: ["global: usable everywhere", "local: it exists only inside that function call", "saved to a file", "always None"], answer: 1,
+      why: "Names created in a function are local. They disappear when the function returns." },
+  ]);
+})();
+</script>
+
+<!-- ===================================================================== 8 -->
+<section class="section" id="modules" data-title="8. Modules">
+  <h2>8. Modules <small style="color:var(--muted);font-weight:500">(the standard library)</small></h2>
+  <p class="lead">A <b>module</b> is a file of ready-made Python code. <code>import</code> loads it so you can use its functions instead of writing them yourself.</p>
+  <p>Think of a toolbox. Python comes with a big one, the <b>standard library</b>, with a drawer for each kind of job: <code>math</code> for calculations, <code>random</code> for chance, <code>datetime</code> for dates. <code>import</code> opens a drawer; it's free and already installed.</p>
+
+  <div class="w-mod">
+  <div class="grid2">
+    <div class="card">
+      <div class="controls">
+        <label class="inl">x <input type="number" class="md-x num" value="16" aria-label="Number for sqrt"></label>
+        <label class="inl">y <input type="text" class="md-y num" value="3.7" aria-label="Number for floor and ceil"></label>
+        <button class="md-pi">math.pi</button>
+        <button class="md-sqrt">sqrt(x)</button>
+        <button class="md-fc">floor / ceil of y</button>
+      </div>
+      <div class="controls">
+        <button class="md-dice">random.randint(1, 6)</button>
+        <button class="md-pick">random.choice(...)</button>
+        <button class="md-today">dt.date.today()</button>
+        <button class="md-week">+ 7 days</button>
+      </div>
+      <div class="viz">
+        <span class="caption">Global names · and what each module contains</span>
+        <div class="py-boxes md-boxes"></div>
+        <div class="tr-outlabel">Output</div>
+        <div class="console md-out"><span class="dim">(nothing printed yet)</span></div>
+      </div>
+      <div class="status"></div>
+      <div class="log"></div>
+    </div>
+    <div class="code"></div>
+  </div>
+  </div>
+
+  <h3>What a module is and why we use import</h3>
+  <ul>
+    <li>A module is just a <code>.py</code> file. Every file you write is a module too, so you can import your own code.</li>
+    <li>Modules keep code organised and save you from reinventing things like square roots or calendars.</li>
+    <li>Put imports at the <b>top</b> of your file, so readers see what the program depends on.</li>
+  </ul>
+
+  <h3>Import styles</h3>
+  <table class="cx">
+    <thead><tr><th>You write</th><th>Then you use</th><th>Good when</th></tr></thead>
+    <tbody>
+      <tr><td><code>import math</code></td><td><code>math.sqrt(16)</code></td><td>the usual choice: it's clear where <code>sqrt</code> comes from</td></tr>
+      <tr><td><code>from math import sqrt</code></td><td><code>sqrt(16)</code></td><td>you use one or two names a lot</td></tr>
+      <tr><td><code>import datetime as dt</code></td><td><code>dt.date.today()</code></td><td>the module name is long: <code>as</code> gives it a short nickname</td></tr>
+    </tbody>
+  </table>
+  <div class="callout warn">Avoid <code>from math import *</code>. It dumps every name from the module into your program, so it's hard to tell where a name came from.</div>
+
+  <h3>Practical use of math, random and datetime</h3>
+  <table class="cx">
+    <thead><tr><th>Module</th><th>Useful names</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td><code>math</code></td><td><code>pi</code>, <code>sqrt()</code>, <code>floor()</code>, <code>ceil()</code></td><td>circle area: <code>math.pi * r ** 2</code></td></tr>
+      <tr><td><code>random</code></td><td><code>randint(a, b)</code>, <code>choice(list)</code>, <code>shuffle(list)</code>, <code>sample(list, k)</code></td><td>dice games, picking a random question</td></tr>
+      <tr><td><code>datetime</code></td><td><code>date.today()</code>, <code>timedelta(days=7)</code>, <code>datetime.now()</code></td><td>due dates, ages, timestamps</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Where it shows up</h3>
+  <ul>
+    <li>Real programs import a lot: reading files (<code>os</code>, <code>pathlib</code>), the web (<code>urllib</code>), data (<code>json</code>, <code>csv</code>).</li>
+    <li>Beyond the standard library, <code>pip install</code> adds packages from the internet, such as <code>requests</code> or <code>pandas</code>. You import them the same way.</li>
+  </ul>
+
+  <div class="quizbox"></div>
+</section>
+<script>
+(() => {
+  const root = document.querySelector("#modules .w-mod");
+  const $ = s => root.querySelector(s);
+  const { el, esc } = DS;
+  const SRC = `import math
+from math import sqrt
+import random
+import datetime as dt
+
+print(math.pi)
+print(sqrt(x))
+print(math.floor(y), math.ceil(y))
+print(random.randint(1, 6))
+print(random.choice(["red", "green", "blue"]))
+today = dt.date.today()
+print(today)
+print(today + dt.timedelta(days=7))`;
+  const cp = DS.code($(".code"), SRC, "modules.py");
+  const boxes = $(".md-boxes"), outEl = $(".md-out"), statusEl = $(".status"), logEl = $(".log"), viz = $(".viz");
+  const say = h => (statusEl.innerHTML = h);
+  // name in global scope → members shown inside its box
+  const LAYOUT = [
+    ["math", "module", ["pi", "sqrt", "floor", "ceil"]],
+    ["sqrt", "function", []],
+    ["random", "module", ["randint", "choice", "shuffle"]],
+    ["dt", "module", ["date", "timedelta", "datetime"]],
+  ];
+  const N = {};
+  LAYOUT.forEach(([name, kind, members]) => {
+    const row = el("div", { class: "py-row" });
+    members.forEach(m => { const n = el("span", { class: "node" }, m); N[name + "." + m] = n; row.append(n); });
+    if (!members.length) row.append(el("span", { class: "empty" }, "imported straight into your names"));
+    const head = el("span", { class: "node" }, name, el("span", { class: "sub" }, kind));
+    N[name] = head;
+    boxes.append(el("div", { class: "py-box" }, el("div", { class: "py-row", style: { paddingTop: "6px", paddingBottom: "26px" } }, head), row));
+  });
+  function print(t) {
+    if (!outEl.dataset.used) { outEl.innerHTML = ""; outEl.dataset.used = "1"; }
+    outEl.append(el("div", { class: "new" }, t));
+    outEl.scrollTop = outEl.scrollHeight;
+  }
+  async function use(names, lines, text, out, logTxt) {
+    names.forEach(n => N[n] && N[n].classList.add("active"));
+    cp.hl(...lines);
+    say(text);
+    await DS.wait(1.1);
+    names.forEach(n => { if (!N[n]) return; N[n].classList.remove("active"); N[n].classList.add("found"); });
+    if (out != null) print(out);
+    DS.log(logEl, esc(logTxt), out != null && String(out).startsWith("ValueError") ? "err" : "ok");
+    await DS.wait(1.1);
+    names.forEach(n => N[n] && N[n].classList.remove("found"));
+  }
+  let today = null;
+  const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const ops = {
+    pi: () => use(["math", "math.pi"], [1, 6], "<code>import math</code> gives you the name <code>math</code>. The dot means \"look inside\": <code>math.pi</code>.", String(Math.PI), "math.pi"),
+    sqrt: () => {
+      const x = +$(".md-x").value || 0;
+      if (x < 0) return use(["sqrt"], [2, 7], "<code>sqrt()</code> only works for numbers ≥ 0, so Python raises a <b>ValueError</b>.", "ValueError: math domain error", `sqrt(${x}) → ValueError`).then(() => PY.shake(viz));
+      return use(["sqrt"], [2, 7], "<code>from math import sqrt</code> copied <code>sqrt</code> straight into your names, so no <code>math.</code> prefix is needed.", PY.fl(Math.sqrt(x)), `sqrt(${x}) → ${PY.fl(Math.sqrt(x))}`);
+    },
+    fc: () => {
+      const y = parseFloat($(".md-y").value);
+      const v = Number.isFinite(y) ? y : 3.7;
+      $(".md-y").value = v;
+      return use(["math", "math.floor", "math.ceil"], [1, 8], `<code>floor()</code> rounds <b>down</b> to a whole number and <code>ceil()</code> rounds <b>up</b>.`, `${Math.floor(v)} ${Math.ceil(v)}`, `floor(${v}), ceil(${v}) → ${Math.floor(v)} ${Math.ceil(v)}`);
+    },
+    dice: () => { const r = DS.randInt(1, 6); return use(["random", "random.randint"], [3, 9], "<code>randint(1, 6)</code> picks a whole number from 1 to 6, <b>including</b> both ends, like a die. Press it again for a new roll.", String(r), `randint(1, 6) → ${r}`); },
+    pick: () => { const c = ["red", "green", "blue"][DS.randInt(0, 2)]; return use(["random", "random.choice"], [3, 10], "<code>choice()</code> picks one item at random from a list.", c, `choice(...) → '${c}'`); },
+    today: () => { today = new Date(); return use(["dt", "dt.date"], [4, 11, 12], "<code>import datetime as dt</code> gives the module a short nickname, <code>dt</code>. <code>dt.date.today()</code> is today's date on this computer.", iso(today), `dt.date.today() → ${iso(today)}`); },
+    week: () => {
+      if (!today) today = new Date();
+      const d = new Date(today); d.setDate(d.getDate() + 7);
+      return use(["dt", "dt.timedelta"], [4, 13], "A <code>timedelta</code> is a length of time. Adding 7 days to a date handles month and year changes for you.", iso(d), `today + 7 days → ${iso(d)}`);
+    },
+  };
+  for (const [k, fn] of Object.entries(ops)) $(".md-" + k).onclick = () => DS.run(root, fn);
+  say("Press a button to run that line. Watch which name is looked up, and how the import style changes how you write it.");
+
+  DS.quiz(document.querySelector("#modules .quizbox"), [
+    { q: "After <code>import math</code>, how do you get the square root of 16?", options: ["sqrt(16)", "math.sqrt(16)", "math(sqrt, 16)", "import sqrt(16)"], answer: 1,
+      why: "With <code>import math</code>, the module's tools are reached through the module name and a dot: <code>math.sqrt(16)</code>." },
+    { q: "After <code>from math import sqrt</code>, which call works?", options: ["sqrt(16)", "math.sqrt(16)", "from.sqrt(16)", "None of them"], answer: 0,
+      why: "<code>from … import</code> brings the name straight into your program, so you call <code>sqrt(16)</code> without a prefix." },
+    { q: "Which standard module gives you random numbers?", options: ["math", "datetime", "random", "chance"], answer: 2,
+      why: "The <code>random</code> module has <code>randint()</code>, <code>choice()</code>, <code>shuffle()</code> and more." },
+  ]);
+})();
+</script>
+
+<!-- ===================================================================== 9 -->
+<section class="section" id="errors" data-title="9. Errors & Exceptions">
+  <h2>9. Errors and Exceptions <small style="color:var(--muted);font-weight:500">(when things go wrong)</small></h2>
+  <p class="lead">Errors are normal: every programmer sees them all day. Python tells you <b>what</b> went wrong and <b>where</b>, and <code>try</code> / <code>except</code> lets your program recover instead of crashing.</p>
+  <p>Think of a smoke alarm. An exception is the alarm going off: something unexpected happened. A <b>traceback</b> tells you which room it came from, and an <code>except</code> block is your plan for what to do when the alarm rings.</p>
+
+  <h3>Reading error messages and tracebacks</h3>
+  <p>Click each line of the traceback to see what it means. The program it came from is on the right.</p>
+  <div class="w-tb">
+  <div class="grid2">
+    <div class="card">
+      <div class="viz" style="min-height:190px">
+        <span class="caption">Terminal · python shop.py</span>
+        <div class="console tb-con" style="margin-top:22px;padding:8px 4px"></div>
+      </div>
+      <div class="status"></div>
+    </div>
+    <div class="code"></div>
+  </div>
+  </div>
+  <div class="callout tip"><b>Read a traceback from the bottom up.</b> The last line names the error and says what went wrong. The lines above show the path that led there, ending at the exact line that failed.</div>
+
+  <table class="cx">
+    <thead><tr><th>Error</th><th>Usually means</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td><code>SyntaxError</code></td><td>the code isn't written correctly (a missing colon, bracket or quote)</td><td><code>if x &gt; 3</code></td></tr>
+      <tr><td><code>NameError</code></td><td>a name that doesn't exist yet, often a typo</td><td><code>prnt("hi")</code></td></tr>
+      <tr><td><code>TypeError</code></td><td>the wrong type for the job</td><td><code>"5" + 3</code></td></tr>
+      <tr><td><code>ValueError</code></td><td>right type, but a bad value</td><td><code>int("abc")</code></td></tr>
+      <tr><td><code>IndexError</code></td><td>a position that doesn't exist</td><td><code>[1, 2][5]</code></td></tr>
+      <tr><td><code>KeyError</code></td><td>a dict key that doesn't exist</td><td><code>{"a": 1}["b"]</code></td></tr>
+      <tr><td><code>ZeroDivisionError</code></td><td>dividing by zero</td><td><code>10 / 0</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>try / except / finally</h3>
+  <p>Put code that might fail inside <code>try</code>. If an error happens, Python jumps straight to the matching <code>except</code> block instead of crashing. <code>finally</code> runs at the end <b>either way</b>. Try a good input, then some text, then a zero.</p>
+  <div class="w-try">
+  <div class="grid2">
+    <div class="card">
+      <div class="controls">
+        <label class="inl">a_text <input type="text" class="tr-a" value="10" aria-label="First number" style="width:70px"></label>
+        <label class="inl">b_text <input type="text" class="tr-b" value="2" aria-label="Second number" style="width:70px"></label>
+        <span class="sep"></span>
+        <button class="secondary always tr-ex" data-v="10,2">10, 2</button>
+        <button class="secondary always tr-ex" data-v="10,abc">10, abc</button>
+        <button class="secondary always tr-ex" data-v="10,0">10, 0</button>
+      </div>
+      <div class="controls">
+        <button class="t-run">▶ Run</button>
+        <button class="t-step">Step</button>
+        <button class="secondary t-reset">Reset</button>
+      </div>
+      <div class="viz"></div>
+      <div class="status"></div>
+      <div class="log"></div>
+    </div>
+    <div class="code"></div>
+  </div>
+  </div>
+
+  <h3>Basic debugging</h3>
+  <ol class="ex">
+    <li><b>Read the last line</b> of the traceback, then go to the line number it points to.</li>
+    <li><b>Print what you think you know:</b> add <code>print(x, type(x))</code> just before the failing line to check names and types.</li>
+    <li><b>Make it smaller:</b> run the failing piece on its own in the REPL.</li>
+    <li><b>Use a debugger:</b> in VS Code or PyCharm, click next to a line number to set a breakpoint, then run step by step and watch the variables, just like the <b>Step</b> button in this course.</li>
+    <li><b>Explain it out loud</b>, line by line ("rubber duck debugging"). You'll often spot the problem as you speak.</li>
+  </ol>
+
+  <h3>Where it shows up</h3>
+  <ul>
+    <li>Checking user input: ask again when someone types letters instead of a number (the final project does this).</li>
+    <li>Files that might be missing, and network calls that might fail.</li>
+    <li><code>finally</code>: always closing a file or connection, even after an error.</li>
+  </ul>
+
+  <div class="quizbox"></div>
+</section>
+<script>
+(() => {
+  /* ---------- traceback reader ---------- */
+  const root = document.querySelector("#errors .w-tb");
+  const con = root.querySelector(".tb-con"), statusEl = root.querySelector(".status");
+  const SRC = `def average_price(items):
+    if not items:
+        print("The cart is empty")
+    return sum(items) / len(items)
+
+cart = []
+total = average_price(cart)
+print(total)`;
+  const cp = DS.code(root.querySelector(".code"), SRC, "shop.py");
+  const TB = [
+    ["Traceback (most recent call last):", null, "The start of the report. \"Most recent call last\" means the newest step is at the <b>bottom</b>."],
+    ['  File "shop.py", line 7, in <module>', 7, "The first stop on the path: line 7 of <code>shop.py</code>, in the main program (<code>&lt;module&gt;</code>), called <code>average_price()</code>."],
+    ["    total = average_price(cart)", 7, "The code on that line. <code>cart</code> is an empty list here."],
+    ['  File "shop.py", line 4, in average_price', 4, "Then Python went into <code>average_price()</code>, and the error happened on <b>line 4</b>."],
+    ["    return sum(items) / len(items)", 4, "The exact line that failed. <code>len(items)</code> is 0 for an empty list."],
+    ["ZeroDivisionError: division by zero", 4, "<b>Start here.</b> The error's type and message: we divided by zero. The fix: <code>return</code> early (for example <code>return 0</code>) when the list is empty, instead of only printing a message."],
+  ];
+  TB.forEach(([text, line, why]) => {
+    const b = DS.el("button", { class: "tb-line always" + (text.startsWith("Zero") ? "" : ""), style: text.startsWith("Zero") ? { color: "#ff8a80" } : null }, text);
+    b.onclick = () => {
+      con.querySelectorAll(".tb-line").forEach(x => x.classList.toggle("on", x === b));
+      if (line) cp.hl(line); else cp.clear();
+      statusEl.innerHTML = why;
+    };
+    con.append(b);
+  });
+  statusEl.innerHTML = "Click a line of the traceback. Hint: start with the <b>last</b> one.";
+
+  /* ---------- try / except / finally ---------- */
+  const tRoot = document.querySelector("#errors .w-try");
+  const aIn = tRoot.querySelector(".tr-a"), bIn = tRoot.querySelector(".tr-b");
+  const api = PY.tracer(tRoot, () => {
+    const a = PY.clean(aIn, "10", 8), b = PY.clean(bIn, "2", 8);
+    const isInt = s => /^\s*[+-]?\d+\s*$/.test(s);
+    const src = `def safe_divide(a_text, b_text):
+    try:
+        a = int(a_text)
+        b = int(b_text)
+        result = a / b
+        print("Result:", result)
+    except ValueError:
+        print("Please type whole numbers only.")
+    except ZeroDivisionError:
+        print("You can't divide by zero.")
+    finally:
+        print("Finished trying.")
+
+safe_divide("${a}", "${b}")`;
+    const steps = [
+      { line: 1, set: { safe_divide: "<function safe_divide>" }, say: "Define the function." },
+      { line: 14, push: "safe_divide() · local names", set: { a_text: `'${a}'`, b_text: `'${b}'` }, say: "Call it with two pieces of text, as if a user typed them." },
+      { line: 2, say: "<code>try:</code> Python will watch the indented lines below for errors." },
+    ];
+    let failed = null;
+    if (!isInt(a)) failed = ["a_text", 3, `int('${a}')`];
+    else {
+      steps.push({ line: 3, read: ["a_text"], set: { a: parseInt(a, 10) }, say: "Converted fine." });
+      if (!isInt(b)) failed = ["b_text", 4, `int('${b}')`];
+      else steps.push({ line: 4, read: ["b_text"], set: { b: parseInt(b, 10) }, say: "Converted fine." });
+    }
+    if (failed) {
+      steps.push({ line: failed[1], read: [failed[0]], say: `<code>${DS.esc(failed[2])}</code> raises a <b>ValueError</b>. The rest of the <code>try</code> block is skipped.`, log: "ValueError raised", kind: "err" });
+      steps.push({ line: [7, 8], out: "Please type whole numbers only.", say: "Python jumps to the matching <code>except ValueError:</code> block. No crash." });
+    } else {
+      const A = parseInt(a, 10), B = parseInt(b, 10);
+      if (B === 0) {
+        steps.push({ line: 5, read: ["a", "b"], say: "<code>a / b</code> with b = 0 raises a <b>ZeroDivisionError</b>.", log: "ZeroDivisionError raised", kind: "err" });
+        steps.push({ line: [9, 10], out: "You can't divide by zero.", say: "The first <code>except</code> doesn't match, so Python tries the next one: <code>except ZeroDivisionError:</code> does." });
+      } else {
+        const r = PY.fl(A / B);
+        steps.push({ line: 5, read: ["a", "b"], set: { result: r }, say: "No error: <code>/</code> gives a float." });
+        steps.push({ line: 6, read: ["result"], out: `Result: ${r}`, say: "Everything in <code>try</code> worked, so both <code>except</code> blocks are skipped." });
+      }
+    }
+    steps.push({ line: [11, 12], out: "Finished trying.", say: "<code>finally</code> runs <b>every time</b>, whether there was an error or not." });
+    steps.push({ line: 14, pop: true, say: "The program carries on normally. Try the other inputs to see each path." });
+    return { src, title: "safe_divide.py", steps };
+  }, { hint: "Pick inputs (or a preset), then press <b>Run</b>. Each one takes a different path through <code>try</code> / <code>except</code>." });
+  tRoot.querySelectorAll(".tr-ex").forEach(btn => (btn.onclick = () => {
+    if (tRoot.dataset.busy) return;
+    const [a, b] = btn.dataset.v.split(",");
+    aIn.value = a; bIn.value = b; api.reset();
+    tRoot.querySelector(".t-run").click();
+  }));
+
+  DS.quiz(document.querySelector("#errors .quizbox"), [
+    { q: "Where should you start reading a traceback?", options: ["The first line", "The last line", "The middle", "It doesn't matter"], answer: 1,
+      why: "The last line names the error and its message. The lines above show how the program got there." },
+    { q: "Which error does <code>int(\"abc\")</code> raise?", options: ["TypeError", "NameError", "ValueError", "SyntaxError"], answer: 2,
+      why: "The type is fine (a string), but the value can't be turned into a whole number, so it's a <code>ValueError</code>." },
+    { q: "When does a <code>finally</code> block run?", options: ["Only when there is an error", "Only when there is no error", "Always, error or not", "Never"], answer: 2,
+      why: "<code>finally</code> always runs at the end of the <code>try</code> statement, which makes it right for clean-up work." },
+  ]);
+})();
+</script>
+
+<!-- ===================================================================== 10 -->
+<section class="section" id="project" data-title="10. Final Project">
+  <h2>10. Final Project <small style="color:var(--muted);font-weight:500">(a quiz game)</small></h2>
+  <p class="lead">Time to put it all together: a small quiz game that uses variables, strings, loops, a list of dictionaries, functions, two modules and error handling.</p>
+  <p>Play it below. The game really runs: type your answers into the console and watch each line of the program light up as it executes. Then read the code and the table underneath to see which lesson every part comes from.</p>
+
+  <div class="w-game">
+  <div class="grid2">
+    <div class="card">
+      <div class="controls">
+        <button class="g-start">▶ Start the game</button>
+        <button class="secondary g-stop always">Stop</button>
+      </div>
+      <div class="viz" style="min-height:300px">
+        <span class="caption">Terminal · python quiz_game.py</span>
+        <div class="py-row g-vars" style="padding-top:34px"></div>
+        <div class="console g-con" style="min-height:170px;max-height:280px"><span class="dim">$ python quiz_game.py</span></div>
+        <div class="py-ask">
+          <input type="text" class="g-in" placeholder="Type your answer…" aria-label="Your answer" disabled>
+          <button class="g-send always" disabled>Enter</button>
+        </div>
+      </div>
+      <div class="status"></div>
+    </div>
+    <div class="code"></div>
+  </div>
+  </div>
+
+  <h3>Which lesson each part comes from</h3>
+  <table class="cx">
+    <thead><tr><th>In the game</th><th>What it does</th><th>Lesson</th></tr></thead>
+    <tbody>
+      <tr><td><code>import random</code>, <code>import datetime as dt</code></td><td>random question order, today's date</td><td><a href="#modules">8. Modules</a></td></tr>
+      <tr><td><code>QUESTIONS = [{"q": …, "a": …}, …]</code></td><td>a list of dictionaries holds the questions</td><td><a href="#collections">6. Data Structures</a></td></tr>
+      <tr><td><code>def ask()</code>, <code>def play()</code>, <code>def main()</code></td><td>each function does one job and returns a result</td><td><a href="#functions">7. Functions</a></td></tr>
+      <tr><td><code>for item in questions</code>, <code>while True</code>, <code>break</code>, <code>if</code> / <code>else</code></td><td>repeats the rounds, asks again until the input is valid</td><td><a href="#flow">5. Control Flow</a></td></tr>
+      <tr><td><code>try</code> / <code>except ValueError</code></td><td>no crash when the player types letters instead of a number</td><td><a href="#errors">9. Errors</a></td></tr>
+      <tr><td><code>answer.strip().lower()</code>, f-string</td><td>tidies the answer, builds the score message</td><td><a href="#strings">4. Strings</a></td></tr>
+      <tr><td><code>==</code>, <code>&lt;=</code>, <code>score / rounds * 100</code></td><td>checks answers and works out the percentage</td><td><a href="#ops">3. Operators</a></td></tr>
+      <tr><td><code>input()</code>, <code>int()</code>, <code>score = 0</code></td><td>reads the player's answers, keeps the score</td><td><a href="#vars">2. Variables &amp; Types</a></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Make it your own</h3>
+  <ul>
+    <li><b>Quiz game:</b> add your own questions to <code>QUESTIONS</code>, or a time limit using <code>datetime</code>.</li>
+    <li><b>To-do app in memory:</b> a <code>while True</code> menu with <code>add</code>, <code>list</code>, <code>done</code> and <code>quit</code>, storing tasks in a list of dicts.</li>
+    <li><b>Simple calculator:</b> ask for two numbers and an operator, use <code>if</code> / <code>elif</code> to pick the operation, and catch <code>ValueError</code> and <code>ZeroDivisionError</code>.</li>
+  </ul>
+  <div class="callout tip">Copy the code into <code>quiz_game.py</code>, run it with <code>python quiz_game.py</code>, and change one thing at a time. Breaking it on purpose and reading the traceback is a great way to learn.</div>
+
+  <div class="quizbox"></div>
+</section>
+<script>
+(() => {
+  const root = document.querySelector("#project .w-game");
+  const $ = s => root.querySelector(s);
+  const { el } = DS;
+  const SRC = `import random
+import datetime as dt
+
+QUESTIONS = [
+    {"q": "What is 7 * 6?", "a": "42"},
+    {"q": "Which type is 3.14?", "a": "float"},
+    {"q": "What does len('cat') return?", "a": "3"},
+    {"q": "Which keyword defines a function?", "a": "def"},
+]
+
+def ask(item):
+    answer = input(item["q"] + " ")
+    return answer.strip().lower() == item["a"]
+
+def play(rounds):
+    questions = random.sample(QUESTIONS, rounds)
+    score = 0
+    for item in questions:
+        if ask(item):
+            print("Correct!")
+            score += 1
+        else:
+            print("Not quite. The answer is", item["a"])
+    return score
+
+def main():
+    print("Welcome to the Python quiz!")
+    while True:
+        try:
+            rounds = int(input("How many questions (1-4)? "))
+            if 1 <= rounds <= len(QUESTIONS):
+                break
+            print("Please pick a number from 1 to", len(QUESTIONS))
+        except ValueError:
+            print("Please type a number.")
+    score = play(rounds)
+    percent = round(score / rounds * 100)
+    print(f"You scored {score}/{rounds} ({percent}%)")
+    print("Played on", dt.date.today())
+
+main()`;
+  const cp = DS.code($(".code"), SRC, "quiz_game.py");
+  const QUESTIONS = [
+    { q: "What is 7 * 6?", a: "42" },
+    { q: "Which type is 3.14?", a: "float" },
+    { q: "What does len('cat') return?", a: "3" },
+    { q: "Which keyword defines a function?", a: "def" },
+  ];
+  const con = $(".g-con"), inp = $(".g-in"), send = $(".g-send"), statusEl = $(".status"), varsEl = $(".g-vars");
+  const say = h => (statusEl.innerHTML = h);
+  let token = 0, waiting = null;
+  const vars = new Map();
+  function showVars(changed) {
+    varsEl.innerHTML = "";
+    if (!vars.size) varsEl.append(el("span", { class: "empty" }, "(variables appear here)"));
+    for (const [k, v] of vars) varsEl.append(el("span", { class: "node" + (k === changed ? " visited new" : "") }, v, el("span", { class: "tag" }, k), el("span", { class: "sub" }, PY.typeOf(v))));
+  }
+  const setVar = (k, v) => { vars.set(k, String(v)); showVars(k); };
+  function out(t, cls = "") { con.append(el("div", { class: "new " + cls }, t)); con.scrollTop = con.scrollHeight; }
+  const live = t => { if (t !== token) throw new Error("stopped"); };
+  async function line(n, mult = 0.7) { const t = token; cp.hl(n); await DS.wait(mult); live(t); }
+  function input(prompt) {
+    const t = token;
+    const row = el("div", {}, prompt);
+    con.append(row); con.scrollTop = con.scrollHeight;
+    inp.disabled = false; send.disabled = false; inp.value = ""; inp.focus({ preventScroll: true });
+    say("The program is waiting for <b>input()</b>. Type your answer and press <b>Enter</b>.");
+    return new Promise((resolve, reject) => {
+      waiting = text => {
+        waiting = null; inp.disabled = true; send.disabled = true;
+        if (t !== token) return reject(new Error("stopped"));
+        row.append(el("span", { class: "in" }, text));
+        say("");
+        resolve(text);
+      };
+    });
+  }
+  const submit = () => { if (waiting) waiting(String(inp.value).slice(0, 30)); };
+  send.onclick = submit;
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") submit(); });
+
+  async function ask(item) {
+    await line("def ask(item):", 0.5);
+    // Python's repr switches to double quotes when the text contains a single quote.
+    const q = item.q.includes("'") ? `"${item.q}"` : `'${item.q}'`;
+    setVar("item", `{'q': ${q}, 'a': '${item.a}'}`);
+    cp.hl('answer = input(item["q"]');
+    const answer = await input(item.q + " ");
+    setVar("answer", PY.repr(answer));
+    await line("return answer.strip().lower()", 0.9);
+    const ok = answer.trim().toLowerCase() === item.a;
+    say(`<code>'${DS.esc(answer.trim().toLowerCase())}' == '${item.a}'</code> is <b>${ok ? "True" : "False"}</b>.`);
+    await DS.wait(0.6);
+    vars.delete("answer"); vars.delete("item"); showVars();
+    return ok;
+  }
+  async function play(rounds) {
+    await line("def play(rounds):", 0.5);
+    await line("questions = random.sample", 0.9);
+    const qs = QUESTIONS.slice().sort(() => Math.random() - 0.5).slice(0, rounds);
+    say(`<code>random.sample()</code> picked ${rounds} different question${rounds > 1 ? "s" : ""} in a random order.`);
+    await line("score = 0", 0.6); setVar("score", 0);
+    let score = 0;
+    for (const item of qs) {
+      await line("for item in questions:", 0.6);
+      await line("if ask(item):", 0.4);
+      const ok = await ask(item);
+      if (ok) {
+        await line('print("Correct!")', 0.5); out("Correct!");
+        await line("score += 1", 0.6); score++; setVar("score", score);
+      } else {
+        await line('print("Not quite.', 0.6); out(`Not quite. The answer is ${item.a}`);
+      }
+    }
+    await line("return score", 0.8);
+    return score;
+  }
+  async function main() {
+    const t = ++token;
+    con.innerHTML = ""; out("$ python quiz_game.py", "dim");
+    vars.clear(); showVars();
+    await line("import random", 0.6); await line("import datetime as dt", 0.6);
+    await line("QUESTIONS = [", 0.8); setVar("QUESTIONS", "[4 dicts]");
+    await line("main()", 0.6);
+    await line("def main():", 0.5);
+    await line('print("Welcome', 0.5); out("Welcome to the Python quiz!");
+    let rounds;
+    while (true) {
+      await line("while True:", 0.5);
+      await line("try:", 0.4);
+      cp.hl("rounds = int(input(");
+      const txt = await input("How many questions (1-4)? ");
+      live(t);
+      if (!/^\s*[+-]?\d+\s*$/.test(txt)) {
+        say(`<code>int('${DS.esc(txt)}')</code> raised a <b>ValueError</b>, so Python jumps to <code>except</code>.`);
+        await line("except ValueError:", 1); await line('print("Please type a number.")', 0.4); out("Please type a number.");
+        continue;
+      }
+      rounds = parseInt(txt, 10); setVar("rounds", rounds);
+      await line("if 1 <= rounds", 0.8);
+      if (rounds >= 1 && rounds <= 4) { await line("break", 0.7); break; }
+      await line('print("Please pick', 0.5); out("Please pick a number from 1 to 4");
+    }
+    await line("score = play(rounds)", 0.6);
+    const score = await play(rounds);
+    await line("score = play(rounds)", 0.6); setVar("score", score);
+    const percent = Math.round(score / rounds * 100);
+    await line("percent = round(", 0.7); setVar("percent", percent);
+    await line('print(f"You scored', 0.6); out(`You scored ${score}/${rounds} (${percent}%)`);
+    const d = new Date();
+    await line('print("Played on"', 0.6); out(`Played on ${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`);
+    out("$", "dim"); cp.clear();
+    say(score === rounds ? "🎉 Perfect score! Read the table below to see which lesson each part of the game uses." : "Game over. Press <b>Start</b> to play again, or read the code and the table below.");
+  }
+  function stop() {
+    token++;
+    if (waiting) waiting("");
+    inp.disabled = true; send.disabled = true;
+    delete root.dataset.busy;
+    root.querySelectorAll("button:not(.always)").forEach(b => (b.disabled = false));
+    cp.clear(); say("Stopped. Press <b>Start the game</b> to play.");
+  }
+  $(".g-start").onclick = () => DS.run(root, () => main().catch(e => { if (e.message !== "stopped") console.error(e); }));
+  $(".g-stop").onclick = stop;
+  showVars();
+  say("Press <b>Start the game</b>, then answer in the console. Try typing <code>abc</code> or <code>9</code> when it asks how many questions.");
+
+  DS.quiz(document.querySelector("#project .quizbox"), [
+    { q: "Which part of the game stops it from crashing when the player types <code>abc</code> for the number of questions?", options: ["random.sample", "except ValueError", "return score", "import datetime"], answer: 1,
+      why: "<code>int(\"abc\")</code> raises a <code>ValueError</code>; the <code>except ValueError</code> block catches it, prints a message, and the loop asks again." },
+    { q: "Where are the questions and their answers stored?", options: ["In a set", "In a list of dictionaries", "In a tuple of strings", "In the random module"], answer: 1,
+      why: "<code>QUESTIONS</code> is a list, and each item is a dict with a <code>\"q\"</code> key and an <code>\"a\"</code> key." },
+    { q: "Why is the game split into <code>ask()</code>, <code>play()</code> and <code>main()</code>?", options: ["Python requires three functions", "Each function does one clear job, so the code is easier to read and change", "It makes the game run faster", "Functions are needed for print() to work"], answer: 1,
+      why: "Small functions with one job each are easier to understand, test and reuse." },
+  ]);
+})();
+</script>
+
+<!-- ===================================================================== cheat sheet -->
+<section class="section" id="cheatsheet" data-title="Python cheat sheet">
+  <h2>Python cheat sheet</h2>
+  <p class="lead">Everything from the course on one page. Filter by topic to revise before the final quiz.</p>
+  <style>
+    #cheatsheet [data-col][aria-pressed="true"] { background: var(--surface-2); color: var(--text); border-color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); }
+  </style>
+  <div class="controls cs-filters" role="group" aria-label="Filter by topic"></div>
+  <div style="overflow-x:auto"><table class="cx" id="csTable"></table></div>
+</section>
+<script>
+(() => {
+  const rows = [
+    ["Basics", "#start", 'print("Hi", name)', "show values on the screen, separated by spaces"],
+    ["Basics", "#start", "# a comment", "a note for humans; Python ignores it"],
+    ["Variables", "#vars", "age = 21", "store a value under a name"],
+    ["Variables", "#vars", "int  float  str  bool  None", "the core types: 7, 3.5, 'hi', True, None"],
+    ["Variables", "#vars", "type(x)", "ask for the type of a value"],
+    ["Variables", "#vars", 'int("5")  float("2.5")  str(5)', "convert between types"],
+    ["Variables", "#vars", 'name = input("Name? ")', "read what the user types (always a str)"],
+    ["Operators", "#ops", "+  -  *  /  //  %  **", "add, subtract, multiply, divide, whole divide, remainder, power"],
+    ["Operators", "#ops", "==  !=  <  >  <=  >=", "compare two values; gives True or False"],
+    ["Operators", "#ops", "and  or  not", "combine or flip True / False"],
+    ["Strings", "#strings", "s[0]  s[-1]  s[1:4]  s[::-1]", "index, last item, slice, reverse"],
+    ["Strings", "#strings", 's.strip()  s.split(",")  ", ".join(lst)', "trim spaces, cut into a list, glue a list"],
+    ["Strings", "#strings", 's.replace("a", "b")  s.upper()  len(s)', "swap text, change case, count characters"],
+    ["Strings", "#strings", 'f"{name} is {age}"', "f-string: put values inside text"],
+    ["Control flow", "#flow", "if x > 0: … elif x == 0: … else: …", "run one block depending on conditions"],
+    ["Control flow", "#flow", "for i in range(1, 5):", "repeat for 1, 2, 3, 4"],
+    ["Control flow", "#flow", "while count > 0:", "repeat while the condition is True"],
+    ["Control flow", "#flow", "break  continue", "leave the loop / skip to the next round"],
+    ["Collections", "#collections", 'fruits = ["a", "b"]; fruits.append("c")', "list: ordered and changeable"],
+    ["Collections", "#collections", "point = (3, 4)", "tuple: ordered and fixed"],
+    ["Collections", "#collections", 'ages = {"Ada": 36}; ages["Ada"]', "dict: look up a value by its key"],
+    ["Collections", "#collections", 'colors = {"red", "blue"}', "set: unique items only"],
+    ["Collections", "#collections", "[n * n for n in range(5)]", "list comprehension: build a list in one line"],
+    ["Functions", "#functions", "def area(w, h=1):\n    return w * h", "define a function with a default value"],
+    ["Functions", "#functions", "size = area(3, 4)", "call it and keep the returned value"],
+    ["Modules", "#modules", "import math  ·  from math import sqrt  ·  import datetime as dt", "three import styles"],
+    ["Modules", "#modules", "random.randint(1, 6)  ·  random.choice(lst)", "random numbers and picks"],
+    ["Modules", "#modules", "dt.date.today()  ·  dt.timedelta(days=7)", "today's date, a length of time"],
+    ["Errors", "#errors", "try: … except ValueError: … finally: …", "handle an error instead of crashing"],
+    ["Errors", "#errors", "Read the last line of a traceback first", "it names the error and what went wrong"],
+  ];
+  const topics = ["All", ...new Set(rows.map(r => r[0]))];
+  const filters = document.querySelector("#cheatsheet .cs-filters");
+  const table = document.getElementById("csTable");
+  let only = "All";
+  function render() {
+    table.innerHTML = "";
+    table.append(DS.el("thead", {}, DS.el("tr", {}, DS.el("th", {}, "Topic"), DS.el("th", {}, "Code"), DS.el("th", {}, "What it does"))));
+    table.append(DS.el("tbody", {}, ...rows.filter(r => only === "All" || r[0] === only).map(([t, href, code, what]) =>
+      DS.el("tr", {}, DS.el("td", {}, DS.el("a", { href }, t)), DS.el("td", {}, DS.el("code", { style: { whiteSpace: "pre-wrap" } }, code)), DS.el("td", {}, what)))));
+  }
+  const btns = topics.map(t => {
+    const b = DS.el("button", { class: "secondary always", "data-col": t, "aria-pressed": String(t === "All") }, t === "All" ? "All topics" : t);
+    b.onclick = () => { only = t; btns.forEach(x => x.setAttribute("aria-pressed", String(x === b))); render(); };
+    filters.append(b);
+    return b;
+  });
+  render();
+})();
+</script>
+<section class="section" id="finalquiz" data-title="Final quiz & certificate">
+  <h2>Final quiz &amp; certificate</h2>
+  <p class="lead">This is the last step of the course: one list of 10 questions covering every lesson. After each answer you'll see the correct option and why it's right. Score 80% or more (8 of 10) to earn a certificate with your name.</p>
+  <style>
+    #finalquiz .fq-progress { font-weight: 600; margin: 4px 0 12px; }
+    #finalquiz .fq-result { margin: 8px 0 0; }
+    #finalquiz .fq-result .controls { margin-top: 10px; }
+    #finalquiz .cert { margin: 18px auto 0; max-width: 760px; text-align: center; background: var(--surface);
+      border: 3px double var(--accent); outline: 1px solid var(--border); outline-offset: 6px;
+      border-radius: 6px; padding: 36px 28px; }
+    #finalquiz .cert .c-kicker { font-size: .8rem; letter-spacing: .2em; text-transform: uppercase; color: var(--text-2); }
+    #finalquiz .cert .c-title { font-size: 1.9rem; font-weight: 700; margin: 6px 0 18px; }
+    #finalquiz .cert .c-name { font-size: 2.1rem; font-weight: 700; color: var(--accent); margin: 10px auto 6px;
+      padding: 0 24px 6px; border-bottom: 1px solid var(--border); display: inline-block; max-width: 100%; overflow-wrap: anywhere; }
+    #finalquiz .cert .c-body { color: var(--text-2); margin: 10px 0; }
+    #finalquiz .cert .c-score { font-size: 1.15rem; font-weight: 600; margin: 14px 0 4px; }
+    #finalquiz .cert .c-levels { font-size: .9rem; color: var(--text-2); }
+    #finalquiz .cert .c-sign, #certPrint .c-sign { display: inline-flex; flex-direction: column; align-items: center; min-width: 200px; }
+    #finalquiz .cert .c-sig, #certPrint .c-sig { font: italic 400 1.9rem/1.1 "Segoe Script", "Brush Script MT", "Lucida Handwriting", "Apple Chancery", cursive;
+      padding: 0 10px 4px; border-bottom: 1px solid var(--border); align-self: stretch; text-align: center; }
+    #finalquiz .cert .c-sig { color: var(--accent); }
+    #finalquiz .cert .c-sigrole, #certPrint .c-sigrole { font-size: .85rem; margin-top: 6px; }
+    #finalquiz .cert .c-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; text-align: left;
+      margin-top: 28px; font-size: .85rem; color: var(--text-2); }
+    #finalquiz .cert, #certPrint .cert { box-sizing: border-box; }
+    #certPrint { display: none; }
+    @media print {
+      html, body { background: white !important; color: black !important; }
+      body > *:not(#certPrint) { display: none !important; }
+      /* Same blue as the on-screen certificate (light-theme --accent); fixed so dark mode prints the same. */
+      #certPrint { display: block; padding: 24px; --cert-blue: #2a78d6; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      #certPrint .cert { text-align: center; max-width: 760px; margin: 0 auto; padding: 48px 32px; background: white; color: black;
+        border: 3px double var(--cert-blue); outline: 1px solid #c9d8ec; outline-offset: 6px; border-radius: 6px; font-family: var(--sans); }
+      #certPrint .c-kicker { font-size: .8rem; letter-spacing: .2em; text-transform: uppercase; color: #333; }
+      #certPrint .c-title { font-size: 1.9rem; font-weight: 700; margin: 6px 0 18px; }
+      #certPrint .c-name { font-size: 2.1rem; font-weight: 700; color: var(--cert-blue); margin: 10px auto 6px; padding: 0 24px 6px; border-bottom: 1px solid #c9d8ec; display: inline-block; }
+      #certPrint .c-body, #certPrint .c-levels, #certPrint .c-foot { color: #333; margin: 10px 0; }
+      #certPrint .c-score { font-size: 1.15rem; font-weight: 600; margin: 14px 0 4px; }
+      #certPrint .c-foot { display: flex; justify-content: space-between; align-items: baseline; margin-top: 28px; font-size: .85rem; text-align: left; }
+      #certPrint .c-sig { color: var(--cert-blue); border-bottom-color: #c9d8ec; }
+    }
+  </style>
+  <div id="finalQuizBox"></div>
+  <div class="card" id="certBox" aria-live="polite"></div>
+</section>
+
+<script>
+(() => {
+  /* ---------- final quiz: one list ---------- */
+  const finalQs = [
+    { q: "What does <code>print(\"Hello\")</code> do?", options: ["Saves Hello to a file", "Shows Hello on the screen", "Creates a variable called Hello", "Asks the user for Hello"], answer: 1,
+      why: "<code>print()</code> shows its values on the screen. It's the first function every Python programmer uses." },
+    { q: "What is the type of <code>3.5</code>?", options: ["int", "float", "str", "bool"], answer: 1,
+      why: "Numbers with a decimal point are <code>float</code>s. Whole numbers like <code>3</code> are <code>int</code>s." },
+    { q: "What is <code>int(\"7\") + 1</code>?", options: ["\"71\"", "8", "\"7 + 1\"", "An error"], answer: 1,
+      why: "<code>int(\"7\")</code> turns the text into the number 7, and 7 + 1 is <b>8</b>." },
+    { q: "What is <code>2 + 3 * 4</code>?", options: ["20", "14", "24", "9"], answer: 1,
+      why: "Multiplication comes before addition: <code>3 * 4</code> is 12, then 2 + 12 is <b>14</b>." },
+    { q: "What is <code>\"Python\"[0]</code>?", options: ["'P'", "'y'", "'n'", "'Python'"], answer: 0,
+      why: "Positions start at 0, so index 0 is the first character, <code>'P'</code>." },
+    { q: "How many times does the body of <code>for i in range(3):</code> run?", options: ["2", "3", "4", "Forever"], answer: 1,
+      why: "<code>range(3)</code> gives 0, 1 and 2: three numbers, so the loop body runs <b>3</b> times." },
+    { q: "Which collection stores <b>key → value</b> pairs, like a phone book?", options: ["list", "tuple", "dict", "set"], answer: 2,
+      why: "A <code>dict</code> maps each key to a value, so you can look a value up by its key: <code>ages[\"Ada\"]</code>." },
+    { q: "Which keyword sends a value back from a function to the code that called it?", options: ["print", "return", "def", "break"], answer: 1,
+      why: "<code>return</code> hands a value back to the caller. (<code>print</code> only shows it on the screen.)" },
+    { q: "After <code>import math</code>, how do you get the square root of 16?", options: ["sqrt(16)", "math.sqrt(16)", "math(16)", "16.sqrt()"], answer: 1,
+      why: "With <code>import math</code>, you reach the module's tools through its name and a dot: <code>math.sqrt(16)</code>." },
+    { q: "In <code>try</code> / <code>except</code>, which block runs when an error happens inside <code>try</code>?", options: ["try", "except", "else", "None of them: the program always crashes"], answer: 1,
+      why: "When code inside <code>try</code> raises an error, Python jumps to the matching <code>except</code> block instead of crashing." },
+  ];
+  const fq = document.getElementById("finalQuizBox");
+  const certBox = document.getElementById("certBox");
+  const PASS = 0.8;
+  let result = { correct: 0, answered: 0, total: finalQs.length };
+  const totalQs = finalQs.length;
+  const needed = Math.ceil(PASS * totalQs);
+  let certName = "", showScore = true;
+  // The provider who signs every certificate: fixed, never taken from the learner's input.
+  const PROVIDER = "Ibrahim Sobh";
+
+  // Re-render the certificate panel from the current answers.
+  function renderCert() {
+    const { correct, answered } = result;
+    const pct = Math.round(100 * correct / totalQs);
+    certBox.innerHTML = "";
+    certBox.append(DS.el("h3", { style: { margin: "0 0 4px" } }, "🎓 Certificate"));
+    if (answered < totalQs) {
+      certBox.append(
+        DS.el("p", { class: "fq-progress" }, `${answered} of ${totalQs} questions answered · ${correct} correct so far`),
+        DS.el("p", { style: { margin: "0", color: "var(--text-2)" } },
+          `Answer all ${totalQs} questions. You need at least ${needed} correct (80%) to earn your certificate.`));
+      return;
+    }
+    if (correct < needed) {
+      certBox.append(DS.el("div", { class: "callout warn fq-result" },
+        DS.el("b", {}, `Not yet: you scored ${correct} / ${totalQs} (${pct}%).`),
+        ` You need ${needed} / ${totalQs} (80%) for the certificate, so ${needed - correct} more correct answer${needed - correct > 1 ? "s" : ""}. `,
+        "Read the explanations above, then press ", DS.el("b", {}, "Try again"), " to retake the quiz."));
+      return;
+    }
+    const nameIn = DS.el("input", { type: "text", maxlength: "60", placeholder: "Your full name", "aria-label": "Your name for the certificate", style: { minWidth: "220px" } });
+    nameIn.value = certName;
+    const err = DS.el("span", { style: { color: "var(--bad)", fontWeight: "600" } });
+    const scoreCb = DS.el("input", { type: "checkbox", style: { accentColor: "var(--accent)", margin: "0 6px 0 0" } });
+    scoreCb.checked = showScore;
+    // Toggling updates a certificate that is already on screen.
+    scoreCb.addEventListener("change", () => { showScore = scoreCb.checked; if (certName) showCert(certName, correct, pct); });
+    const make = () => {
+      const name = nameIn.value.trim().replace(/\s+/g, " ");
+      if (!name) { err.textContent = "Please enter your name first."; nameIn.focus(); return; }
+      certName = name; err.textContent = "";
+      showCert(name, correct, pct);
+    };
+    nameIn.addEventListener("keydown", e => { if (e.key === "Enter") make(); });
+    certBox.append(DS.el("div", { class: "callout tip fq-result" },
+      DS.el("b", {}, `✓ Passed! You scored ${correct} / ${totalQs} (${pct}%).`),
+      " Enter your name to get your certificate.",
+      DS.el("div", { class: "controls" }, nameIn, DS.el("button", { class: "always", onclick: make }, "Get my certificate"), err),
+      DS.el("label", { style: { display: "inline-flex", alignItems: "center", marginTop: "8px", cursor: "pointer" } },
+        scoreCb, "Show my score on the certificate")));
+    if (certName) showCert(certName, correct, pct);
+  }
+
+  function showCert(name, correct, pct) {
+    const old = certBox.querySelector(".cert-wrap");
+    if (old) old.remove();
+    const date = new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+    const cert = DS.el("div", { class: "cert", role: "img", "aria-label": `Certificate of completion for ${name}` },
+      DS.el("div", { class: "c-kicker" }, "Certificate of completion"),
+      DS.el("div", { class: "c-title" }, "Introduction to Python"),
+      DS.el("div", { class: "c-body" }, "This certifies that"),
+      DS.el("div", { class: "c-name" }, name),
+      DS.el("div", { class: "c-body" }, "has completed the self-paced course and passed its final quiz, covering variables and data types, operators, strings, control flow, lists, tuples, dictionaries and sets, functions, modules, and errors and exceptions."),
+      showScore && DS.el("div", { class: "c-score" }, `Score: ${correct} / ${totalQs} (${pct}%)`),
+      DS.el("div", { class: "c-foot" },
+        DS.el("div", { class: "c-date" }, `Date: ${date}`),
+        DS.el("div", { class: "c-sign" },
+          DS.el("div", { class: "c-sig" }, PROVIDER),
+          DS.el("div", { class: "c-sigrole" }, "Course Provider"))));
+    const wrap = DS.el("div", { class: "cert-wrap" }, cert,
+      DS.el("div", { class: "controls", style: { justifyContent: "center", marginTop: "14px" } },
+        DS.el("button", { class: "always", onclick: () => printCert(cert) }, "Print / Save as PDF"),
+        DS.el("button", { class: "always", onclick: () => downloadCert(name, correct, pct, date) }, "Download as image")));
+    certBox.append(wrap);
+  }
+
+  // Print only the certificate: copy it into a top-level element that the print CSS keeps visible.
+  function printCert(cert) {
+    let host = document.getElementById("certPrint");
+    if (!host) { host = DS.el("div", { id: "certPrint" }); document.body.append(host); }
+    host.innerHTML = "";
+    host.append(cert.cloneNode(true));
+    window.print();
+  }
+
+  // Draw the certificate onto a canvas (same look as the printed one) and save it as a PNG.
+  async function downloadCert(name, correct, pct, date) {
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    const W = 800, S = 2, BLUE = "#2a78d6", LINE = "#c9d8ec", GREY = "#333";
+    const SANS = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+    const SCRIPT = '"Segoe Script", "Brush Script MT", "Lucida Handwriting", "Apple Chancery", cursive';
+    const body = "has completed the self-paced course and passed its final quiz, covering variables and data types, operators, strings, control flow, lists, tuples, dictionaries and sets, functions, modules, and errors and exceptions.";
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    // Lay out (and, when draw is true, paint) the certificate; returns its height.
+    function layout(draw) {
+      const text = (s, x, y, font, color, align = "center") => {
+        ctx.font = font; ctx.fillStyle = color; ctx.textAlign = align;
+        if (draw) ctx.fillText(s, x, y);
+        return ctx.measureText(s).width;
+      };
+      const line = (x1, y1, x2, y2, color) => {
+        if (!draw) return;
+        ctx.strokeStyle = color; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      };
+      let y = 100;
+      // Spaced capitals, drawn letter by letter so every browser spaces them the same.
+      ctx.font = `13px ${SANS}`;
+      const kicker = "CERTIFICATE OF COMPLETION", gap = 2.6;
+      const kw = [...kicker].reduce((w, c) => w + ctx.measureText(c).width + gap, -gap);
+      let kx = (W - kw) / 2;
+      for (const c of kicker) { text(c, kx, y, `13px ${SANS}`, GREY, "left"); kx += ctx.measureText(c).width + gap; }
+      y += 50; text("Introduction to Python", W / 2, y, `700 30px ${SANS}`, "#000");
+      y += 52; text("This certifies that", W / 2, y, `16px ${SANS}`, GREY);
+      y += 52;
+      ctx.font = `700 34px ${SANS}`;
+      let shown = name;
+      while (ctx.measureText(shown).width > W - 140 && shown.length > 1) shown = shown.slice(0, -1);
+      if (shown !== name) shown = shown.trimEnd() + "…";
+      const nw = text(shown, W / 2, y, `700 34px ${SANS}`, BLUE);
+      y += 16; line(W / 2 - nw / 2 - 24, y, W / 2 + nw / 2 + 24, y, LINE);
+      ctx.font = `16px ${SANS}`;
+      const lines = [];
+      let cur = "";
+      for (const word of body.split(" ")) {
+        const next = cur ? cur + " " + word : word;
+        if (ctx.measureText(next).width > W - 100 && cur) { lines.push(cur); cur = word; } else cur = next;
+      }
+      lines.push(cur);
+      y += 18;
+      for (const l of lines) { y += 26; text(l, W / 2, y, `16px ${SANS}`, GREY); }
+      if (showScore) { y += 38; text(`Score: ${correct} / ${totalQs} (${pct}%)`, W / 2, y, `600 18px ${SANS}`, "#000"); }
+      y += 64;
+      text(`Date: ${date}`, 60, y + 4, `13.5px ${SANS}`, GREY, "left");
+      const sx = W - 170;
+      const sw = Math.max(200, text(PROVIDER, sx, y, `italic 30px ${SCRIPT}`, BLUE) + 20);
+      line(sx - sw / 2, y + 12, sx + sw / 2, y + 12, LINE);
+      text("Course Provider", sx, y + 34, `13.5px ${SANS}`, GREY);
+      const H = y + 80;
+      if (draw) {
+        // Thin outer frame, then the double blue border, as on the printed certificate.
+        ctx.strokeStyle = LINE; ctx.lineWidth = 1; ctx.beginPath(); ctx.roundRect(14.5, 14.5, W - 29, H - 29, 10); ctx.stroke();
+        ctx.strokeStyle = BLUE;
+        for (const i of [21.5, 24.5]) { ctx.beginPath(); ctx.roundRect(i, i, W - 2 * i, H - 2 * i, 6); ctx.stroke(); }
+      }
+      return H;
+    }
+
+    const H = layout(false);
+    canvas.width = W * S; canvas.height = H * S;
+    ctx.scale(S, S);
+    ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, H);
+    ctx.textBaseline = "alphabetic";
+    layout(true);
+
+    const slug = name.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-+|-+$/g, "") || "certificate";
+    canvas.toBlob(blob => {
+      const a = DS.el("a", { href: URL.createObjectURL(blob), download: `certificate-${slug}.png` });
+      document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }, "image/png");
+  }
+
+  const qBox = DS.el("div");
+  const reset = () => {
+    qBox.innerHTML = "";
+    result = { correct: 0, answered: 0, total: totalQs };
+    DS.quiz(qBox, finalQs, r => { result = r; renderCert(); });
+  };
+  fq.append(DS.el("div", { class: "card", style: { marginBottom: "16px" } },
+    DS.el("div", { style: { display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap" } },
+      DS.el("h3", { style: { margin: "0" } }, "Final quiz"),
+      DS.el("span", { style: { color: "var(--text-2)", flex: "1" } }, `${totalQs} questions covering every lesson.`),
+      DS.el("button", { class: "secondary always", onclick: reset }, "Try again")),
+    qBox));
+  reset();
+})();
+</script>
+
+
+
+<footer>Introduction to Python — a free, self-paced course. Every code panel shows real Python you can copy and run yourself. Single self-contained file; works offline.</footer>
+</main>
+</div>
+
+<script>
+/* Build the sidebar from every section that has a data-title, and track the current one. */
+(() => {
+  const nav = document.getElementById("nav");
+  const sections = [...document.querySelectorAll("section[data-title]")];
+  const links = sections.map(s => {
+    const a = DS.el("a", { href: "#" + s.id }, s.dataset.title);
+    nav.append(a);
+    return a;
+  });
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        links.forEach(l => {
+          const on = l.getAttribute("href") === "#" + en.target.id;
+          l.classList.toggle("current", on);
+          // In the narrow-screen chip bar, keep the current chip visible (horizontal scroll only).
+          if (on && nav.scrollWidth > nav.clientWidth) {
+            const left = l.offsetLeft - (nav.clientWidth - l.offsetWidth) / 2;
+            nav.scrollTo({ left: Math.max(0, left), behavior: DS.reducedMotion() ? "auto" : "smooth" });
+          }
+        });
+      }
+    });
+  }, { rootMargin: "-40% 0px -55% 0px" });
+  sections.forEach(s => io.observe(s));
+})();
+</script>
+</body>
