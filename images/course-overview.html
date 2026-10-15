@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Overview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #faf8f1;
+      --color-ink:     #1c1c1c;
+      --color-muted:   #555555;
+      --font-sans:     'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 48px 16px;
+    }
+    .frame { max-width: 960px; width: 100%; }
+    h1 {
+      font-size: clamp(1.75rem, 2.4vw + 0.8rem, 2.2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle { font-size: 1rem; color: var(--color-muted); margin-bottom: 2rem; }
+    .figure { overflow-x: auto; }
+    svg { width: 100%; min-width: 720px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <h1>Introduction to Python</h1>
+    <p class="subtitle">Getting started · 8 lessons · final project · final quiz · certificate</p>
+
+    <div class="figure">
+    <svg viewBox="0 0 960 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="py-course-overview-title py-course-overview-desc"
+         font-family="Inter, system-ui, sans-serif">
+      <title id="py-course-overview-title">Introduction to Python: course path</title>
+      <desc id="py-course-overview-desc">The course starts with Getting Started, then eight lessons from variables and types to errors, then a final project and a final quiz; scoring 8 of 10 earns a certificate you can download and share.</desc>
+      <defs>
+        <marker id="arrow" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto"><polygon points="0 0, 12 5, 0 10" fill="#444444"/></marker>
+        <marker id="arrow-green" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto"><polygon points="0 0, 12 5, 0 10" fill="#2e7d32"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#faf8f1"/>
+
+      <!-- Zone: the eight lessons -->
+      <rect x="40" y="136" width="880" height="216" rx="16" fill="#ebf0f4" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="56" y="164" font-size="16" font-weight="700" fill="#245c99">8 lessons</text>
+
+      <!-- Connectors -->
+      <line x1="480" y1="96" x2="480" y2="136" stroke="#444444" stroke-width="2" marker-end="url(#arrow)"/>
+      <line x1="128" y1="352" x2="128" y2="416" stroke="#444444" stroke-width="2" marker-end="url(#arrow)"/>
+      <line x1="216" y1="456" x2="280" y2="456" stroke="#444444" stroke-width="2" marker-end="url(#arrow)"/>
+      <line x1="456" y1="456" x2="600" y2="456" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+      <!-- Connector label -->
+      <rect x="470" y="428" width="116" height="20" fill="#faf8f1"/>
+      <text x="528" y="443" text-anchor="middle" font-size="12" font-weight="700" fill="#276b2b">8 of 10 to pass</text>
+
+      <!-- Start -->
+      <rect x="360" y="32" width="240" height="64" rx="12" fill="#ffffff" stroke="#c8c8c8" stroke-width="1.5"/>
+      <text x="480" y="70" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Getting started</text>
+
+      <!-- Lessons, row 1 -->
+      <rect x="60" y="180" width="192" height="64" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="156" y="218" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Variables &amp; types</text>
+      <rect x="276" y="180" width="192" height="64" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="372" y="218" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Operators</text>
+      <rect x="492" y="180" width="192" height="64" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="588" y="218" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Strings</text>
+      <rect x="708" y="180" width="192" height="64" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="804" y="218" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Control flow</text>
+
+      <!-- Lessons, row 2 -->
+      <rect x="60" y="268" width="192" height="64" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="156" y="306" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Data structures</text>
+      <rect x="276" y="268" width="192" height="64" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="372" y="306" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Functions</text>
+      <rect x="492" y="268" width="192" height="64" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="588" y="306" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Modules</text>
+      <rect x="708" y="268" width="192" height="64" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="804" y="306" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Errors</text>
+
+      <!-- Final project and quiz -->
+      <rect x="40" y="416" width="176" height="80" rx="12" fill="#ffffff" stroke="#c8c8c8" stroke-width="1.5"/>
+      <text x="128" y="462" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Final project</text>
+      <rect x="280" y="416" width="176" height="80" rx="12" fill="#ffffff" stroke="#c8c8c8" stroke-width="1.5"/>
+      <text x="368" y="462" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Final quiz</text>
+
+      <!-- Focal: the certificate (larger, double frame like the real one) -->
+      <rect x="600" y="392" width="320" height="128" rx="12" fill="#dff0e0" stroke="#2e7d32" stroke-width="3"/>
+      <rect x="608" y="400" width="304" height="112" rx="8" fill="none" stroke="#2e7d32" stroke-width="1.5"/>
+      <text x="760" y="448" text-anchor="middle" font-size="20" font-weight="700" fill="#1c1c1c">Your certificate</text>
+      <text x="760" y="480" text-anchor="middle" font-size="16" fill="#555555">Download and share</text>
+    </svg>
+    </div>
+  </div>
+</body>
+</html>
