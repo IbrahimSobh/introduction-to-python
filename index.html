@@ -699,6 +699,8 @@ const PY = (() => {
   <h2>1. Getting Started <small style="color:var(--muted);font-weight:500">(your first program)</small></h2>
   <p class="lead">Python is a programming language that reads almost like English, which makes it one of the easiest languages to learn and one of the most widely used.</p>
   <p>A program is a list of instructions that the computer follows one line at a time, from top to bottom. Think of a recipe: each step is simple, and the order matters. Python's job is to read your recipe and carry it out.</p>
+  <div class="callout tip"><b>First program:</b> <code>print()</code> shows text on the screen. It is a ready-made command; Python calls commands like this <b>functions</b> (lesson 7 shows how to write your own). Whatever you put inside its brackets is what it shows. Text goes inside quotes: <code>print("Hello, World!")</code>. Numbers don't need quotes: <code>print(2 + 3)</code> shows <code>5</code>. Give <code>print()</code> several items separated by commas and it puts a space between them.</div>
+  <p>Below is a tiny program saved in a file called <code>hello.py</code> (<code>.py</code> is the ending used for Python files). Press <b>Step</b> to run it one line at a time; the box under the picture explains each line.</p>
 
   <div class="w-hello">
   <div class="grid2">
@@ -731,8 +733,8 @@ const PY = (() => {
 
   <h3>Installing Python and choosing an editor</h3>
   <ol class="ex">
-    <li>Download Python from <b>python.org</b> and run the installer. On Windows, tick <b>"Add Python to PATH"</b>.</li>
-    <li>Open a terminal and check it worked: <code>python --version</code> (on macOS or Linux it may be <code>python3 --version</code>).</li>
+    <li>Download Python from <b>python.org</b> and run the installer. On Windows, tick <b>"Add Python to PATH"</b>, so you can start Python by typing <code>python</code> in a terminal.</li>
+    <li>Open a <b>terminal</b>: a window where you type commands instead of clicking (on Windows it's called Command Prompt or PowerShell; on macOS it's Terminal). Check Python is installed: <code>python --version</code> (on macOS or Linux it may be <code>python3 --version</code>).</li>
     <li>Pick a place to write code:</li>
   </ol>
   <table class="cx">
@@ -775,8 +777,6 @@ const PY = (() => {
     </div>
   </div>
   </div>
-
-  <div class="callout tip"><b>First program:</b> <code>print()</code> shows text on the screen. Text goes inside quotes: <code>print("Hello, World!")</code>. Numbers don't need quotes: <code>print(2 + 3)</code> shows <code>5</code>. Give <code>print()</code> several items separated by commas and it puts a space between them.</div>
 
   <h3>Where it shows up</h3>
   <ul>
@@ -859,6 +859,7 @@ print(2 + 3)`;
   <h2>2. Variables and Data Types <small style="color:var(--muted);font-weight:500">(names for values)</small></h2>
   <p class="lead">A variable is a <b>name</b> that refers to a <b>value</b>. Every value has a <b>type</b> that decides what you can do with it.</p>
   <p>Think of sticky labels on boxes. <code>age = 21</code> puts the number 21 in a box and sticks the label <code>age</code> on it. Later, writing <code>age</code> means "the value in that box". Give the label to a new value and it simply moves.</p>
+  <p>The program below asks for your name and age, stores each answer under a name, and makes a few more variables of different types. Step through it now; the sections after it explain each new word.</p>
 
   <div class="w-vars">
   <div class="grid2">
@@ -886,7 +887,7 @@ print(2 + 3)`;
     <li>Names use letters, digits and <code>_</code>, and <b>can't start with a digit</b>: <code>score2</code> is fine, <code>2score</code> is not.</li>
     <li>No spaces or dashes: use <code>user_name</code>, not <code>user name</code> or <code>user-name</code>.</li>
     <li>Names are <b>case-sensitive</b>: <code>age</code> and <code>Age</code> are two different names.</li>
-    <li>You can't use Python's own words such as <code>if</code>, <code>for</code> or <code>class</code>.</li>
+    <li>You can't use Python's own reserved words, called <b>keywords</b>, such as <code>if</code>, <code>for</code> or <code>class</code>.</li>
     <li>Choose names that say what the value means: <code>price</code> beats <code>p</code>.</li>
   </ul>
 
@@ -898,9 +899,10 @@ print(2 + 3)`;
       <tr><td><code>float</code></td><td>Numbers with a decimal point</td><td><code>3.14</code>, <code>1.75</code>, <code>2.0</code></td></tr>
       <tr><td><code>str</code></td><td>Text, inside quotes</td><td><code>"hello"</code>, <code>'42'</code></td></tr>
       <tr><td><code>bool</code></td><td>Yes or no</td><td><code>True</code>, <code>False</code></td></tr>
-      <tr><td><code>None</code></td><td>"No value yet"</td><td><code>None</code></td></tr>
+      <tr><td><code>None</code> (its type is called <code>NoneType</code>)</td><td>"No value yet"</td><td><code>None</code></td></tr>
     </tbody>
   </table>
+  <p>The type names are short: <code>int</code> = <b>integer</b> (a whole number), <code>float</code> = <b>floating-point number</b> (a number with a decimal point), <code>str</code> = <b>string</b> (a string of characters, in other words text), <code>bool</code> = <b>Boolean</b> (True or False, named after the mathematician George Boole).</p>
   <p>Ask Python for the type of any value with <code>type()</code>: <code>type(3.14)</code> gives <code>&lt;class 'float'&gt;</code>.</p>
 
   <h3>Type conversion and user input</h3>
@@ -1046,7 +1048,8 @@ print("Next year you will be", next_year)`;
 <section class="section" id="ops" data-title="3. Operators & Expressions">
   <h2>3. Operators and Expressions <small style="color:var(--muted);font-weight:500">(working values out)</small></h2>
   <p class="lead">An <b>expression</b> is anything Python can work out to a single value, like <code>2 + 3 * 4</code>. <b>Operators</b> are the symbols that do the work.</p>
-  <p>It's the maths you know from school, with the same rule: multiplication happens before addition unless brackets say otherwise. Python also has operators that compare values and combine yes/no answers.</p>
+  <p>It's the maths you know from school, with the same rule: multiplication happens before addition unless brackets say otherwise. Python also has operators that compare values and combine yes/no answers. Working out an expression's value is called <b>evaluating</b> it.</p>
+  <p>Pick an expression below and press <b>Evaluate</b> to watch Python work it out one operator at a time. The tables after the demo list every operator and the order they go in.</p>
 
   <div class="w-ops">
   <div class="grid2">
@@ -1082,8 +1085,8 @@ print("Next year you will be", next_year)`;
       <tr><td><code>**</code></td><td>power</td><td><code>2 ** 3</code></td><td><code>8</code></td></tr>
       <tr><td><code>( )</code></td><td>do this part first</td><td><code>(1 + 2) * 3</code></td><td><code>9</code></td></tr>
       <tr><td><b>Comparison</b></td><td><code>==</code> <code>!=</code> <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></td><td>equal, not equal, less, greater…</td><td><code>5 &gt; 3</code></td><td><code>True</code></td></tr>
-      <tr><td rowspan="3"><b>Logical</b></td><td><code>and</code></td><td>True only if both are True</td><td><code>True and False</code></td><td><code>False</code></td></tr>
-      <tr><td><code>or</code></td><td>True if at least one is True</td><td><code>True or False</code></td><td><code>True</code></td></tr>
+      <tr><td rowspan="3"><b>Logical</b></td><td><code>and</code></td><td>True only if the values on both sides are True</td><td><code>True and False</code></td><td><code>False</code></td></tr>
+      <tr><td><code>or</code></td><td>True if at least one of the two sides is True</td><td><code>True or False</code></td><td><code>True</code></td></tr>
       <tr><td><code>not</code></td><td>flips True and False</td><td><code>not True</code></td><td><code>False</code></td></tr>
     </tbody>
   </table>
@@ -1214,8 +1217,9 @@ print(10 % 2 == 0)`;
 <!-- ===================================================================== 4 -->
 <section class="section" id="strings" data-title="4. Strings">
   <h2>4. Strings <small style="color:var(--muted);font-weight:500">(working with text)</small></h2>
-  <p class="lead">A string (<code>str</code>) is a sequence of characters. Each character has a numbered position, so you can pick out one character or a whole slice.</p>
-  <p>Think of a string as a row of letter tiles with numbers underneath. Counting starts at <b>0</b> on the left. Python also numbers from the right: <code>-1</code> is the last tile, <code>-2</code> the one before it.</p>
+  <p class="lead">A string (<code>str</code>) is a sequence of characters (single letters, digits, spaces or symbols). Each character has a numbered position, so you can pick out one character or a slice (several characters in a row).</p>
+  <p>Think of a string as a row of letter tiles with numbers underneath. The number under a tile is that character's <b>index</b> (its position number). Counting starts at <b>0</b> on the left. Python also numbers from the right: <code>-1</code> is the last tile, <code>-2</code> the one before it.</p>
+  <p>To pick a position, write the index in square brackets: <code>s[0]</code> is the character at index 0. Type a word below, choose the numbers, and press a button.</p>
 
   <div class="w-slice">
   <div class="grid2">
@@ -1259,7 +1263,8 @@ print(10 % 2 == 0)`;
   </ul>
 
   <h3>Common methods and f-strings</h3>
-  <p>A <b>method</b> is a function that belongs to a value, called with a dot: <code>text.upper()</code>. String methods never change the original; they give back a <b>new</b> string. Run the program below with your own text.</p>
+  <p>A <b>method</b> is a command that belongs to a value and works on it. You use it (programmers say you <i>call</i> it) by writing a dot after the value: <code>text.upper()</code>. A <b>function</b> is a named command such as <code>print()</code> or <code>len()</code>; lesson 7 covers them. String methods never change the original; they give back a <b>new</b> string.</p>
+  <p>Some methods work with a <b>list</b>: an ordered row of values in square brackets, like <code>['a', 'b']</code> (lesson 6 covers lists). Run the program below with your own text. Its last line uses an <b>f-string</b>, explained just below the table.</p>
 
   <div class="w-meth">
   <div class="grid2">
@@ -1285,7 +1290,7 @@ print(10 % 2 == 0)`;
     <tbody>
       <tr><td><code>strip()</code></td><td>removes spaces at both ends</td><td><code>"  hi  ".strip()</code></td><td><code>'hi'</code></td></tr>
       <tr><td><code>split(sep)</code></td><td>cuts into a list of pieces</td><td><code>"a,b,c".split(",")</code></td><td><code>['a', 'b', 'c']</code></td></tr>
-      <tr><td><code>sep.join(list)</code></td><td>glues a list back together</td><td><code>"-".join(["a", "b"])</code></td><td><code>'a-b'</code></td></tr>
+      <tr><td><code>sep.join(list)</code></td><td>glues a list back together, with the separator text <code>sep</code> between the items</td><td><code>"-".join(["a", "b"])</code></td><td><code>'a-b'</code></td></tr>
       <tr><td><code>replace(old, new)</code></td><td>swaps every <code>old</code> for <code>new</code></td><td><code>"cat".replace("c", "b")</code></td><td><code>'bat'</code></td></tr>
       <tr><td><code>upper()</code> / <code>lower()</code></td><td>changes the case</td><td><code>"Hi".lower()</code></td><td><code>'hi'</code></td></tr>
       <tr><td><code>len(s)</code></td><td>counts characters (a built-in function, not a method)</td><td><code>len("cat")</code></td><td><code>3</code></td></tr>
@@ -1453,6 +1458,7 @@ print(f"{count} fruits: {joined}")`;
   <h2>5. Control Flow <small style="color:var(--muted);font-weight:500">(decisions and loops)</small></h2>
   <p class="lead">Control flow decides <b>which</b> lines run and <b>how many times</b>. <code>if</code> makes decisions; <code>for</code> and <code>while</code> repeat work.</p>
   <p>Think of a road with junctions and roundabouts. At a junction (<code>if</code>) you take one road depending on a condition. On a roundabout (a loop) you go around again and again until it's time to exit (<code>break</code>), and sometimes you skip ahead to the next lap (<code>continue</code>).</p>
+  <p>The program below counts from 1 upward. For each number it decides what to print (<code>if</code> / <code>elif</code> / <code>else</code>). Two settings let you skip one number (<code>continue</code>) or stop early (<code>break</code>). The sections after the demo explain each keyword.</p>
 
   <div class="w-for">
   <div class="grid2">
@@ -1475,8 +1481,10 @@ print(f"{count} fruits: {joined}")`;
   </div>
   </div>
 
-  <h3>if / elif / else</h3>
-  <p>Python checks the conditions from the top. It runs the block under the <b>first</b> condition that is <code>True</code>, then skips the rest. <code>else</code> runs only when none of them were true. The lines that belong to a block are <b>indented</b> (4 spaces): indentation is how Python knows what's inside.</p>
+  <h3>Decisions and loops at a glance</h3>
+  <p>A <b>condition</b> is an expression that is <code>True</code> or <code>False</code>, such as <code>age &gt;= 18</code> (lesson 3). An <code>if</code> checks one condition; <code>elif</code> and <code>else</code> add more choices underneath it. The lines under each one form its <b>block</b>, and they are <b>indented</b> (4 spaces): indentation is how Python knows what's inside.</p>
+  <p>Python checks the conditions from the top. It runs the block under the <b>first</b> condition that is <code>True</code>, then skips the rest. <code>else</code> runs only when none of them were true.</p>
+  <p>A loop repeats its block. Each pass through a loop is called a <b>round</b> (or iteration), and the indented lines that repeat are the loop's <b>body</b>. <code>range(5)</code> gives the numbers 0, 1, 2, 3, 4; <code>range(1, 5)</code> gives 1, 2, 3, 4.</p>
   <table class="cx">
     <thead><tr><th>Statement</th><th>What it does</th></tr></thead>
     <tbody>
@@ -1491,7 +1499,8 @@ print(f"{count} fruits: {joined}")`;
   </table>
 
   <h3>Loops: for, while and range()</h3>
-  <p>Use <code>for</code> when you know what to loop over: a <code>range()</code> of numbers, or the items of a list or string. Use <code>while</code> when you repeat <b>until something happens</b>. <code>range(5)</code> gives 0, 1, 2, 3, 4; <code>range(1, 5)</code> gives 1, 2, 3, 4.</p>
+  <p>Use <code>for</code> when you know what to loop over: a <code>range()</code> of numbers, the items of a list (lesson 6), or the characters of a string. Use <code>while</code> when you repeat <b>until something happens</b>.</p>
+  <p>Here is a <code>while</code> loop that counts down from a number you choose and stops at zero.</p>
 
   <div class="w-while">
   <div class="grid2">
@@ -1509,7 +1518,7 @@ print(f"{count} fruits: {joined}")`;
     <div class="code"></div>
   </div>
   </div>
-  <div class="callout warn"><b>Infinite loops:</b> a <code>while</code> loop must change something so its condition eventually becomes <code>False</code>. Forget <code>count = count - 1</code> above and it would count forever. If that happens, press <b>Ctrl+C</b> to stop the program.</div>
+  <div class="callout warn"><b>Infinite loops:</b> a <code>while</code> loop must change something so its condition eventually becomes <code>False</code>. <code>count = count - 1</code> above means: work out <code>count - 1</code> first, then store the result back in <code>count</code>, so it goes down by one each round. Forget that line and it would count forever. If that happens, press <b>Ctrl+C</b> to stop the program.</div>
 
   <h3>Where it shows up</h3>
   <ul>
@@ -1599,8 +1608,9 @@ print("Go!")`;
 <!-- ===================================================================== 6 -->
 <section class="section" id="collections" data-title="6. Data Structures">
   <h2>6. Data Structures <small style="color:var(--muted);font-weight:500">(list, tuple, dict, set)</small></h2>
-  <p class="lead">Python has four built-in ways to keep many values together. Each one is good at a different job.</p>
-  <p>A <b>list</b> is like a shopping list: ordered, and you can add or cross off items. A <b>tuple</b> is like a date of birth: fixed once written. A <b>dict</b> is like a phone book: look up a value by its key. A <b>set</b> is like a bag of unique stickers: no duplicates allowed.</p>
+  <p class="lead">Python has four built-in (ready to use, nothing to install) ways to keep many values together, called <b>collections</b>. Each one is good at a different job.</p>
+  <p>A <b>list</b> is like a shopping list: ordered, and you can add or cross off items. A <b>tuple</b> (a maths word for a fixed group of values) is like a date of birth: fixed once written. A <b>dict</b> (short for dictionary) is like a phone book: you look up a <b>value</b> (the phone number) by its <b>key</b> (the person's name). A <b>set</b> is like a bag of unique stickers: no duplicates allowed.</p>
+  <p>Below, four collections are already in memory. Each button runs one line of code on them, and the box under the picture explains what that line did.</p>
 
   <div class="w-coll">
   <div class="grid2">
@@ -1643,13 +1653,14 @@ print("Go!")`;
   </div>
 
   <h3>list, tuple, dict and set</h3>
+  <p><b>Ordered</b> means the items stay in the order you put them in (not that they get sorted).</p>
   <div style="overflow-x:auto">
   <table class="cx">
     <thead><tr><th>Type</th><th>Written as</th><th>Ordered?</th><th>Can change?</th><th>Duplicates?</th><th>Get an item</th></tr></thead>
     <tbody>
       <tr><td><b>list</b></td><td><code>["a", "b"]</code></td><td>yes</td><td>yes</td><td>yes</td><td><code>items[0]</code></td></tr>
       <tr><td><b>tuple</b></td><td><code>(3, 4)</code></td><td>yes</td><td>no</td><td>yes</td><td><code>point[0]</code></td></tr>
-      <tr><td><b>dict</b></td><td><code>{"Ada": 36}</code></td><td>keeps insertion order</td><td>yes</td><td>keys are unique</td><td><code>ages["Ada"]</code></td></tr>
+      <tr><td><b>dict</b></td><td><code>{"Ada": 36}</code></td><td>keeps the order keys were added</td><td>yes</td><td>keys are unique</td><td><code>ages["Ada"]</code></td></tr>
       <tr><td><b>set</b></td><td><code>{"red", "blue"}</code></td><td>no</td><td>yes</td><td>no</td><td><code>"red" in colors</code></td></tr>
     </tbody>
   </table>
@@ -1907,6 +1918,7 @@ print(quick)`;
   <h2>7. Functions <small style="color:var(--muted);font-weight:500">(reusable blocks of code)</small></h2>
   <p class="lead">A function is a named block of code that does one job. You <b>define</b> it once with <code>def</code> and <b>call</b> it as many times as you like.</p>
   <p>Think of a coffee machine. You press a button and give it inputs (the cup size). It does its work inside, then hands you a result (the coffee). You don't need to know what happens inside to use it, and you can use it again and again.</p>
+  <p>The program below defines two functions, <code>greet</code> and <code>area</code>, and then uses (calls) them. Step through it: a purple box of the function's own names appears for each call. The sections after the demo explain what you see.</p>
 
   <div class="w-func">
   <div class="grid2">
@@ -2025,6 +2037,7 @@ print(area(${w}))`;
   <h2>8. Modules <small style="color:var(--muted);font-weight:500">(the standard library)</small></h2>
   <p class="lead">A <b>module</b> is a file of ready-made Python code. <code>import</code> loads it so you can use its functions instead of writing them yourself.</p>
   <p>Think of a toolbox. Python comes with a big one, the <b>standard library</b>, with a drawer for each kind of job: <code>math</code> for calculations, <code>random</code> for chance, <code>datetime</code> for dates. <code>import</code> opens a drawer; it's free and already installed.</p>
+  <p>The program below imports modules in three different ways (the <b>Import styles</b> table after it explains each one). Each button runs one line.</p>
 
   <div class="w-mod">
   <div class="grid2">
@@ -2185,11 +2198,11 @@ print(today + dt.timedelta(days=7))`;
 <!-- ===================================================================== 9 -->
 <section class="section" id="errors" data-title="9. Errors & Exceptions">
   <h2>9. Errors and Exceptions <small style="color:var(--muted);font-weight:500">(when things go wrong)</small></h2>
-  <p class="lead">Errors are normal: every programmer sees them all day. Python tells you <b>what</b> went wrong and <b>where</b>, and <code>try</code> / <code>except</code> lets your program recover instead of crashing.</p>
+  <p class="lead">Errors are normal: every programmer sees them all day. Python tells you <b>what</b> went wrong and <b>where</b>, and <code>try</code> / <code>except</code> lets your program recover instead of crashing. When Python hits a problem while running, it stops and reports an error. Python calls this an <b>exception</b>, and says the line <b>raised</b> it.</p>
   <p>Think of a smoke alarm. An exception is the alarm going off: something unexpected happened. A <b>traceback</b> tells you which room it came from, and an <code>except</code> block is your plan for what to do when the alarm rings.</p>
 
   <h3>Reading error messages and tracebacks</h3>
-  <p>Click each line of the traceback to see what it means. The program it came from is on the right.</p>
+  <p>Click each line of the traceback to see what it means. The program it came from is on the right. It uses two things you haven't met yet: <code>sum(items)</code> adds up all the numbers in a list, and <code>if not items:</code> is True when the list is empty (an empty list counts as False).</p>
   <div class="w-tb">
   <div class="grid2">
     <div class="card">
@@ -2365,7 +2378,7 @@ safe_divide("${a}", "${b}")`;
 <!-- ===================================================================== 10 -->
 <section class="section" id="project" data-title="10. Final Project">
   <h2>10. Final Project <small style="color:var(--muted);font-weight:500">(a quiz game)</small></h2>
-  <p class="lead">Time to put it all together: a small quiz game that uses variables, strings, loops, a list of dictionaries, functions, two modules and error handling.</p>
+  <p class="lead">Time to put it all together: a small quiz game that uses variables, strings, loops, a list of dicts (dictionaries), functions, two modules and error handling.</p>
   <p>Play it below. The game really runs: type your answers into the console and watch each line of the program light up as it executes. Then read the code and the table underneath to see which lesson every part comes from.</p>
 
   <div class="w-game">
@@ -2404,6 +2417,15 @@ safe_divide("${a}", "${b}")`;
       <tr><td><code>input()</code>, <code>int()</code>, <code>score = 0</code></td><td>reads the player's answers, keeps the score</td><td><a href="#vars">2. Variables &amp; Types</a></td></tr>
     </tbody>
   </table>
+
+  <h3>New pieces in the game</h3>
+  <p>The game uses a few small things the lessons didn't show:</p>
+  <ul>
+    <li><code>score += 1</code> is short for <code>score = score + 1</code>.</li>
+    <li><code>while True:</code> repeats forever on purpose. The <code>break</code> inside it is the way out: it runs once the player types a valid number.</li>
+    <li><code>1 &lt;= rounds &lt;= len(QUESTIONS)</code> means <code>rounds</code> is at least 1 and at most 4 (the number of questions).</li>
+    <li><code>random.sample(QUESTIONS, rounds)</code> picks that many different questions in a random order, and <code>round()</code> rounds a number to the nearest whole number.</li>
+  </ul>
 
   <h3>Make it your own</h3>
   <ul>
