@@ -721,7 +721,7 @@ const PY = (() => {
 
   <h3>What Python is and where people use it</h3>
   <p>Python is a <b>general-purpose</b> language: the same language is used for very different jobs. It's free, it runs on Windows, macOS and Linux, and it comes with a huge collection of ready-made tools.</p>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Area</th><th>What people build with Python</th></tr></thead>
     <tbody>
       <tr><td><b>Data and AI</b></td><td>Data analysis, charts, machine learning and AI models</td></tr>
@@ -729,7 +729,7 @@ const PY = (() => {
       <tr><td><b>Automation</b></td><td>Scripts that rename files, fill spreadsheets or send reports</td></tr>
       <tr><td><b>Science and education</b></td><td>Experiments, simulations, and first programming courses</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h3>Installing Python and choosing an editor</h3>
   <ol class="ex">
@@ -737,7 +737,7 @@ const PY = (() => {
     <li>Open a <b>terminal</b>: a window where you type commands instead of clicking (on Windows it's called Command Prompt or PowerShell; on macOS it's Terminal). Check Python is installed: <code>python --version</code> (on macOS or Linux it may be <code>python3 --version</code>).</li>
     <li>Pick a place to write code:</li>
   </ol>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Tool</th><th>Good for</th></tr></thead>
     <tbody>
       <tr><td><b>VS Code</b></td><td>A free, light editor. Add the <b>Python</b> extension, then press ▶ to run a file.</td></tr>
@@ -745,7 +745,7 @@ const PY = (() => {
       <tr><td><b>Jupyter</b></td><td>Notebooks made of cells: run small pieces one at a time. Popular in data science.</td></tr>
       <tr><td><b>IDLE</b></td><td>A simple editor that comes with Python. Fine for your first steps.</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h3>Running a script vs. the interactive shell (REPL)</h3>
   <p>There are two ways to run Python. A <b>script</b> is a file such as <code>hello.py</code> that you run all at once with <code>python hello.py</code>. The <b>interactive shell</b>, or <b>REPL</b> (Read, Evaluate, Print, Loop), starts when you type <code>python</code> on its own: you type one line at a time after the <code>&gt;&gt;&gt;</code> prompt and see the answer immediately.</p>
@@ -764,7 +764,7 @@ const PY = (() => {
       <div class="status"></div>
     </div>
     <div class="card" style="box-shadow:none">
-      <table class="cx" style="margin:0">
+      <div style="overflow-x:auto"><table class="cx" style="margin:0">
         <thead><tr><th></th><th>Script</th><th>REPL</th></tr></thead>
         <tbody>
           <tr><td>Start it with</td><td><code>python hello.py</code></td><td><code>python</code></td></tr>
@@ -773,7 +773,7 @@ const PY = (() => {
           <tr><td>Best for</td><td>real programs you keep</td><td>quick experiments</td></tr>
           <tr><td>Leave with</td><td>it ends by itself</td><td><code>exit()</code></td></tr>
         </tbody>
-      </table>
+      </table></div>
     </div>
   </div>
   </div>
@@ -892,7 +892,7 @@ print(2 + 3)`;
   </ul>
 
   <h3>Core types</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Type</th><th>What it holds</th><th>Examples</th></tr></thead>
     <tbody>
       <tr><td><code>int</code></td><td>Whole numbers</td><td><code>7</code>, <code>-3</code>, <code>2025</code></td></tr>
@@ -901,7 +901,7 @@ print(2 + 3)`;
       <tr><td><code>bool</code></td><td>Yes or no</td><td><code>True</code>, <code>False</code></td></tr>
       <tr><td><code>None</code> (its type is called <code>NoneType</code>)</td><td>"No value yet"</td><td><code>None</code></td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>The type names are short: <code>int</code> = <b>integer</b> (a whole number), <code>float</code> = <b>floating-point number</b> (a number with a decimal point), <code>str</code> = <b>string</b> (a string of characters, in other words text), <code>bool</code> = <b>Boolean</b> (True or False, named after the mathematician George Boole).</p>
   <p>Ask Python for the type of any value with <code>type()</code>: <code>type(3.14)</code> gives <code>&lt;class 'float'&gt;</code>.</p>
 
@@ -1095,7 +1095,7 @@ print("Next year you will be", next_year)`;
 
   <h3>Operator precedence</h3>
   <p>When an expression has several operators, Python does them in this order, from first to last. Operators on the same row go left to right. When in doubt, add brackets: they make your intent clear to readers too.</p>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Order</th><th>Operators</th></tr></thead>
     <tbody>
       <tr><td>1</td><td><code>( )</code> brackets</td></tr>
@@ -1105,7 +1105,7 @@ print("Next year you will be", next_year)`;
       <tr><td>5</td><td><code>==</code> <code>!=</code> <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></td></tr>
       <tr><td>6</td><td><code>not</code>, then <code>and</code>, then <code>or</code></td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h3>Where it shows up</h3>
   <ul>
@@ -1285,7 +1285,7 @@ print(10 % 2 == 0)`;
   </div>
   </div>
 
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Method</th><th>What it does</th><th>Example</th><th>Result</th></tr></thead>
     <tbody>
       <tr><td><code>strip()</code></td><td>removes spaces at both ends</td><td><code>"  hi  ".strip()</code></td><td><code>'hi'</code></td></tr>
@@ -1295,7 +1295,7 @@ print(10 % 2 == 0)`;
       <tr><td><code>upper()</code> / <code>lower()</code></td><td>changes the case</td><td><code>"Hi".lower()</code></td><td><code>'hi'</code></td></tr>
       <tr><td><code>len(s)</code></td><td>counts characters (a built-in function, not a method)</td><td><code>len("cat")</code></td><td><code>3</code></td></tr>
     </tbody>
-  </table>
+  </table></div>
   <div class="callout tip"><b>f-strings:</b> put an <code>f</code> before the quotes and write any value or expression inside <code>{ }</code>: <code>f"{name} scored {score}"</code>. It's the easiest way to build text from values, and you don't need <code>str()</code>.</div>
 
   <h3>Where it shows up</h3>
@@ -1485,7 +1485,7 @@ print(f"{count} fruits: {joined}")`;
   <p>A <b>condition</b> is an expression that is <code>True</code> or <code>False</code>, such as <code>age &gt;= 18</code> (lesson 3). An <code>if</code> checks one condition; <code>elif</code> and <code>else</code> add more choices underneath it. The lines under each one form its <b>block</b>, and they are <b>indented</b> (4 spaces): indentation is how Python knows what's inside.</p>
   <p>Python checks the conditions from the top. It runs the block under the <b>first</b> condition that is <code>True</code>, then skips the rest. <code>else</code> runs only when none of them were true.</p>
   <p>A loop repeats its block. Each pass through a loop is called a <b>round</b> (or iteration), and the indented lines that repeat are the loop's <b>body</b>. <code>range(5)</code> gives the numbers 0, 1, 2, 3, 4; <code>range(1, 5)</code> gives 1, 2, 3, 4.</p>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Statement</th><th>What it does</th></tr></thead>
     <tbody>
       <tr><td><code>if condition:</code></td><td>runs the indented block only when the condition is <code>True</code></td></tr>
@@ -1496,7 +1496,7 @@ print(f"{count} fruits: {joined}")`;
       <tr><td><code>break</code></td><td>leaves the loop immediately</td></tr>
       <tr><td><code>continue</code></td><td>skips the rest of this round and starts the next one</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h3>Loops: for, while and range()</h3>
   <p>Use <code>for</code> when you know what to loop over: a <code>range()</code> of numbers, the items of a list (lesson 6), or the characters of a string. Use <code>while</code> when you repeat <b>until something happens</b>.</p>
@@ -1949,7 +1949,7 @@ print(quick)`;
   </ul>
 
   <h3>Parameters, default values and return values</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Term</th><th>Meaning</th><th>In the example</th></tr></thead>
     <tbody>
       <tr><td><b>Parameter</b></td><td>a name in the definition that receives a value</td><td><code>name</code>, <code>punctuation</code></td></tr>
@@ -1957,7 +1957,7 @@ print(quick)`;
       <tr><td><b>Default value</b></td><td>used when the caller leaves that argument out</td><td><code>punctuation="!"</code>, <code>height=1</code></td></tr>
       <tr><td><b>Return value</b></td><td>the result <code>return</code> sends back to the caller</td><td><code>return message</code></td></tr>
     </tbody>
-  </table>
+  </table></div>
   <div class="callout warn"><b>print vs. return:</b> <code>print()</code> only shows a value on the screen. <code>return</code> hands the value back so the caller can store it and use it. A function with no <code>return</code> gives back <code>None</code>.</div>
 
   <h3>Scope: local vs. global</h3>
@@ -2076,25 +2076,25 @@ print(area(${w}))`;
   </ul>
 
   <h3>Import styles</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>You write</th><th>Then you use</th><th>Good when</th></tr></thead>
     <tbody>
       <tr><td><code>import math</code></td><td><code>math.sqrt(16)</code></td><td>the usual choice: it's clear where <code>sqrt</code> comes from</td></tr>
       <tr><td><code>from math import sqrt</code></td><td><code>sqrt(16)</code></td><td>you use one or two names a lot</td></tr>
       <tr><td><code>import datetime as dt</code></td><td><code>dt.date.today()</code></td><td>the module name is long: <code>as</code> gives it a short nickname</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <div class="callout warn">Avoid <code>from math import *</code>. It dumps every name from the module into your program, so it's hard to tell where a name came from.</div>
 
   <h3>Practical use of math, random and datetime</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Module</th><th>Useful names</th><th>Example</th></tr></thead>
     <tbody>
       <tr><td><code>math</code></td><td><code>pi</code>, <code>sqrt()</code>, <code>floor()</code>, <code>ceil()</code></td><td>circle area: <code>math.pi * r ** 2</code></td></tr>
       <tr><td><code>random</code></td><td><code>randint(a, b)</code>, <code>choice(list)</code>, <code>shuffle(list)</code>, <code>sample(list, k)</code></td><td>dice games, picking a random question</td></tr>
       <tr><td><code>datetime</code></td><td><code>date.today()</code>, <code>timedelta(days=7)</code>, <code>datetime.now()</code></td><td>due dates, ages, timestamps</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h3>Where it shows up</h3>
   <ul>
@@ -2217,7 +2217,7 @@ print(today + dt.timedelta(days=7))`;
   </div>
   <div class="callout tip"><b>Read a traceback from the bottom up.</b> The last line names the error and says what went wrong. The lines above show the path that led there, ending at the exact line that failed.</div>
 
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Error</th><th>Usually means</th><th>Example</th></tr></thead>
     <tbody>
       <tr><td><code>SyntaxError</code></td><td>the code isn't written correctly (a missing colon, bracket or quote)</td><td><code>if x &gt; 3</code></td></tr>
@@ -2228,7 +2228,7 @@ print(today + dt.timedelta(days=7))`;
       <tr><td><code>KeyError</code></td><td>a dict key that doesn't exist</td><td><code>{"a": 1}["b"]</code></td></tr>
       <tr><td><code>ZeroDivisionError</code></td><td>dividing by zero</td><td><code>10 / 0</code></td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h3>try / except / finally</h3>
   <p>Put code that might fail inside <code>try</code>. If an error happens, Python jumps straight to the matching <code>except</code> block instead of crashing. <code>finally</code> runs at the end <b>either way</b>. Try a good input, then some text, then a zero.</p>
@@ -2404,7 +2404,7 @@ safe_divide("${a}", "${b}")`;
   </div>
 
   <h3>Which lesson each part comes from</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>In the game</th><th>What it does</th><th>Lesson</th></tr></thead>
     <tbody>
       <tr><td><code>import random</code>, <code>import datetime as dt</code></td><td>random question order, today's date</td><td><a href="#modules">8. Modules</a></td></tr>
@@ -2416,7 +2416,7 @@ safe_divide("${a}", "${b}")`;
       <tr><td><code>==</code>, <code>&lt;=</code>, <code>score / rounds * 100</code></td><td>checks answers and works out the percentage</td><td><a href="#ops">3. Operators</a></td></tr>
       <tr><td><code>input()</code>, <code>int()</code>, <code>score = 0</code></td><td>reads the player's answers, keeps the score</td><td><a href="#vars">2. Variables &amp; Types</a></td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h3>New pieces in the game</h3>
   <p>The game uses a few small things the lessons didn't show:</p>
