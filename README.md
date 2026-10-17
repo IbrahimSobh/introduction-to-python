@@ -2,6 +2,8 @@
 
 A **self-paced online course, completely free**, that teaches you to write real Python programs from zero: variables and data types, operators, strings, decisions and loops, lists, tuples, dictionaries and sets, functions, modules, and errors and exceptions. It ends with a small project that uses everything you learned.
 
+<sub><i>Created by <a href="https://www.linkedin.com/in/ibrahim-sobh-phd-8681757/">Ibrahim Sobh, PhD</a></i></sub>
+
 **The certificate is free too.** No sign-up and no fees: pass the final quiz and get a certificate with your name.
 
 ## 🚀 Take the course: [ibrahimsobh.github.io/introduction-to-python](https://ibrahimsobh.github.io/introduction-to-python/)
