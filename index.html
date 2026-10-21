@@ -61,6 +61,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 72px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 var(--sans); }
 a { color: var(--accent); }
+* { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; } /* keep != <= >= as typed (Cascadia Code ligatures) */
 code { font-family: var(--mono); font-size: .9em; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
 h1, h2, h3 { line-height: 1.25; }
 h2 { font-size: 1.75rem; margin: 0 0 .25rem; }
@@ -728,7 +729,7 @@ const PY = (() => {
   <h2>1. Getting Started <small style="color:var(--muted);font-weight:500">(your first program)</small></h2>
   <p class="lead">Python is a programming language that reads almost like English, which makes it one of the easiest languages to learn and one of the most widely used.</p>
   <p>A program is a list of instructions that the computer follows one line at a time, from top to bottom. Think of a recipe: each step is simple, and the order matters. Python's job is to read your recipe and carry it out.</p>
-  <div class="callout tip"><b>First program:</b> <code>print()</code> shows text on the screen. It is a ready-made command; Python calls commands like this <b>functions</b> (lesson 7 shows how to write your own). Whatever you put inside its brackets is what it shows. Text goes inside quotes: <code>print("Hello, World!")</code>. Numbers don't need quotes: <code>print(2 + 3)</code> shows <code>5</code>. Give <code>print()</code> several items separated by commas and it puts a space between them.</div>
+  <div class="callout tip"><b>First program:</b> <code>print()</code> shows text on the screen. It is a ready-made command; Python calls commands like this <b>functions</b> (lesson 7 shows how to write your own). Whatever you put inside its brackets is what it shows. Text goes inside quotes: <code>print("Hello, World!")</code>. Numbers don't need quotes: <code>print(2 + 3)</code> shows <code>5</code>. Give <code>print()</code> several items separated by commas and it puts a space between them. A line that starts with <code>#</code> is a <b>comment</b>: a note for humans that Python skips.</div>
   <p>Below is a tiny program saved in a file called <code>hello.py</code> (<code>.py</code> is the ending used for Python files). Press <b>Step</b> to run it one line at a time; the box under the picture explains each line.</p>
 
   <div class="w-hello">
@@ -770,7 +771,7 @@ const PY = (() => {
     <thead><tr><th>Tool</th><th>Good for</th></tr></thead>
     <tbody>
       <tr><td><b>VS Code</b></td><td>A free, light editor. Add the <b>Python</b> extension, then press ▶ to run a file.</td></tr>
-      <tr><td><b>PyCharm</b></td><td>A full Python IDE with smart hints and a debugger (the Community edition is free).</td></tr>
+      <tr><td><b>PyCharm</b></td><td>An <b>IDE</b> (integrated development environment: an editor with many tools built in), with smart hints and a debugger (a tool that runs code step by step; see lesson 9). It has a free version.</td></tr>
       <tr><td><b>Jupyter</b></td><td>Notebooks made of cells: run small pieces one at a time. Popular in data science.</td></tr>
       <tr><td><b>IDLE</b></td><td>A simple editor that comes with Python. Fine for your first steps.</td></tr>
     </tbody>
@@ -834,7 +835,7 @@ print(2 + 3)`;
         { line: 1, say: "Lines starting with <code>#</code> are <b>comments</b>: notes for humans. Python skips them.", wait: 1 },
         { line: 2, out: "Hello, World!", say: "<code>print()</code> shows the text inside the quotes. The quotes themselves are not printed." },
         { line: 3, out: "Python is fun", say: "Python moves to the next line and prints again. Programs run <b>top to bottom</b>." },
-        { line: 4, set: { name: `'${name}'` }, say: `This line prints nothing. It stores the text <b>'${DS.esc(name)}'</b> under the name <code>name</code> so we can use it later.` },
+        { line: 4, set: { name: `'${name}'` }, say: `This line prints nothing. It stores the text <b>'${DS.esc(name)}'</b> under the name <code>name</code> so we can use it later (lesson 2 calls this a <b>variable</b>).` },
         { line: 5, read: ["name"], out: `Nice to meet you, ${name}`, say: "<code>print()</code> can show several items. It looks up <code>name</code> and puts a space between the items." },
         { line: 6, out: "5", say: "No quotes, so <code>2 + 3</code> is maths, not text: Python works it out first and prints <b>5</b>." },
       ],
@@ -854,7 +855,7 @@ print(2 + 3)`;
   ];
   async function play() {
     con.innerHTML = "";
-    con.append(DS.el("div", { class: "dim" }, "$ python"), DS.el("div", { class: "dim" }, "Python 3.13 · type exit() to leave"));
+    con.append(DS.el("div", { class: "dim" }, "$ python"), DS.el("div", { class: "dim" }, "Python 3 · type exit() to leave"));
     for (const [cmd, res, why] of script) {
       const line = DS.el("div", {}, DS.el("span", { class: "dim" }, ">>> "));
       const typed = DS.el("span", { class: "in" });
@@ -873,11 +874,11 @@ print(2 + 3)`;
   st.innerHTML = "Press <b>Play</b> to watch a short REPL session.";
 
   DS.quiz(document.querySelector("#start .quizbox"), [
-    { q: "Which command runs a script saved as <code>hello.py</code>?", options: ["python hello.py", "run hello", "print(hello.py)", "open hello.py"], answer: 0,
+    { q: "Which command runs a script saved as <code>hello.py</code>?", options: ["print(hello.py)", "run hello", "python hello.py", "open hello.py"], answer: 2,
       why: "<code>python</code> followed by the file name runs the whole file from top to bottom." },
-    { q: "In the REPL you type <code>2 + 3</code> and press Enter. What do you see?", options: ["Nothing", "5", "2 + 3", "An error"], answer: 1,
+    { q: "In the REPL you type <code>2 + 3</code> and press Enter. What do you see?", options: ["5", "Nothing", "2 + 3", "An error"], answer: 0,
       why: "The REPL evaluates each expression and shows its value straight away, even without <code>print()</code>." },
-    { q: "What does <code>print(\"Hi\", \"there\")</code> show?", options: ["Hithere", "Hi there", "\"Hi\", \"there\"", "Hi, there"], answer: 1,
+    { q: "What does <code>print(\"Hi\", \"there\")</code> show?", options: ["Hithere", "Hi, there", "\"Hi\", \"there\"", "Hi there"], answer: 3,
       why: "<code>print()</code> shows each item without quotes and puts one space between items." },
   ]);
 })();
@@ -901,7 +902,7 @@ print(2 + 3)`;
         <button class="t-run">▶ Run</button>
         <button class="t-step">Step</button>
         <button class="secondary t-reset">Reset</button>
-        <span style="font-size:.82rem;color:var(--muted)">Try an age like <code>abc</code> too.</span>
+        <span style="font-size:.82rem;color:var(--muted)">Try an age like <code>abc</code> too: <code>int()</code> can't convert it and the program stops.</span>
       </div>
       <div class="viz"></div>
       <div class="status"></div>
@@ -948,6 +949,12 @@ print(2 + 3)`;
     </div>
     <div class="ty-out"></div>
   </div>
+  <ul>
+    <li><code>int()</code> of a number with a decimal point cuts the decimal part off: <code>int(3.5)</code> is <code>3</code>. It does not round.</li>
+    <li><code>int('abc')</code> stops the program with a <b>ValueError</b>, because the text isn't a whole number (lesson 9 shows how to handle it).</li>
+    <li><code>bool(x)</code> gives <code>False</code> for <code>0</code>, <code>0.0</code>, empty text <code>''</code> and <code>None</code>, and <code>True</code> for everything else.</li>
+    <li>Text without quotes is read as a name: <code>hi</code> on its own gives a <b>NameError</b> unless a variable called <code>hi</code> exists.</li>
+  </ul>
   <div class="callout warn"><b>Common mistake:</b> <code>"5" + 3</code> is a <code>TypeError</code>: Python won't add text to a number. Convert first: <code>int("5") + 3</code> gives <code>8</code>, and <code>"5" + str(3)</code> gives <code>'53'</code>.</div>
 
   <h3>Where it shows up</h3>
@@ -1063,11 +1070,11 @@ print("Next year you will be", next_year)`;
   check();
 
   DS.quiz(document.querySelector("#vars .quizbox"), [
-    { q: "Which of these is a valid variable name?", options: ["2nd_place", "user-name", "user_name", "class"], answer: 2,
+    { q: "Which of these is a valid variable name?", options: ["2nd_place", "user_name", "user-name", "class"], answer: 1,
       why: "Names can use letters, digits and underscores but can't start with a digit, can't contain dashes, and can't be a Python word like <code>class</code>." },
-    { q: "What is the type of <code>3.0</code>?", options: ["int", "float", "str", "bool"], answer: 1,
+    { q: "What is the type of <code>3.0</code>?", options: ["int", "bool", "str", "float"], answer: 3,
       why: "Any number written with a decimal point is a <code>float</code>, even when the part after the point is 0." },
-    { q: "What type does <code>input()</code> always give back?", options: ["int", "float", "str", "It depends on what the user types"], answer: 2,
+    { q: "What type does <code>input()</code> always give back?", options: ["str", "float", "int", "It depends on what the user types"], answer: 0,
       why: "<code>input()</code> always returns text (<code>str</code>). Use <code>int()</code> or <code>float()</code> to turn it into a number." },
   ]);
 })();
@@ -1076,7 +1083,7 @@ print("Next year you will be", next_year)`;
 <!-- ===================================================================== 3 -->
 <section class="section" id="ops" data-title="3. Operators & Expressions">
   <h2>3. Operators and Expressions <small style="color:var(--muted);font-weight:500">(working values out)</small></h2>
-  <p class="lead">An <b>expression</b> is anything Python can work out to a single value, like <code>2 + 3 * 4</code>. <b>Operators</b> are the symbols that do the work.</p>
+  <p class="lead">An <b>expression</b> is anything Python can work out to a single value, like <code>2 + 3 * 4</code>, which is 14 (<code>3 * 4</code> = 12 first, then 2 + 12). <b>Operators</b> are the symbols that do the work.</p>
   <p>It's the maths you know from school, with the same rule: multiplication happens before addition unless brackets say otherwise. Python also has operators that compare values and combine yes/no answers. Working out an expression's value is called <b>evaluating</b> it.</p>
   <p>Pick an expression below and press <b>Evaluate</b> to watch Python work it out one operator at a time. The tables after the demo list every operator and the order they go in.</p>
 
@@ -1120,10 +1127,11 @@ print("Next year you will be", next_year)`;
     </tbody>
   </table>
   </div>
+  <p>Two rules the table shows: 7 ÷ 2 is 3 with 1 left over (3 × 2 + 1 = 7), so <code>7 // 2</code> is 3 and <code>7 % 2</code> is 1. And if either number is a float, the result is a float: <code>10 - 2.0</code> is <code>8.0</code>.</p>
   <div class="callout warn"><b>= vs ==:</b> one <code>=</code> <i>stores</i> a value (<code>x = 5</code>). Two <code>==</code> <i>asks a question</i> (<code>x == 5</code> gives <code>True</code> or <code>False</code>).</div>
 
   <h3>Operator precedence</h3>
-  <p>When an expression has several operators, Python does them in this order, from first to last. Operators on the same row go left to right. When in doubt, add brackets: they make your intent clear to readers too.</p>
+  <p>When an expression has several operators, Python does them in this order, from first to last. Operators on the same row go left to right (except <code>**</code>). When in doubt, add brackets: they make your intent clear to readers too.</p>
   <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Order</th><th>Operators</th></tr></thead>
     <tbody>
@@ -1233,11 +1241,11 @@ print(10 % 2 == 0)`;
   show(0);
 
   DS.quiz(document.querySelector("#ops .quizbox"), [
-    { q: "What is <code>2 + 3 * 4</code>?", options: ["20", "14", "24", "9"], answer: 1,
+    { q: "What is <code>2 + 3 * 4</code>?", options: ["20", "24", "14", "9"], answer: 2,
       why: "Multiplication comes before addition: <code>3 * 4</code> is 12, then <code>2 + 12</code> is 14." },
-    { q: "What is <code>7 % 2</code>?", options: ["3", "3.5", "1", "14"], answer: 2,
+    { q: "What is <code>7 % 2</code>?", options: ["3", "1", "3.5", "14"], answer: 1,
       why: "<code>%</code> gives the remainder: 7 ÷ 2 is 3 with <b>1</b> left over." },
-    { q: "What is <code>True and False</code>?", options: ["True", "False", "None", "An error"], answer: 1,
+    { q: "What is <code>True and False</code>?", options: ["False", "True", "None", "An error"], answer: 0,
       why: "<code>and</code> is True only when both sides are True. One side is False, so the result is False." },
   ]);
 })();
@@ -1284,10 +1292,10 @@ print(10 % 2 == 0)`;
 
   <h3>Indexing and slicing</h3>
   <ul>
-    <li><code>s[0]</code> is the first character and <code>s[-1]</code> is the last.</li>
+    <li><code>s[0]</code> is the first character and <code>s[-1]</code> is the last. For a negative index, Python adds the length: in <code>"Python"</code> (6 characters), <code>-1</code> means position 6 − 1 = 5.</li>
     <li><code>s[start:stop]</code> takes characters from <code>start</code> <b>up to but not including</b> <code>stop</code>: <code>"Python"[0:2]</code> is <code>'Py'</code>.</li>
     <li>Leave a number out to mean "from the start" or "to the end": <code>s[:3]</code>, <code>s[2:]</code>.</li>
-    <li>A third number is the step: <code>s[::2]</code> takes every second character, <code>s[::-1]</code> reverses the string.</li>
+    <li>A third number is the step: <code>s[::2]</code> takes every second character (<code>"Python"[::2]</code> is <code>'Pto'</code>), and <code>s[::-1]</code> reverses the string (<code>'nohtyP'</code>).</li>
     <li>Strings can't be changed in place: <code>s[0] = "J"</code> is an error. Make a new string instead.</li>
   </ul>
 
@@ -1325,12 +1333,12 @@ print(10 % 2 == 0)`;
       <tr><td><code>len(s)</code></td><td>counts characters (a built-in function, not a method)</td><td><code>len("cat")</code></td><td><code>3</code></td></tr>
     </tbody>
   </table></div>
-  <div class="callout tip"><b>f-strings:</b> put an <code>f</code> before the quotes and write any value or expression inside <code>{ }</code>: <code>f"{name} scored {score}"</code>. It's the easiest way to build text from values, and you don't need <code>str()</code>.</div>
+  <div class="callout tip"><b>f-strings:</b> put an <code>f</code> before the quotes and write any value or expression inside <code>{ }</code>: <code>f"{name} scored {score}"</code>; with <code>name = 'Ada'</code> and <code>score = 9</code> it gives <code>'Ada scored 9'</code>. It's the easiest way to build text from values, and you don't need <code>str()</code>.</div>
 
   <h3>Where it shows up</h3>
   <ul>
-    <li>Cleaning what users type: <code>answer.strip().lower()</code> (you'll see this in the final project).</li>
-    <li>Reading data: <code>line.split(",")</code> splits a line of a CSV file into fields.</li>
+    <li>Cleaning what users type: <code>answer.strip().lower()</code>: each method returns a new string, so you can call the next method on it (you'll see this in the final project).</li>
+    <li>Reading data: <code>line.split(",")</code> splits a line of a CSV file (a plain-text table where commas separate the values) into its values.</li>
     <li>Building messages and reports with f-strings.</li>
   </ul>
 
@@ -1472,7 +1480,7 @@ print(f"{count} fruits: {joined}")`;
   }, { hint: "Press <b>Run</b> or <b>Step</b>. Then change the text, for example <code>  red, green, blue  </code>, and run again." });
 
   DS.quiz(document.querySelector("#strings .quizbox"), [
-    { q: "What is <code>\"Python\"[0]</code>?", options: ["'P'", "'y'", "'n'", "'Python'"], answer: 0,
+    { q: "What is <code>\"Python\"[0]</code>?", options: ["'Python'", "'y'", "'n'", "'P'"], answer: 3,
       why: "Positions start at 0, so index 0 is the first character, <code>'P'</code>." },
     { q: "What is <code>\"Python\"[0:2]</code>?", options: ["'Pyt'", "'Py'", "'yt'", "'P'"], answer: 1,
       why: "A slice goes from <code>start</code> up to but <b>not including</b> <code>stop</code>: positions 0 and 1, so <code>'Py'</code>." },
@@ -1487,7 +1495,7 @@ print(f"{count} fruits: {joined}")`;
   <h2>5. Control Flow <small style="color:var(--muted);font-weight:500">(decisions and loops)</small></h2>
   <p class="lead">Control flow decides <b>which</b> lines run and <b>how many times</b>. <code>if</code> makes decisions; <code>for</code> and <code>while</code> repeat work.</p>
   <p>Think of a road with junctions and roundabouts. At a junction (<code>if</code>) you take one road depending on a condition. On a roundabout (a loop) you go around again and again until it's time to exit (<code>break</code>), and sometimes you skip ahead to the next lap (<code>continue</code>).</p>
-  <p>The program below counts from 1 upward. For each number it decides what to print (<code>if</code> / <code>elif</code> / <code>else</code>). Two settings let you skip one number (<code>continue</code>) or stop early (<code>break</code>). The sections after the demo explain each keyword.</p>
+  <p>The program below counts from 1 upward. For each number it decides what to print (<code>if</code> / <code>elif</code> / <code>else</code>): "n is even", "1 is the first number", or "n is odd". Three settings change the path: <b>limit</b> (the loop uses <code>range(1, limit)</code>, so it counts up to limit − 1), <b>skip</b> (that number is skipped with <code>continue</code>) and <b>stop_at</b> (the loop stops early there with <code>break</code>). The sections after the demo explain each keyword.</p>
 
   <div class="w-for">
   <div class="grid2">
@@ -1624,11 +1632,11 @@ print("Go!")`;
   }, { hint: "A <code>while</code> loop repeats as long as its condition is true. Press <b>Run</b>." });
 
   DS.quiz(document.querySelector("#flow .quizbox"), [
-    { q: "How many times does <code>print(i)</code> run in <code>for i in range(3):</code>?", options: ["2", "3", "4", "It never stops"], answer: 1,
+    { q: "How many times does <code>print(i)</code> run in <code>for i in range(3):</code>?", options: ["2", "4", "3", "It never stops"], answer: 2,
       why: "<code>range(3)</code> gives 0, 1 and 2: three numbers, so the body runs three times." },
-    { q: "What does <code>break</code> do inside a loop?", options: ["Skips to the next round", "Leaves the loop immediately", "Pauses the program", "Restarts the loop"], answer: 1,
+    { q: "What does <code>break</code> do inside a loop?", options: ["Leaves the loop immediately", "Skips to the next round", "Pauses the program", "Restarts the loop"], answer: 0,
       why: "<code>break</code> exits the loop at once. (<code>continue</code> is the one that skips to the next round.)" },
-    { q: "Which numbers does <code>range(1, 4)</code> give?", options: ["1, 2, 3, 4", "0, 1, 2, 3", "1, 2, 3", "1, 4"], answer: 2,
+    { q: "Which numbers does <code>range(1, 4)</code> give?", options: ["1, 2, 3, 4", "0, 1, 2, 3", "1, 4", "1, 2, 3"], answer: 3,
       why: "<code>range(a, b)</code> starts at <code>a</code> and stops <b>before</b> <code>b</code>." },
   ]);
 })();
@@ -1637,7 +1645,7 @@ print("Go!")`;
 <!-- ===================================================================== 6 -->
 <section class="section" id="collections" data-title="6. Data Structures">
   <h2>6. Data Structures <small style="color:var(--muted);font-weight:500">(list, tuple, dict, set)</small></h2>
-  <p class="lead">Python has four built-in (ready to use, nothing to install) ways to keep many values together, called <b>collections</b>. Each one is good at a different job.</p>
+  <p class="lead">Python has four built-in (ready to use, nothing to install) ways to keep many values together, called <b>collections</b> (or data structures). Each one is good at a different job.</p>
   <p>A <b>list</b> is like a shopping list: ordered, and you can add or cross off items. A <b>tuple</b> (a maths word for a fixed group of values) is like a date of birth: fixed once written. A <b>dict</b> (short for dictionary) is like a phone book: you look up a <b>value</b> (the phone number) by its <b>key</b> (the person's name). A <b>set</b> is like a bag of unique stickers: no duplicates allowed.</p>
   <p>Below, four collections are already in memory. Each button runs one line of code on them, and the box under the picture explains what that line did.</p>
 
@@ -1694,13 +1702,25 @@ print("Go!")`;
     </tbody>
   </table>
   </div>
+  <p>Changing a tuple, as in <code>point[0] = 10</code>, raises a <code>TypeError</code>. The demo's buttons run these everyday operations:</p>
+  <div style="overflow-x:auto"><table class="cx">
+    <thead><tr><th>Code</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><code>fruits.append(x)</code></td><td>adds <code>x</code> to the end of the list</td></tr>
+      <tr><td><code>fruits.pop()</code></td><td>removes the last item and gives it back</td></tr>
+      <tr><td><code>ages[k] = v</code></td><td>adds the key <code>k</code> with value <code>v</code>, or replaces its value if the key exists</td></tr>
+      <tr><td><code>ages.get(k)</code></td><td>the value for <code>k</code>, or <code>None</code> if the key is missing (<code>ages[k]</code> would raise a <b>KeyError</b>)</td></tr>
+      <tr><td><code>colors.add(x)</code></td><td>adds <code>x</code> to the set; nothing changes if it is already there</td></tr>
+      <tr><td><code>x in colors</code></td><td><code>True</code> or <code>False</code>: is <code>x</code> in the set? (works for lists too)</td></tr>
+    </tbody>
+  </table></div>
 
   <h3>When to use each one</h3>
   <p style="color:var(--text-2)">Pick the collection you'd reach for in each situation, then check the answer.</p>
   <div class="scenario c-scen"></div>
 
   <h3>List comprehensions (a light intro)</h3>
-  <p>A <b>list comprehension</b> builds a new list in one line: <code>[n * n for n in range(1, 6)]</code> reads as "<i>n times n, for each n in range(1, 6)</i>". It does exactly what the three-line loop does. Step through both below.</p>
+  <p>A <b>list comprehension</b> builds a new list in one line: <code>[n * n for n in range(1, 6)]</code> reads as "<i>n times n, for each n in range(1, 6)</i>". It does exactly what this three-line loop does: <code>squares = []</code>, then <code>for n in range(1, 6):</code>, then <code>squares.append(n * n)</code>. Both give <code>[1, 4, 9, 16, 25]</code>. Step through both below.</p>
 
   <div class="w-comp">
   <div class="grid2">
@@ -1722,8 +1742,8 @@ print("Go!")`;
   <h3>Where it shows up</h3>
   <ul>
     <li><b>list</b>: rows of data, to-do items, scores, anything in an order you can change.</li>
-    <li><b>tuple</b>: fixed pairs such as coordinates <code>(x, y)</code> or RGB colours.</li>
-    <li><b>dict</b>: settings, word counts, a user's profile (<code>{"name": ..., "email": ...}</code>), and JSON data from the web.</li>
+    <li><b>tuple</b>: fixed pairs such as coordinates <code>(x, y)</code> or RGB colours (amounts of red, green and blue, such as <code>(255, 0, 0)</code>).</li>
+    <li><b>dict</b>: settings, word counts, a user's profile (<code>{"name": ..., "email": ...}</code>), and JSON data from the web (JSON is the text format websites use to send data; it looks like a dict).</li>
     <li><b>set</b>: removing duplicates and fast "have I seen this?" checks.</li>
   </ul>
 
@@ -1884,7 +1904,7 @@ print(item in colors)`;
   /* ---------- scenarios ---------- */
   const options = ["list", "tuple", "dict", "set"];
   const scenarios = [
-    ["A shopping list you keep adding to and crossing items off.", "list", "Ordered and changeable: <code>append()</code> to add, <code>remove()</code> or <code>pop()</code> to cross off."],
+    ["A shopping list you keep adding to and crossing items off.", "list", "Ordered and changeable: <code>append()</code> to add, <code>pop()</code> to cross off."],
     ["The (latitude, longitude) of a city, which never changes.", "tuple", "A fixed pair of values that shouldn't be changed by accident."],
     ["Looking up a student's grade by their name.", "dict", "Name → grade: a dict finds the value straight from its key."],
     ["Collecting the unique words in a text, ignoring repeats.", "set", "A set keeps only one copy of each word automatically."],
@@ -1934,9 +1954,9 @@ print(quick)`;
   DS.quiz(document.querySelector("#collections .quizbox"), [
     { q: "Which collection <b>can't</b> be changed after it's created?", options: ["list", "tuple", "dict", "set"], answer: 1,
       why: "A tuple is fixed. Trying <code>point[0] = 10</code> raises a <code>TypeError</code>." },
-    { q: "What does <code>{\"a\": 1, \"b\": 2}[\"a\"]</code> give?", options: ["'a'", "1", "2", "{'a': 1}"], answer: 1,
+    { q: "What does <code>{\"a\": 1, \"b\": 2}[\"a\"]</code> give?", options: ["'a'", "{'a': 1}", "2", "1"], answer: 3,
       why: "Square brackets with a key look up that key's value in a dict: the value for <code>\"a\"</code> is 1." },
-    { q: "What does the set <code>{1, 2, 2, 3}</code> contain?", options: ["{1, 2, 2, 3}", "{1, 2, 3}", "{2}", "An error"], answer: 1,
+    { q: "What does the set <code>{1, 2, 2, 3}</code> contain?", options: ["{1, 2, 3}", "{1, 2, 2, 3}", "{2}", "An error"], answer: 0,
       why: "A set keeps only unique items, so the repeated 2 is stored once." },
   ]);
 })();
@@ -1982,15 +2002,15 @@ print(quick)`;
     <thead><tr><th>Term</th><th>Meaning</th><th>In the example</th></tr></thead>
     <tbody>
       <tr><td><b>Parameter</b></td><td>a name in the definition that receives a value</td><td><code>name</code>, <code>punctuation</code></td></tr>
-      <tr><td><b>Argument</b></td><td>the actual value you pass when calling</td><td><code>"Ada"</code></td></tr>
-      <tr><td><b>Default value</b></td><td>used when the caller leaves that argument out</td><td><code>punctuation="!"</code>, <code>height=1</code></td></tr>
+      <tr><td><b>Argument</b></td><td>the actual value you pass when calling, matched to the parameters in order</td><td><code>"Ada"</code>; in <code>area(3, 4)</code>, <code>width</code> is 3 and <code>height</code> is 4</td></tr>
+      <tr><td><b>Default value</b></td><td>used when the caller leaves that argument out</td><td><code>punctuation="!"</code>, <code>height=1</code>: <code>area(3)</code> returns 3 × 1 = 3</td></tr>
       <tr><td><b>Return value</b></td><td>the result <code>return</code> sends back to the caller</td><td><code>return message</code></td></tr>
     </tbody>
   </table></div>
   <div class="callout warn"><b>print vs. return:</b> <code>print()</code> only shows a value on the screen. <code>return</code> hands the value back so the caller can store it and use it. A function with no <code>return</code> gives back <code>None</code>.</div>
 
   <h3>Scope: local vs. global</h3>
-  <p>Names created <b>inside</b> a function are <b>local</b>: they exist only while that call runs, in its own box of names (shown in purple above), and disappear when it returns. Names created at the top level of the file are <b>global</b>. A function can <i>read</i> a global name (like <code>greeting</code>), but the code outside can't see the function's local names.</p>
+  <p>Names created <b>inside</b> a function are <b>local</b>: they exist only while that call runs, in its own box of names (shown in purple above), and disappear when it returns. Names created at the top level of the file are <b>global</b>. A function can <i>read</i> a global name (like <code>greeting</code>, set on line 1 of the code beside the demo), but the code outside can't see the function's local names.</p>
   <div class="callout">Prefer passing values in as parameters and getting them back with <code>return</code>. Changing global variables from inside functions (with the <code>global</code> keyword) makes programs harder to follow.</div>
 
   <h3>Where it shows up</h3>
@@ -2051,11 +2071,11 @@ print(area(${w}))`;
   }, { hint: "Press <b>Run</b> or <b>Step</b> and watch a purple box of <b>local</b> names appear for each call and vanish when it returns." });
 
   DS.quiz(document.querySelector("#functions .quizbox"), [
-    { q: "Which keyword defines a function?", options: ["func", "def", "function", "define"], answer: 1,
+    { q: "Which keyword defines a function?", options: ["func", "function", "def", "define"], answer: 2,
       why: "Python functions start with <code>def</code>, then the name, the parameters in brackets, and a colon." },
     { q: "Given <code>def add(a, b=2): return a + b</code>, what is <code>add(3)</code>?", options: ["3", "5", "32", "An error"], answer: 1,
       why: "<code>b</code> wasn't given, so it uses its default value 2: <code>3 + 2</code> is 5." },
-    { q: "A variable created inside a function is…", options: ["global: usable everywhere", "local: it exists only inside that function call", "saved to a file", "always None"], answer: 1,
+    { q: "A variable created inside a function is…", options: ["local: it exists only inside that function call", "global: usable everywhere", "saved to a file", "always None"], answer: 0,
       why: "Names created in a function are local. They disappear when the function returns." },
   ]);
 })();
@@ -2117,18 +2137,18 @@ print(area(${w}))`;
 
   <h3>Practical use of math, random and datetime</h3>
   <div style="overflow-x:auto"><table class="cx">
-    <thead><tr><th>Module</th><th>Useful names</th><th>Example</th></tr></thead>
+    <thead><tr><th>Module</th><th>Useful names and what they do</th><th>Example</th></tr></thead>
     <tbody>
-      <tr><td><code>math</code></td><td><code>pi</code>, <code>sqrt()</code>, <code>floor()</code>, <code>ceil()</code></td><td>circle area: <code>math.pi * r ** 2</code></td></tr>
-      <tr><td><code>random</code></td><td><code>randint(a, b)</code>, <code>choice(list)</code>, <code>shuffle(list)</code>, <code>sample(list, k)</code></td><td>dice games, picking a random question</td></tr>
-      <tr><td><code>datetime</code></td><td><code>date.today()</code>, <code>timedelta(days=7)</code>, <code>datetime.now()</code></td><td>due dates, ages, timestamps</td></tr>
+      <tr><td><code>math</code></td><td><code>pi</code> (3.14159…), <code>sqrt()</code> (square root; a negative number raises a ValueError), <code>floor()</code> rounds down and <code>ceil()</code> rounds up: <code>floor(3.7)</code> is 3, <code>ceil(3.7)</code> is 4</td><td>area of a circle with radius <code>r</code>: <code>math.pi * r ** 2</code></td></tr>
+      <tr><td><code>random</code></td><td><code>randint(a, b)</code>: a whole number from a to b, both included · <code>choice(list)</code>: one random item · <code>shuffle(list)</code>: mixes the list in place · <code>sample(list, k)</code>: k different items in random order</td><td>dice games, picking a random question</td></tr>
+      <tr><td><code>datetime</code></td><td><code>date.today()</code>: today's date · <code>timedelta(days=7)</code>: a length of time you can add to a date · <code>datetime.now()</code>: the date and time right now</td><td>due dates, ages, timestamps</td></tr>
     </tbody>
   </table></div>
 
   <h3>Where it shows up</h3>
   <ul>
     <li>Real programs import a lot: reading files (<code>os</code>, <code>pathlib</code>), the web (<code>urllib</code>), data (<code>json</code>, <code>csv</code>).</li>
-    <li>Beyond the standard library, <code>pip install</code> adds packages from the internet, such as <code>requests</code> or <code>pandas</code>. You import them the same way.</li>
+    <li>Beyond the standard library, <code>pip install</code> (pip is Python's installer for extra packages) adds packages from the internet, such as <code>requests</code> (for web pages) or <code>pandas</code> (for data tables). You import them the same way.</li>
   </ul>
 
   <div class="quizbox"></div>
@@ -2214,9 +2234,9 @@ print(today + dt.timedelta(days=7))`;
   say("Press a button to run that line. Watch which name is looked up, and how the import style changes how you write it.");
 
   DS.quiz(document.querySelector("#modules .quizbox"), [
-    { q: "After <code>import math</code>, how do you get the square root of 16?", options: ["sqrt(16)", "math.sqrt(16)", "math(sqrt, 16)", "import sqrt(16)"], answer: 1,
+    { q: "After <code>import math</code>, how do you get the square root of 16?", options: ["sqrt(16)", "import sqrt(16)", "math(sqrt, 16)", "math.sqrt(16)"], answer: 3,
       why: "With <code>import math</code>, the module's tools are reached through the module name and a dot: <code>math.sqrt(16)</code>." },
-    { q: "After <code>from math import sqrt</code>, which call works?", options: ["sqrt(16)", "math.sqrt(16)", "from.sqrt(16)", "None of them"], answer: 0,
+    { q: "After <code>from math import sqrt</code>, which call works?", options: ["math.sqrt(16)", "sqrt(16)", "from.sqrt(16)", "None of them"], answer: 1,
       why: "<code>from … import</code> brings the name straight into your program, so you call <code>sqrt(16)</code> without a prefix." },
     { q: "Which standard module gives you random numbers?", options: ["math", "datetime", "random", "chance"], answer: 2,
       why: "The <code>random</code> module has <code>randint()</code>, <code>choice()</code>, <code>shuffle()</code> and more." },
@@ -2227,7 +2247,7 @@ print(today + dt.timedelta(days=7))`;
 <!-- ===================================================================== 9 -->
 <section class="section" id="errors" data-title="9. Errors & Exceptions">
   <h2>9. Errors and Exceptions <small style="color:var(--muted);font-weight:500">(when things go wrong)</small></h2>
-  <p class="lead">Errors are normal: every programmer sees them all day. Python tells you <b>what</b> went wrong and <b>where</b>, and <code>try</code> / <code>except</code> lets your program recover instead of crashing. When Python hits a problem while running, it stops and reports an error. Python calls this an <b>exception</b>, and says the line <b>raised</b> it.</p>
+  <p class="lead">Errors are normal: every programmer sees them all day. When Python hits a problem while running, it stops and reports an error. Python calls this an <b>exception</b>, and says the line <b>raised</b> it. The report tells you <b>what</b> went wrong and <b>where</b>, and <code>try</code> / <code>except</code> lets your program recover instead of crashing.</p>
   <p>Think of a smoke alarm. An exception is the alarm going off: something unexpected happened. A <b>traceback</b> tells you which room it came from, and an <code>except</code> block is your plan for what to do when the alarm rings.</p>
 
   <h3>Reading error messages and tracebacks</h3>
@@ -2244,7 +2264,7 @@ print(today + dt.timedelta(days=7))`;
     <div class="code"></div>
   </div>
   </div>
-  <div class="callout tip"><b>Read a traceback from the bottom up.</b> The last line names the error and says what went wrong. The lines above show the path that led there, ending at the exact line that failed.</div>
+  <div class="callout tip"><b>Read a traceback from the bottom up.</b> The last line names the error and says what went wrong. The lines above show the path that led there, ending at the exact line that failed. Here the last line is <code>ZeroDivisionError: division by zero</code>. The line above it, <code>return sum(items) / len(items)</code>, failed because <code>len(items)</code> is 0 for the empty <code>cart</code>. The fix: <code>return</code> early (for example <code>return 0</code>) when the list is empty, instead of only printing a message.</div>
 
   <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Error</th><th>Usually means</th><th>Example</th></tr></thead>
@@ -2260,7 +2280,7 @@ print(today + dt.timedelta(days=7))`;
   </table></div>
 
   <h3>try / except / finally</h3>
-  <p>Put code that might fail inside <code>try</code>. If an error happens, Python jumps straight to the matching <code>except</code> block instead of crashing. <code>finally</code> runs at the end <b>either way</b>. Try a good input, then some text, then a zero.</p>
+  <p>Put code that might fail inside <code>try</code>. If an error happens, Python jumps straight to the <code>except</code> block that names that error type, such as <code>except ValueError:</code>, instead of crashing. <code>finally</code> runs at the end <b>either way</b>. Try the three presets: <code>10, 2</code> prints <code>Result: 5.0</code>; <code>10, abc</code> goes to <code>except ValueError</code>; <code>10, 0</code> goes to <code>except ZeroDivisionError</code>. Each time, <code>finally</code> prints "Finished trying."</p>
   <div class="w-try">
   <div class="grid2">
     <div class="card">
@@ -2394,11 +2414,11 @@ safe_divide("${a}", "${b}")`;
   }));
 
   DS.quiz(document.querySelector("#errors .quizbox"), [
-    { q: "Where should you start reading a traceback?", options: ["The first line", "The last line", "The middle", "It doesn't matter"], answer: 1,
+    { q: "Where should you start reading a traceback?", options: ["The first line", "The middle", "The last line", "It doesn't matter"], answer: 2,
       why: "The last line names the error and its message. The lines above show how the program got there." },
-    { q: "Which error does <code>int(\"abc\")</code> raise?", options: ["TypeError", "NameError", "ValueError", "SyntaxError"], answer: 2,
+    { q: "Which error does <code>int(\"abc\")</code> raise?", options: ["ValueError", "NameError", "TypeError", "SyntaxError"], answer: 0,
       why: "The type is fine (a string), but the value can't be turned into a whole number, so it's a <code>ValueError</code>." },
-    { q: "When does a <code>finally</code> block run?", options: ["Only when there is an error", "Only when there is no error", "Always, error or not", "Never"], answer: 2,
+    { q: "When does a <code>finally</code> block run?", options: ["Only when there is an error", "Always, error or not", "Only when there is no error", "Never"], answer: 1,
       why: "<code>finally</code> always runs at the end of the <code>try</code> statement, which makes it right for clean-up work." },
   ]);
 })();
@@ -2442,7 +2462,7 @@ safe_divide("${a}", "${b}")`;
       <tr><td><code>for item in questions</code>, <code>while True</code>, <code>break</code>, <code>if</code> / <code>else</code></td><td>repeats the rounds, asks again until the input is valid</td><td><a href="#flow">5. Control Flow</a></td></tr>
       <tr><td><code>try</code> / <code>except ValueError</code></td><td>no crash when the player types letters instead of a number</td><td><a href="#errors">9. Errors</a></td></tr>
       <tr><td><code>answer.strip().lower()</code>, f-string</td><td>tidies the answer, builds the score message</td><td><a href="#strings">4. Strings</a></td></tr>
-      <tr><td><code>==</code>, <code>&lt;=</code>, <code>score / rounds * 100</code></td><td>checks answers and works out the percentage</td><td><a href="#ops">3. Operators</a></td></tr>
+      <tr><td><code>==</code>, <code>&lt;=</code>, <code>score / rounds * 100</code></td><td>checks answers and works out the percentage: 3 right out of 4 is 3 / 4 * 100 = 75.0, and <code>round()</code> makes it 75</td><td><a href="#ops">3. Operators</a></td></tr>
       <tr><td><code>input()</code>, <code>int()</code>, <code>score = 0</code></td><td>reads the player's answers, keeps the score</td><td><a href="#vars">2. Variables &amp; Types</a></td></tr>
     </tbody>
   </table></div>
@@ -2641,9 +2661,9 @@ main()`;
   DS.quiz(document.querySelector("#project .quizbox"), [
     { q: "Which part of the game stops it from crashing when the player types <code>abc</code> for the number of questions?", options: ["random.sample", "except ValueError", "return score", "import datetime"], answer: 1,
       why: "<code>int(\"abc\")</code> raises a <code>ValueError</code>; the <code>except ValueError</code> block catches it, prints a message, and the loop asks again." },
-    { q: "Where are the questions and their answers stored?", options: ["In a set", "In a list of dictionaries", "In a tuple of strings", "In the random module"], answer: 1,
+    { q: "Where are the questions and their answers stored?", options: ["In a set", "In the random module", "In a tuple of strings", "In a list of dictionaries"], answer: 3,
       why: "<code>QUESTIONS</code> is a list, and each item is a dict with a <code>\"q\"</code> key and an <code>\"a\"</code> key." },
-    { q: "Why is the game split into <code>ask()</code>, <code>play()</code> and <code>main()</code>?", options: ["Python requires three functions", "Each function does one clear job, so the code is easier to read and change", "It makes the game run faster", "Functions are needed for print() to work"], answer: 1,
+    { q: "Why is the game split into <code>ask()</code>, <code>play()</code> and <code>main()</code>?", options: ["Each function does one clear job, so the code is easier to read and change", "Python requires three functions", "It makes the game run faster", "Functions are needed for print() to work"], answer: 0,
       why: "Small functions with one job each are easier to understand, test and reuse." },
   ]);
 })();
@@ -2762,23 +2782,23 @@ main()`;
 (() => {
   /* ---------- final quiz: one list ---------- */
   const finalQs = [
-    { q: "What does <code>print(\"Hello\")</code> do?", options: ["Saves Hello to a file", "Shows Hello on the screen", "Creates a variable called Hello", "Asks the user for Hello"], answer: 1,
+    { q: "What does <code>print(\"Hello\")</code> do?", options: ["Saves Hello to a file", "Creates a variable called Hello", "Shows Hello on the screen", "Asks the user for Hello"], answer: 2,
       why: "<code>print()</code> shows its values on the screen. It's the first function every Python programmer uses." },
     { q: "What is the type of <code>3.5</code>?", options: ["int", "float", "str", "bool"], answer: 1,
       why: "Numbers with a decimal point are <code>float</code>s. Whole numbers like <code>3</code> are <code>int</code>s." },
-    { q: "What is <code>int(\"7\") + 1</code>?", options: ["\"71\"", "8", "\"7 + 1\"", "An error"], answer: 1,
+    { q: "What is <code>int(\"7\") + 1</code>?", options: ["8", "\"71\"", "\"7 + 1\"", "An error"], answer: 0,
       why: "<code>int(\"7\")</code> turns the text into the number 7, and 7 + 1 is <b>8</b>." },
-    { q: "What is <code>2 + 3 * 4</code>?", options: ["20", "14", "24", "9"], answer: 1,
+    { q: "What is <code>2 + 3 * 4</code>?", options: ["20", "9", "24", "14"], answer: 3,
       why: "Multiplication comes before addition: <code>3 * 4</code> is 12, then 2 + 12 is <b>14</b>." },
-    { q: "What is <code>\"Python\"[0]</code>?", options: ["'P'", "'y'", "'n'", "'Python'"], answer: 0,
+    { q: "What is <code>\"Python\"[0]</code>?", options: ["'y'", "'P'", "'n'", "'Python'"], answer: 1,
       why: "Positions start at 0, so index 0 is the first character, <code>'P'</code>." },
-    { q: "How many times does the body of <code>for i in range(3):</code> run?", options: ["2", "3", "4", "Forever"], answer: 1,
+    { q: "How many times does the body of <code>for i in range(3):</code> run?", options: ["2", "4", "3", "Forever"], answer: 2,
       why: "<code>range(3)</code> gives 0, 1 and 2: three numbers, so the loop body runs <b>3</b> times." },
     { q: "Which collection stores <b>key → value</b> pairs, like a phone book?", options: ["list", "tuple", "dict", "set"], answer: 2,
       why: "A <code>dict</code> maps each key to a value, so you can look a value up by its key: <code>ages[\"Ada\"]</code>." },
-    { q: "Which keyword sends a value back from a function to the code that called it?", options: ["print", "return", "def", "break"], answer: 1,
+    { q: "Which keyword sends a value back from a function to the code that called it?", options: ["return", "print", "def", "break"], answer: 0,
       why: "<code>return</code> hands a value back to the caller. (<code>print</code> only shows it on the screen.)" },
-    { q: "After <code>import math</code>, how do you get the square root of 16?", options: ["sqrt(16)", "math.sqrt(16)", "math(16)", "16.sqrt()"], answer: 1,
+    { q: "After <code>import math</code>, how do you get the square root of 16?", options: ["sqrt(16)", "16.sqrt()", "math(16)", "math.sqrt(16)"], answer: 3,
       why: "With <code>import math</code>, you reach the module's tools through its name and a dot: <code>math.sqrt(16)</code>." },
     { q: "In <code>try</code> / <code>except</code>, which block runs when an error happens inside <code>try</code>?", options: ["try", "except", "else", "None of them: the program always crashes"], answer: 1,
       why: "When code inside <code>try</code> raises an error, Python jumps to the matching <code>except</code> block instead of crashing." },

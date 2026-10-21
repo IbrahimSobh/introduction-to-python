@@ -12,6 +12,16 @@ A **self-paced online course, completely free**, that teaches you to write real 
 
 [![Course path: Getting started, eight lessons (variables and types, operators, strings, control flow, data structures, functions, modules, errors), the final project, the final quiz, then your certificate](images/course-overview.png)](https://ibrahimsobh.github.io/introduction-to-python/)
 
+## 🎞️ Presenting it? Use the slides: [ibrahimsobh.github.io/introduction-to-python/slides.html](https://ibrahimsobh.github.io/introduction-to-python/slides.html)
+
+**26 ready-to-present slides** that follow the course: one key message and a clear diagram per topic, with 🗣️ speaker notes. Made for teachers, trainers and anyone giving a talk on Python.
+
+⌨️ **←** / **→** move · **N** speaker notes · **T** light or dark · **F** full screen · 🖨️ **Ctrl + P** save as PDF
+
+📄 **[Download the slides as PDF](https://ibrahimsobh.github.io/introduction-to-python/introduction-to-python-slides.pdf)** (26 pages, one slide per page, clickable links)
+
+[![Slide 10 of the Introduction to Python slides: A string is a row of characters, numbered from 0, with the letters of Python on tiles numbered 0 to 5 from the left and -6 to -1 from the right, the slice 0:2 taking 'Py' and stopping before index 2, and the key insight that indexes start at 0 and a slice stops just before its stop index](images/slides-preview.png)](https://ibrahimsobh.github.io/introduction-to-python/slides.html)
+
 ## What you'll learn
 
 - Python basics: variables, data types, operators, strings, and decisions and loops.
