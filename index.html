@@ -63,7 +63,7 @@ body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 var(
 a { color: var(--accent); }
 * { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; } /* keep != <= >= as typed (Cascadia Code ligatures) */
 code { font-family: var(--mono); font-size: .9em; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
-h1, h2, h3 { line-height: 1.25; }
+h1, h2, h3 { line-height: 1.25; overflow-wrap: break-word; }
 h2 { font-size: 1.75rem; margin: 0 0 .25rem; }
 h3 { font-size: 1.15rem; margin: 1.6rem 0 .5rem; }
 
@@ -121,7 +121,9 @@ main { background: color-mix(in srgb, var(--bg) 92%, #000 8%); }
   border-radius: 10px 10px 0 0; }
 .band-n { flex: none; font: 600 46px/1 var(--sans); color: var(--accent); min-width: 1ch; text-align: center; }
 .band-k { font-size: .8rem; font-weight: 600; letter-spacing: .03em; color: var(--accent); margin-bottom: 2px; }
-.band h2 { margin: 0; }
+.band h2 { margin: 0; overflow-wrap: anywhere; }
+.band > :last-child { min-width: 0; }
+select { max-width: 100%; }
 .endline { margin-top: 26px; padding-top: 8px; border-top: 1px solid var(--border); color: var(--muted); font-size: .85rem; text-align: center; }
 @media (max-width: 560px) {
   main { padding-left: 8px !important; padding-right: 8px !important; }
@@ -205,7 +207,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 }
 .code .title { color: #8e8d86; font-size: 11px; padding: 0 14px 6px; text-transform: uppercase; letter-spacing: .08em; }
 .code .ln { display: flex; white-space: pre; padding: 0 14px 0 0; transition: background .2s; }
-.code .ln .no { width: 36px; flex: none; text-align: right; padding-right: 12px; color: #5f5e59; user-select: none; }
+.code .ln .no { width: 36px; flex: none; text-align: right; padding-right: 12px; color: #94938c; user-select: none; }
 .code .ln.hl { background: var(--code-hl); box-shadow: inset 3px 0 0 var(--hot); }
 .t-k { color: #c792ea; } .t-sf { color: #f78c6c; } .t-s { color: #c3e88d; } .t-c { color: #7f7e78; font-style: italic; } .t-n { color: #f9c859; } .t-d { color: #82aaff; }
 
@@ -255,7 +257,7 @@ table.cx tbody tr:hover { background: var(--surface-2); }
 .scenario .answer.show { display: block; }
 .scenario select { width: 100%; font-family: var(--sans); }
 ol.ex li { margin-bottom: 6px; }
-footer { color: var(--muted); font-size: .85rem; padding: 32px 0; }
+footer { color: var(--text-2); font-size: .85rem; padding: 32px 0; }
 footer a { color: var(--text-2); } /* footer sits on the darker page, where --accent is below 4.5:1 */
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 
@@ -264,8 +266,8 @@ footer a { color: var(--text-2); } /* footer sits on the darker page, where --ac
 .tr-frames { display: flex; flex-wrap: wrap; gap: 14px; padding-top: 22px; align-items: flex-start; }
 .tr-frame { border: 1px dashed var(--border); border-radius: 10px; padding: 10px 12px 4px; background: var(--surface); min-width: 160px; max-width: 100%; }
 .tr-frame.local { border: 2px solid var(--violet); }
-.tr-frame h4 { margin: 0 0 24px; font: 600 12px var(--sans); color: var(--text-2); }
-.tr-frame.local h4 { color: var(--violet); }
+.tr-frame .fr-h { margin: 0 0 24px; font: 600 12px var(--sans); color: var(--text-2); }
+.tr-frame.local .fr-h { color: var(--violet); }
 .tr-vars { display: flex; flex-wrap: wrap; gap: 44px 12px; padding-bottom: 22px; }
 .tr-vars .empty { color: var(--muted); font: 12px var(--mono); }
 .tr-vars .node, .py-row .node { max-width: 100%; overflow: visible; white-space: pre; }
@@ -273,7 +275,7 @@ footer a { color: var(--text-2); } /* footer sits on the darker page, where --ac
 .console { background: var(--code-bg); color: var(--code-text); border-radius: 8px; font: 13px/1.55 var(--mono); padding: 10px 12px; min-height: 64px; max-height: 240px; overflow: auto; margin-top: 6px; white-space: pre-wrap; word-break: break-word; }
 .console .in { color: #82aaff; }
 .console .err { color: #ff8a80; }
-.console .dim { color: #7f7e78; }
+.console .dim { color: #8e8d86; }
 .console .new { animation: fadein .35s ease; }
 @keyframes fadein { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
 .tok-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 34px 0 12px; min-height: 96px; }
@@ -282,8 +284,8 @@ footer a { color: var(--text-2); } /* footer sits on the darker page, where --ac
 .py-boxes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-top: 22px; }
 @media (max-width: 560px) { .py-boxes { grid-template-columns: minmax(0, 1fr); } }
 .py-box { border: 1px dashed var(--border); border-radius: 10px; padding: 10px 12px 6px; background: var(--surface); min-width: 0; }
-.py-box h4 { margin: 0 0 24px; font: 600 12px var(--sans); color: var(--text-2); }
-.py-box h4 code { font-size: 12px; }
+.py-box .fr-h { margin: 0 0 24px; font: 600 12px var(--sans); color: var(--text-2); }
+.py-box .fr-h code { font-size: 12px; }
 .py-row { display: flex; flex-wrap: wrap; gap: 30px 10px; min-height: 46px; align-items: center; padding-bottom: 22px; }
 .py-row.tight { gap: 10px; padding-bottom: 8px; }
 .py-row .empty { color: var(--muted); font: 12px var(--mono); }
@@ -559,7 +561,7 @@ const PY = (() => {
           if (read.includes(k) && (top || !frames[frames.length - 1].vars.has(k))) cls += " active";
           vars.append(el("div", { class: cls }, v, el("span", { class: "tag" }, k), el("span", { class: "sub" }, typeOf(v))));
         }
-        framesEl.append(el("div", { class: "tr-frame" + (fi ? " local" : "") }, el("h4", {}, f.name), vars));
+        framesEl.append(el("div", { class: "tr-frame" + (fi ? " local" : "") }, el("div", { class: "fr-h" }, f.name), vars));
       });
     }
 
@@ -656,7 +658,8 @@ const PY = (() => {
     #intro .pillars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 18px 0 0; }
     #intro .pillar { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
     #intro .pillar .p-ico { font-size: 1.4rem; line-height: 1; }
-    #intro .pillar h3 { margin: 8px 0 4px; font-size: 1rem; }
+    #intro h2 { font-size: 1.15rem; margin: 1.6rem 0 .5rem; }
+    #intro .pillar h2 { margin: 8px 0 4px; font-size: 1rem; }
     #intro .pillar p { margin: 0; color: var(--text-2); font-size: .9rem; line-height: 1.45; }
     #intro .path { list-style: none; counter-reset: step; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
     #intro .path li { counter-increment: step; display: grid; grid-template-columns: 26px minmax(0, 1fr); column-gap: 12px; align-items: start; }
@@ -668,7 +671,7 @@ const PY = (() => {
     #intro .facts b { color: var(--text); }
     @media (max-width: 700px) { #intro .pillars { grid-template-columns: minmax(0, 1fr); } }
     #intro .ckey { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin: 16px 0 0; }
-    #intro .ckey h3 { margin: 0 0 2px; font-size: 1rem; }
+    #intro .ckey h2 { margin: 0 0 2px; font-size: 1rem; }
     #intro .ckey > p { margin: 0 0 12px; color: var(--text-2); font-size: .92rem; }
     #intro .ckey ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px; }
     #intro .ckey li { display: flex; align-items: center; gap: 12px; }
@@ -678,9 +681,9 @@ const PY = (() => {
     #intro .ckey small { color: var(--text-2); font-size: .85rem; line-height: 1.35; display: block; }
   </style>
   <div class="pillars">
-    <div class="pillar"><div class="p-ico" aria-hidden="true">📘</div><h3>Theory</h3><p>Each idea explained in plain words with everyday examples, tables of the key rules, and where you'll use it in real programs.</p></div>
-    <div class="pillar"><div class="p-ico" aria-hidden="true">🛠️</div><h3>Practice</h3><p>Real Python code that runs line by line, so you see every name and value change. Interactive tools, a final project, and a quiz per lesson.</p></div>
-    <div class="pillar"><div class="p-ico" aria-hidden="true">🎓</div><h3>Certificate</h3><p>Score 80% or more on the final quiz to get a certificate with your name, ready to print, save as PDF or download as an image.</p></div>
+    <div class="pillar"><div class="p-ico" aria-hidden="true">📘</div><h2>Theory</h2><p>Each idea explained in plain words with everyday examples, tables of the key rules, and where you'll use it in real programs.</p></div>
+    <div class="pillar"><div class="p-ico" aria-hidden="true">🛠️</div><h2>Practice</h2><p>Real Python code that runs line by line, so you see every name and value change. Interactive tools, a final project, and a quiz per lesson.</p></div>
+    <div class="pillar"><div class="p-ico" aria-hidden="true">🎓</div><h2>Certificate</h2><p>Score 80% or more on the final quiz to get a certificate with your name, ready to print, save as PDF or download as an image.</p></div>
   </div>
   <ul class="facts" aria-label="Course facts">
     <li><b>10</b> lessons</li>
@@ -690,7 +693,7 @@ const PY = (() => {
     <li>Self-paced · works offline</li>
   </ul>
 
-  <h3>How the course works</h3>
+  <h2>How the course works</h2>
   <ol class="path">
     <li><b>Start with Getting Started</b><span>what Python is, how to install it, and your first program.</span></li>
     <li><b>Work through lessons 2 to 9 in order</b><span>read the idea, press Run or Step to watch the code, then take the lesson quiz.</span></li>
@@ -700,7 +703,7 @@ const PY = (() => {
   <div class="callout tip"><b>Tip for each lesson:</b> before you press <b>Step</b>, guess what the next line will do. Use the <b>Animation speed</b> slider at the top to slow things down. There's no time limit, and you can retake any quiz. When you install Python (lesson 1), type the examples yourself too.</div>
 
   <div class="ckey" role="group" aria-labelledby="ckeyTitle">
-    <h3 id="ckeyTitle">Colour key for the animations</h3>
+    <h2 id="ckeyTitle">Colour key for the animations</h2>
     <p>When code runs in any lesson, the boxes in memory change colour to show what is happening at that moment:</p>
     <ul>
       <li><span class="node" aria-hidden="true">7</span><span><b>Normal</b><small>A value stored under a name, not involved in the current line.</small></span></li>
@@ -710,7 +713,7 @@ const PY = (() => {
     </ul>
   </div>
 
-  <h3>Course map</h3>
+  <h2>Course map</h2>
   <div class="order">
     <a href="#start">Getting Started<small>install, REPL, print()</small></a>
     <a href="#vars">Variables &amp; Types<small>int, float, str, bool, None</small></a>
@@ -948,7 +951,7 @@ print(2 + 3)`;
       <button class="secondary always ty-ex">42</button><button class="secondary always ty-ex">3.5</button><button class="secondary always ty-ex">'7'</button>
       <button class="secondary always ty-ex">'hi'</button><button class="secondary always ty-ex">True</button><button class="secondary always ty-ex">None</button>
     </div>
-    <div class="ty-out"></div>
+    <div class="ty-out" style="overflow-x:auto"></div>
   </div>
   <ul>
     <li><code>int()</code> of a number with a decimal point cuts the decimal part off: <code>int(3.5)</code> is <code>3</code>. It does not round.</li>
@@ -1111,7 +1114,7 @@ print("Next year you will be", next_year)`;
 
   <h3>Arithmetic, comparison and logical operators</h3>
   <div style="overflow-x:auto">
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Kind</th><th>Operator</th><th>Meaning</th><th>Example</th><th>Result</th></tr></thead>
     <tbody>
       <tr><td rowspan="7"><b>Arithmetic</b></td><td><code>+</code> <code>-</code></td><td>add, subtract</td><td><code>7 + 2</code></td><td><code>9</code></td></tr>
@@ -1126,7 +1129,7 @@ print("Next year you will be", next_year)`;
       <tr><td><code>or</code></td><td>True if at least one of the two sides is True</td><td><code>True or False</code></td><td><code>True</code></td></tr>
       <tr><td><code>not</code></td><td>flips True and False</td><td><code>not True</code></td><td><code>False</code></td></tr>
     </tbody>
-  </table>
+  </table></div>
   </div>
   <p>Two rules the table shows: 7 ÷ 2 is 3 with 1 left over (3 × 2 + 1 = 7), so <code>7 // 2</code> is 3 and <code>7 % 2</code> is 1. And if either number is a float, the result is a float: <code>10 - 2.0</code> is <code>8.0</code>.</p>
   <div class="callout warn"><b>= vs ==:</b> one <code>=</code> <i>stores</i> a value (<code>x = 5</code>). Two <code>==</code> <i>asks a question</i> (<code>x == 5</code> gives <code>True</code> or <code>False</code>).</div>
@@ -1675,10 +1678,10 @@ print("Go!")`;
       <div class="viz">
         <span class="caption">Memory · four collections</span>
         <div class="py-boxes">
-          <div class="py-box"><h4><code>fruits</code> · list · ordered, changeable</h4><div class="py-row c-list"></div></div>
-          <div class="py-box"><h4><code>point</code> · tuple · ordered, fixed</h4><div class="py-row c-tup"></div></div>
-          <div class="py-box"><h4><code>ages</code> · dict · key → value</h4><div class="py-row tight c-dict"></div></div>
-          <div class="py-box"><h4><code>colors</code> · set · unique items</h4><div class="py-row tight c-set"></div></div>
+          <div class="py-box"><div class="fr-h"><code>fruits</code> · list · ordered, changeable</div><div class="py-row c-list"></div></div>
+          <div class="py-box"><div class="fr-h"><code>point</code> · tuple · ordered, fixed</div><div class="py-row c-tup"></div></div>
+          <div class="py-box"><div class="fr-h"><code>ages</code> · dict · key → value</div><div class="py-row tight c-dict"></div></div>
+          <div class="py-box"><div class="fr-h"><code>colors</code> · set · unique items</div><div class="py-row tight c-set"></div></div>
         </div>
         <div class="tr-outlabel">Output</div>
         <div class="console c-out"><span class="dim">(nothing printed yet)</span></div>
@@ -1693,7 +1696,7 @@ print("Go!")`;
   <h3>list, tuple, dict and set</h3>
   <p><b>Ordered</b> means the items stay in the order you put them in (not that they get sorted).</p>
   <div style="overflow-x:auto">
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Type</th><th>Written as</th><th>Ordered?</th><th>Can change?</th><th>Duplicates?</th><th>Get an item</th></tr></thead>
     <tbody>
       <tr><td><b>list</b></td><td><code>["a", "b"]</code></td><td>yes</td><td>yes</td><td>yes</td><td><code>items[0]</code></td></tr>
@@ -1701,7 +1704,7 @@ print("Go!")`;
       <tr><td><b>dict</b></td><td><code>{"Ada": 36}</code></td><td>keeps the order keys were added</td><td>yes</td><td>keys are unique</td><td><code>ages["Ada"]</code></td></tr>
       <tr><td><b>set</b></td><td><code>{"red", "blue"}</code></td><td>no</td><td>yes</td><td>no</td><td><code>"red" in colors</code></td></tr>
     </tbody>
-  </table>
+  </table></div>
   </div>
   <p>Changing a tuple, as in <code>point[0] = 10</code>, raises a <code>TypeError</code>. The demo's buttons run these everyday operations:</p>
   <div style="overflow-x:auto"><table class="cx">
