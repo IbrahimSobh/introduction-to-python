@@ -136,6 +136,13 @@ select { max-width: 100%; }
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; box-shadow: var(--shadow); min-width: 0; }
 .grid2 { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; margin: 20px 0; align-items: start; }
 @media (max-width: 1050px) { .grid2 { grid-template-columns: 1fr; } }
+/* Narrow screens: the code panel goes above its demo card and stays pinned under the header while the
+   memory boxes scroll past, so the highlighted line and the boxes are on screen together. */
+@media (max-width: 1050px) {
+  .grid2 > .code { order: -1; position: sticky; top: 64px; z-index: 5; max-height: 30vh;
+    box-shadow: 0 8px 18px -10px rgb(0 0 0 / .55); }
+}
+@media (max-width: 860px) { .grid2 > .code { top: 113px; } }
 .callout { border-left: 4px solid var(--accent); background: var(--surface); padding: 10px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; }
 .callout.tip { border-color: var(--ok); }
 .callout.warn { border-color: var(--hot); }
@@ -2681,6 +2688,16 @@ main()`;
     #cheatsheet [data-col][aria-pressed="true"] { background: var(--surface-2); color: var(--text); border-color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); }
   </style>
   <div class="controls cs-filters" role="group" aria-label="Filter by topic"></div>
+  <style>
+    /* Phones: each row becomes a small block (topic, code, meaning) instead of three squeezed columns */
+    @media (max-width: 560px) {
+      #csTable thead { display: none; }
+      #csTable tr { display: block; padding: 10px 0; border-bottom: 1px solid var(--border); }
+      #csTable td { display: block; padding: 2px 0; border: 0; }
+      #csTable td:first-child { font-size: .8rem; }
+      #csTable td:nth-child(2) { padding: 4px 0; }
+    }
+  </style>
   <div style="overflow-x:auto"><table class="cx" id="csTable"></table></div>
 </section>
 <script>
