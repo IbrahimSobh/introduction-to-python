@@ -25,7 +25,7 @@
   --text: #0b0b0b;
   --text-2: #52514e;
   --muted: #6b6a65;
-  --accent: #2a78d6;   /* default node / primary */
+  --accent: #246abd;   /* default node / primary; ≥4.5:1 on --surface, --bg, --surface-2 and the lesson band */
   --accent-strong: #2b6bc9; /* primary button background (white text >= 4.5:1) */
   --hot: #eb6834;      /* currently active / being compared */
   --ok: #1baf7a;       /* found / success */
@@ -256,6 +256,7 @@ table.cx tbody tr:hover { background: var(--surface-2); }
 .scenario select { width: 100%; font-family: var(--sans); }
 ol.ex li { margin-bottom: 6px; }
 footer { color: var(--muted); font-size: .85rem; padding: 32px 0; }
+footer a { color: var(--text-2); } /* footer sits on the darker page, where --accent is below 4.5:1 */
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 
 /* ---------- Python course: memory frames, console, tokens ---------- */
