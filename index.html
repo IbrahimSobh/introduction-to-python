@@ -46,7 +46,7 @@
   --text: #f0efec;
   --text-2: #c3c2b7;
   --muted: #8e8d86;
-  --accent: #3987e5;
+  --accent: #4a93ea;   /* >= 4.5:1 on --surface, --bg and the lesson band */
   --accent-strong: #2f6fcc;
   --hot: #d95926;
   --ok: #199e70;
@@ -59,6 +59,9 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 72px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+.skip { position: fixed; left: 8px; top: -60px; z-index: 100; padding: 8px 14px; border-radius: 8px; background: var(--accent-strong); color: #fff; font-weight: 600; text-decoration: none; }
+.skip:focus { top: 8px; }
+main:focus { outline: none; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 var(--sans); }
 a { color: var(--accent); }
 * { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; } /* keep != <= >= as typed (Cascadia Code ligatures) */
@@ -164,6 +167,7 @@ input[type="text"], input[type="number"], select {
   font: .9rem var(--mono); padding: 7px 9px; border-radius: 8px; width: 84px;
   border: 1px solid var(--border); background: var(--surface); color: var(--text);
 }
+::placeholder { color: var(--muted); opacity: 1; }
 input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ---------- visual area ---------- */
@@ -216,7 +220,9 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 .code .ln { display: flex; white-space: pre; padding: 0 14px 0 0; transition: background .2s; }
 .code .ln .no { width: 36px; flex: none; text-align: right; padding-right: 12px; color: #94938c; user-select: none; }
 .code .ln.hl { background: var(--code-hl); box-shadow: inset 3px 0 0 var(--hot); }
-.t-k { color: #c792ea; } .t-sf { color: #f78c6c; } .t-s { color: #c3e88d; } .t-c { color: #7f7e78; font-style: italic; } .t-n { color: #f9c859; } .t-d { color: #82aaff; }
+.code .ln.hl .no { color: var(--code-text); }
+.code:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.t-k { color: #c792ea; } .t-sf { color: #f78c6c; } .t-s { color: #c3e88d; } .t-c { color: #8e8d86; font-style: italic; } .t-n { color: #f9c859; } .t-d { color: #82aaff; }
 
 /* ---------- tables ---------- */
 table.cx { border-collapse: collapse; width: 100%; font-size: .92rem; margin: 10px 0; }
@@ -309,6 +315,7 @@ label.inl { font-size: .85rem; color: var(--text-2); display: inline-flex; align
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <header class="top">
   <div class="brand">🐍 Intro to Python</div>
   <label>Animation speed
@@ -320,7 +327,7 @@ label.inl { font-size: .85rem; color: var(--text-2); display: inline-flex; align
 
 <div class="layout">
 <nav class="side" id="nav" aria-label="Sections"></nav>
-<main>
+<main id="main" tabindex="-1">
 
 <script>
 /* ======================================================================
@@ -354,24 +361,36 @@ const DS = (() => {
 
   const reducedMotion = () => !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-  let speed = 1;
+  let speed = 1, paused = false;
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-  // Pause between animation steps; scaled by the global speed slider.
-  const wait = (mult = 1) => sleep(650 * mult / speed);
+  // Pause between animation steps; scaled by the global speed slider. Holds while a demo is paused.
+  const wait = async (mult = 1) => { await sleep(650 * mult / speed); while (paused) await sleep(120); };
 
   // Run an async animation, disabling the section's buttons until it finishes.
+  // A ▶ button that starts a run turns into Pause / Resume until the run ends.
   async function run(root, fn) {
-    if (root.dataset.busy) return;
+    const trigger = window.event && window.event.currentTarget;
+    if (root.dataset.busy) {
+      if (trigger && trigger === root.pauseBtn) {
+        paused = !paused;
+        trigger.textContent = paused ? "▶ Resume" : "⏸ Pause";
+      }
+      return;
+    }
     root.dataset.busy = "1";
     // Only touch buttons that are currently enabled, so ones disabled for other
     // reasons stay disabled afterwards.
     const btns = [...root.querySelectorAll("button:not(.always)")].filter(b => !b.disabled);
     const focused = document.activeElement;
-    btns.forEach(b => (b.disabled = true));
+    const play = btns.includes(trigger) && trigger.textContent.trim().startsWith("▶") && !trigger.matches(".g-start") ? trigger : null;
+    const playLabel = play && play.textContent;
+    if (play) { root.pauseBtn = play; play.textContent = "⏸ Pause"; }
+    btns.forEach(b => (b.disabled = b !== play));
     try { await fn(); }
     catch (e) { console.error(e); }
     finally {
       delete root.dataset.busy;
+      if (play) { play.textContent = playLabel; root.pauseBtn = null; paused = false; }
       btns.forEach(b => (b.disabled = false));
       // Disabling a focused button drops focus to <body>; give it back.
       const lost = !document.activeElement || document.activeElement === document.body;
@@ -401,6 +420,10 @@ const DS = (() => {
   function code(container, src, title) {
     const lines = src.replace(/^\n+|\s+$/g, "").split("\n");
     container.innerHTML = "";
+    // Focusable so keyboard users can scroll long or wide code
+    container.tabIndex = 0;
+    container.setAttribute("role", "region");
+    container.setAttribute("aria-label", (title || "Python") + " code");
     if (title) container.append(el("div", { class: "title" }, title));
     const rows = lines.map((t, i) => {
       const r = el("div", { class: "ln" }, el("span", { class: "no" }, String(i + 1)), el("span", { html: hlPy(t) || " " }));
@@ -753,7 +776,7 @@ const PY = (() => {
         <button class="secondary t-reset">Reset</button>
       </div>
       <div class="viz"></div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -802,7 +825,7 @@ const PY = (() => {
         <span class="caption">Terminal · python</span>
         <div class="console r-con" style="margin-top:22px;min-height:150px"><span class="dim">$ python</span></div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
     </div>
     <div class="card" style="box-shadow:none">
       <div style="overflow-x:auto"><table class="cx" style="margin:0">
@@ -916,7 +939,7 @@ print(2 + 3)`;
         <span style="font-size:.82rem;color:var(--muted)">Try an age like <code>abc</code> too: <code>int()</code> can't convert it and the program stops.</span>
       </div>
       <div class="viz"></div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -1112,7 +1135,7 @@ print("Next year you will be", next_year)`;
         <div class="tr-outlabel">Output</div>
         <div class="console o-out"><span class="dim">(nothing printed yet)</span></div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -1294,7 +1317,7 @@ print(10 % 2 == 0)`;
         <div class="tr-outlabel">Result</div>
         <div class="py-row sl-res" style="padding-top:8px;min-height:50px"></div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -1326,7 +1349,7 @@ print(10 % 2 == 0)`;
         <button class="secondary t-reset">Reset</button>
       </div>
       <div class="viz"></div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -1522,7 +1545,7 @@ print(f"{count} fruits: {joined}")`;
         <button class="secondary t-reset">Reset</button>
       </div>
       <div class="viz"></div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -1560,7 +1583,7 @@ print(f"{count} fruits: {joined}")`;
         <button class="secondary t-reset">Reset</button>
       </div>
       <div class="viz"></div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -1693,7 +1716,7 @@ print("Go!")`;
         <div class="tr-outlabel">Output</div>
         <div class="console c-out"><span class="dim">(nothing printed yet)</span></div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -1743,7 +1766,7 @@ print("Go!")`;
         <button class="secondary t-reset">Reset</button>
       </div>
       <div class="viz"></div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -1994,7 +2017,7 @@ print(quick)`;
         <button class="secondary t-reset">Reset</button>
       </div>
       <div class="viz"></div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -2121,7 +2144,7 @@ print(area(${w}))`;
         <div class="tr-outlabel">Output</div>
         <div class="console md-out"><span class="dim">(nothing printed yet)</span></div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -2270,7 +2293,7 @@ print(today + dt.timedelta(days=7))`;
         <span class="caption">Terminal · python shop.py</span>
         <div class="console tb-con" style="margin-top:22px;padding:8px 4px"></div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
     </div>
     <div class="code"></div>
   </div>
@@ -2309,7 +2332,7 @@ print(today + dt.timedelta(days=7))`;
         <button class="secondary t-reset">Reset</button>
       </div>
       <div class="viz"></div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
       <div class="log"></div>
     </div>
     <div class="code"></div>
@@ -2457,7 +2480,7 @@ safe_divide("${a}", "${b}")`;
           <button class="g-send always" disabled>Enter</button>
         </div>
       </div>
-      <div class="status"></div>
+      <div class="status" role="status"></div>
     </div>
     <div class="code"></div>
   </div>
